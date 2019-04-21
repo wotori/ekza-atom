@@ -1,0 +1,14 @@
+{
+    "telemetry.machineId": "3889f51a5ca101d7348a2e2907a902c2620ee9e5f7c303d742b041ca46e27bb2",
+    "openedPathsList": {
+        "workspaces2": [
+            "file:///root/js/soulsphere-real"
+        ],
+        "files2": [
+            "file:///root/js/soul-reserve/index.html"
+        ]
+    },
+    "theme": "vs-dark",
+    "themeBackground": "#1e1e1e",
+    "pickerWorkingDir": "/root/js/soul-reserve"
+}

@@ -10,18 +10,40 @@
 		<script src="engine/three.js"></script>
 		<script src="engine/libs/OrbitControls.js"></script>
 		<script>
+			let RUNNING_INDEXES = [-1];
+			let AVATARS = [];
+			
+
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera( 100, window.innerWidth/window.innerHeight, 0.1, 1000 );
 
-			// var controls = new THREE.OrbitControls( camera );
+			var raycaster = new THREE.Raycaster(), intersected =null;
+			raycaster.params.Points.threshold = 0.015;
 
-			var mouseX = 0;
-			var mouseY = 0;
+			var renderer;
 
-			var windowX = window.innerWidth / 2;
-			var windowY = window.innerHeight / 2;
+			var mouse = new THREE.Vector2();
 
-			document.addEventListener( 'mousemove', onDocumentMouseMove, false )
+			// camera.position.x = 2
+			// camera.position.y = 2
+			// camera.position.z = 2
+
+			function onMouseMove( event ) {
+
+			// calculate mouse position in normalized device coordinates
+			// (-1 to +1) for both components
+
+			mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+			mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+			}
+
+			ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld);
+			
+			RemoveAvatar =(object)=>{ 
+				var selectedObject = scene.getObjectByName(object.name);
+				scene.remove( selectedObject );
+				// animate(); 
+			};
 
 			var renderer = new THREE.WebGLRenderer({ antialias : true });
 			renderer.setSize( window.innerWidth, window.innerHeight );
@@ -48,8 +70,8 @@
 
 			//points setup
 			
-			var pointGeo = new THREE.IcosahedronGeometry( 3, 4 )
-			var pointMat = new THREE.PointsMaterial({ color : 'white', size : 0.02, });
+			var pointGeo = new THREE.IcosahedronGeometry( 3.5, 4 )
+			var pointMat = new THREE.PointsMaterial({ color : 'white', size : 0.04 });
 
 			pointGeo.vertices.forEach(function(vertex) { 
 				vertex.x += (Math.random() - 0.5);
@@ -57,16 +79,33 @@
 				vertex.z += (Math.random() - 0.5);
 			 })
 
-			var pointsClouds = new THREE.Points( pointGeo, pointMat, );
-			scene.add( line );
-			scene.add( mesh, pointsClouds );
-
+			var pointsClouds = new THREE.Points( pointGeo, pointMat );
 			
+			pC =[pointsClouds];
+
+
+		
+
+			// console.log(pointsClouds)
+
+
+			scene.add(line,mesh,pointsClouds );
 
 			camera.position.z = 5;
 
-			var animate = function () {
+			document.addEventListener( 'mousemove', onMouseMove, false );
+
+
+			animate();
+
+			function animate(){
+
 				requestAnimationFrame( animate );
+
+				render();
+
+				
+			
 
 				mesh.rotation.x += 0.001;
 				mesh.rotation.y += 0.001;
@@ -74,41 +113,121 @@
 				line.rotation.x += 0.001;
 				line.rotation.y += 0.001;
 
+			
+
+				// pointsClouds.geometry.vertices.forEach(function(particle) {
+				// 	particle.x += (Math.random() / 500)-(Math.random() / 500);
+				// 	particle.y += (Math.random() / 500)-(Math.random() / 500);
+				// 	particle.z += (Math.random() / 500)-(Math.random() / 500);
+				// } )
+
 				pointsClouds.rotation.x += 0.001;
 				pointsClouds.rotation.y += 0.001;
 
-				pointsClouds.geometry.vertices.forEach(function(particle) {
-					particle.x += (Math.random() / 500);
-					particle.y += (Math.random() / 500);
-					particle.z += Math.random() / 500;
-				} )
-
-				pointsClouds.geometry.vertices.forEach(function(particle) {
-					particle.x -= (Math.random() / 500);
-					particle.y -= (Math.random() / 500);
-					particle.z -= Math.random() / 500;
-				} )
 				pointsClouds.geometry.verticesNeedUpdate = true;
+				pointsClouds.matrixAutoUpdate = true;
+				pointsClouds.updateMatrix();
 
-				//camera
-				camera.position.x += ( mouseX - camera.position.x ) * .05;
-				camera.position.y += ( mouseY - camera.position.y ) * .05;
-				camera.lookAt( scene.position );
+				// plane.position.set(pointsClouds.geometry.faceVertexUvs[0].x,pointsClouds.geometry.faceVertexUvs[0].y,pointsClouds.geometry.faceVertexUvs[0].z)
+				
 
-
-
-
-				renderer.render( scene, camera );
-			};
-
-			animate();
-
-			function onDocumentMouseMove( event ) {
-
-				mouseX = ( event.clientX - windowX ) / 100;
-				mouseY = ( event.clientY - windowY ) / 100;
 
 			}
+	
+
+			class PlaneAvatar {
+				
+				constructor(index) {
+
+					this.index = index;
+					this.plane_geometry = new THREE.PlaneGeometry( 0.8, 0.8, 1 );
+					this.plane_material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+					this.plane = new THREE.Mesh( this.plane_geometry, this.plane_material );
+				
+					scene.add(this.plane);
+				};
+
+				run = (vector) =>{
+					this.plane.position.set(vector.x,vector.y,vector.z);
+				}
+
+			}
+
+			
+
+
+			function render(){
+
+			//FIND INTERSECTION
+			
+			camera.updateMatrixWorld();
+
+			raycaster.setFromCamera( mouse, camera );
+			
+			// var vector = pointsClouds.geometry.vertices[1000].clone();
+			// vector.applyMatrix4( pointsClouds.matrixWorld );
+
+	
+			var intersects = raycaster.intersectObjects( pC );
+
+			
+			
+
+			if ( intersects.length > 0 ) {
+
+					intersected = Array.from(intersects);
+					let FIRST = intersected[0];
+					console.log(FIRST.index);
+					RUNNING_INDEXES.indexOf(FIRST.index) == -1 ? (
+																	RUNNING_INDEXES.push(FIRST.index),
+																	AVATARS.push(new PlaneAvatar(FIRST.index)),
+																	console.log(FIRST.index)
+																  )
+															  : void null;
+
+
+					
+					// plane.position.set(intersected[0].point.x,intersected[0].point.y,intersected[0].point.z)
+					// console.log(plane);
+
+
+
+					// console.log(intersected[0].point)
+
+					// for (let i = 0; i < intersected.length; i++) {
+					// 	intersected[i].object.material.color.set( 0xff0000 );
+					// 	console.log(intersected[i].index)
+						
+					// }
+
+					// console.log(intersected)
+					
+					// if ( intersected != intersects[ 0 ].object ) {
+						
+					// 	// console.log(intersects[0].object)
+					// 	// if ( intersected ) intersected.material.emissive.setHex( intersected.currentHex );
+					// 	// intersected = intersects[ 0 ].object;
+					// 	// intersected.currentHex = intersected.material.emissive.getHex();
+					// 	// intersected.material.emissive.setHex( 0xff0000 );
+					// }
+			} 
+			else {
+					
+					if ( intersected ) intersected.map((i,j)=>{i.object.material.color.set( 0x00afaf );})
+
+					// intersects[0].object.material.color.set( 0xff0000 );
+					intersected = null;
+			};
+
+
+			AVATARS.map((i)=>
+				i.run(ConvertToWorld(i.index))
+			);
+
+
+			renderer.render( scene, camera );
+
+			};
 
 		</script>
 	</body>
