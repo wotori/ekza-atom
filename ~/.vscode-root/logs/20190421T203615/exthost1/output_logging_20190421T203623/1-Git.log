@@ -41,3 +41,4 @@ fatal: no upstream configured for branch 'gudzo'
 fatal: no upstream configured for branch 'gudzo'
 > git for-each-ref --format %(refname) %(objectname) --sort -committerdate
 > git remote --verbose
+> git check-ignore -z --stdin
