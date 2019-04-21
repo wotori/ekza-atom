@@ -12,10 +12,10 @@
 		<script>
 			let RUNNING_INDEXES = [-1];
 			let AVATARS = [];
-			
 
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera( 100, window.innerWidth/window.innerHeight, 0.1, 1000 );
+			// var controls = new THREE.OrbitControls( camera );
 
 			var raycaster = new THREE.Raycaster(), intersected =null;
 			raycaster.params.Points.threshold = 0.015;
@@ -30,17 +30,10 @@
 			var windowX = window.innerWidth / 2;
 			var windowY = window.innerHeight / 2;
 
-			// camera.position.x = 2
-			// camera.position.y = 2
-			// camera.position.z = 2
-
 			function onMouseMove( event ) {
 
-			// mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-			// mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
 			mouseX = ( event.clientX - windowX ) / 100;
-				mouseY = ( event.clientY - windowY ) / 100;
+			mouseY = ( event.clientY - windowY ) / 100;
 
 			}
 
@@ -190,37 +183,11 @@
 																  )
 															  : void null;
 
-
-					
-					// plane.position.set(intersected[0].point.x,intersected[0].point.y,intersected[0].point.z)
-					// console.log(plane);
-
-
-
-					// console.log(intersected[0].point)
-
-					// for (let i = 0; i < intersected.length; i++) {
-					// 	intersected[i].object.material.color.set( 0xff0000 );
-					// 	console.log(intersected[i].index)
-						
-					// }
-
-					// console.log(intersected)
-					
-					// if ( intersected != intersects[ 0 ].object ) {
-						
-					// 	// console.log(intersects[0].object)
-					// 	// if ( intersected ) intersected.material.emissive.setHex( intersected.currentHex );
-					// 	// intersected = intersects[ 0 ].object;
-					// 	// intersected.currentHex = intersected.material.emissive.getHex();
-					// 	// intersected.material.emissive.setHex( 0xff0000 );
-					// }
 			} 
 			else {
 					
 					if ( intersected ) intersected.map((i,j)=>{i.object.material.color.set( 0x00afaf );})
-
-					// intersects[0].object.material.color.set( 0xff0000 );
+					
 					intersected = null;
 			};
 
