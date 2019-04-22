@@ -15,7 +15,7 @@
 			
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.1, 1000 );
-			var controls = new THREE.OrbitControls( camera );
+            var controls = new THREE.OrbitControls ( camera )
 
 			var raycaster = new THREE.Raycaster(), intersected =null;
 			raycaster.params.Points.threshold = 0.015;
@@ -27,9 +27,9 @@
 			var windowX = window.innerWidth / 2;
 			var windowY = window.innerHeight / 2;
 
-			camera.position.x = 5
-			camera.position.y = 5
-			camera.position.z = 5
+			camera.position.x = 7
+			camera.position.y = 7
+			camera.position.z = 7
 
 			function onMouseMove( event ) {
 
@@ -60,7 +60,7 @@
 			var meshMaterial = new THREE.MeshBasicMaterial( { color: 'black' } );
 			var mesh = new THREE.Mesh( geometry, meshMaterial );
 
-			//wireFrameGeo
+			//wireFrame
 			var lineMat = new THREE.LineBasicMaterial({ color: 'white' })
 			var geometryWire = new THREE.IcosahedronBufferGeometry( 2, 3 );
 			var wireframe = new THREE.WireframeGeometry( geometryWire );
@@ -69,7 +69,7 @@
 			line.material.transparent = true;
 
 			//points setup
-			var pointGeo = new THREE.IcosahedronGeometry( 3, 4 )
+			var pointGeo = new THREE.IcosahedronGeometry( 3.5, 4 )
 			var pointMat = new THREE.PointsMaterial({ color : 'white', size : 0.04 });
 
 			pointGeo.vertices.forEach(function(vertex) { 
@@ -81,11 +81,11 @@
 			var pointsClouds = new THREE.Points( pointGeo, pointMat );
 			
 			pC =[pointsClouds];
+			scene.add(line,mesh,pointsClouds );
 
-			scene.add(line, mesh, pointsClouds );
+			camera.position.z = 5;
 
 			document.addEventListener( 'mousemove', onMouseMove, false );
-
 
 			animate();
 
@@ -110,7 +110,6 @@
 
 			}
 	
-
 			class PlaneAvatar {
 				
 				constructor(index) {
@@ -129,14 +128,18 @@
 
 			}
 
-			
-
-
 			function render(){
 
 			raycaster.setFromCamera( mouse, camera );
+			
+			// var vector = pointsClouds.geometry.vertices[1000].clone();
+			// vector.applyMatrix4( pointsClouds.matrixWorld );
 
+	
 			var intersects = raycaster.intersectObjects( pC );
+
+			
+			
 
 			if ( intersects.length > 0 ) {
 
@@ -149,11 +152,16 @@
 																	console.log(FIRST.index)
 																  )
 															  : void null;
+
+
+					
+				
 			} 
 			else {
 					
 					if ( intersected ) intersected.map((i,j)=>{i.object.material.color.set( 0x00afaf );})
 
+					// intersects[0].object.material.color.set( 0xff0000 );
 					intersected = null;
 			};
 
@@ -168,7 +176,8 @@
 			// camera.position.y += ( mouse.y - camera.position.y ) * .05;
 			camera.lookAt( scene.position );
 
-		  //FIND INTERSECTION
+		    //FIND INTERSECTION
+			
 			camera.updateMatrixWorld();
 
 			renderer.render( scene, camera );
