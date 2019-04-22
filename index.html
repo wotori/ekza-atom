@@ -16,7 +16,7 @@
 			
 
 			var scene = new THREE.Scene();
-			var controls = new THREE.OrbitControls ( camera )
+			// var controls = new THREE.OrbitControls ( camera )
 			var camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.1, 1000 );
 
 			var raycaster = new THREE.Raycaster(), intersected =null;
@@ -159,8 +159,8 @@
 
 
 			//camera
-			camera.position.x += ( MOUSE.x - camera.position.x ) * .05;
-			camera.position.y += ( MOUSE.y - camera.position.y ) * .05;
+			// camera.position.x += ( MOUSE.x - camera.position.x ) * .05;
+			// camera.position.y += ( MOUSE.y - camera.position.y ) * .05;
 			camera.lookAt( scene.position );
 
 				//FIND INTERSECTION
@@ -219,7 +219,7 @@
 				constructor(index) {
 
 					this.index = index;
-					this.plane_geometry = new THREE.PlaneGeometry( 0.8, 0.8, 1 );
+					this.plane_geometry = new THREE.SphereGeometry( 0.2, 9, 9 );
 					this.plane_material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
 					this.plane = new THREE.Mesh( this.plane_geometry, this.plane_material );
 					
@@ -250,8 +250,8 @@
 
 					for(var XYZ in this.plane.scale) {
 
-						let P = this.plane.scale[XYZ] - 0.005;
-					 	this.plane.scale[XYZ] = (P > 0) ? P : 0.001;
+						let P = this.plane.scale[XYZ] - 0.0025;
+					 	this.plane.scale[XYZ] = (P > 0) ? P : 0.0001;
 
 					}
 
