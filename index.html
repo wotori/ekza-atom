@@ -16,7 +16,7 @@
 			
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.1, 1000 );
-            var controls = new THREE.OrbitControls ( camera )
+      var controls = new THREE.OrbitControls ( camera );
 
 			var raycaster = new THREE.Raycaster(), intersected =null;
 			raycaster.params.Points.threshold = 0.015;
@@ -162,7 +162,7 @@
 
 			animate = () => {
 
-				window.requestAnimationFrame( animate );
+				window.requestAnimationFrame(animate);
 
 				var time = clock.getElapsedTime();
 
@@ -183,7 +183,7 @@
 
 			}
 
-			window.requestAnimationFrame(animate)
+			window.requestAnimationFrame(animate);
 	
 			class PlaneAvatar {
 				
@@ -221,8 +221,8 @@
 
 					for(var XYZ in this.plane.scale) {
 
-						let P = this.plane.scale[XYZ] - 0.0025;
-					 	this.plane.scale[XYZ] = (P > 0) ? P : 0.0001;
+						let P = this.plane.scale[XYZ] - Math.random()/100;
+					 	this.plane.scale[XYZ] = (P > 0) ? P : 0.001;
 
 					}
 
