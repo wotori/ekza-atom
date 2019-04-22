@@ -34,6 +34,7 @@
 			camera.position.y = 7
 			camera.position.z = 7
 
+
 			onMouseMove = (event) => {
 
 					event.preventDefault();
@@ -45,17 +46,21 @@
 			onMouseClick = (event) => {
 
 					event.preventDefault();
-					MOUSE.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-					MOUSE.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-			
+					
+
 			}
 
 			ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld);
 			
-			RemoveAvatar = (object) =>  { 
-				var selectedObject = scene.getObjectByName(object.name);
-				scene.remove( selectedObject );
-			};
+			RemoveAvatar = (object,iAVATAR) =>  {
+				
+				//  object == undefined ? console.log('##@') : void null;
+				 object.geometry.dispose();
+				 object.material.dispose();
+				 scene.remove(object);
+				 AVATARS.splice(iAVATAR,1);
+
+			}
 
 			var renderer = new THREE.WebGLRenderer({ antialias : true });
 			renderer.setSize( window.innerWidth, window.innerHeight );
@@ -97,8 +102,8 @@
 
 			camera.position.z = 5;
 
-			document.addEventListener( 'mousemove', onMouseMove, false );
-			document.addEventListener( 'mouseclick', onMouseClick, false );
+			document.addEventListener('mousemove', onMouseMove, false );
+			document.addEventListener('mousedown', onMouseClick, false);
 
 
 		  render = (time) => {
@@ -120,11 +125,10 @@
 
 					intersected = Array.from(intersects);
 					let FIRST = intersected[0];
-					console.log(FIRST.index);
+					// console.log(FIRST.index);
 					RUNNING_INDEXES.indexOf(FIRST.index) == -1 ? (
 																	RUNNING_INDEXES.push(FIRST.index),
-																	AVATARS.push(new PlaneAvatar(FIRST.index)),
-																	console.log(FIRST.index)
+																	AVATARS.push(new PlaneAvatar(FIRST.index))
 																	)
 																: void null;	
 				
@@ -137,13 +141,32 @@
 					intersected = null;
 			};
 
+	
 
-			AVATARS.map((i)=>{
-				i.run(ConvertToWorld(i.index));
-				i.dissolve();
-			}	
-			);
+			// let AvatarsToRemove=[];
+	
+					AVATARS.map((i,j) =>
+						
+						i != undefined ?
+								
+								(i.plane.scale.z <= 0.1 ? RemoveAvatar(i.plane,j)
+																				: (i.run(ConvertToWorld(i.index)),i.dissolve())
+								) : void null
+					)
 
+			// AvatarsToRemove.map((i)=>{
+
+			// 	console.log(i.name)
+			// 	AVATARS.splice(i,1);
+
+			// 	// console.log(i);
+			// 	// //IsRealRemove? 
+			// 	// console.log(AVATARS[i]);
+			// 	// //IsRealRemove? test
+
+			// });
+
+			console.log(AVATARS.length);	
 
 
 			//camera
@@ -190,11 +213,11 @@
 				constructor(index) {
 
 					this.index = index;
-					this.plane_geometry = new THREE.SphereGeometry( 0.2, 9, 9 );
+					this.plane_geometry = new THREE.SphereGeometry( 0.4, 9, 9 );
 					this.plane_material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
 					this.plane = new THREE.Mesh( this.plane_geometry, this.plane_material );
 					
-					console.log(this.plane);
+					// console.log(this.plane);
 
 					scene.add(this.plane);
 					
@@ -218,20 +241,26 @@
 				//  });
 				
 				dissolve = () => {	
-
+			
 					for(var XYZ in this.plane.scale) {
 
 						let P = this.plane.scale[XYZ] - Math.random()/100;
-					 	this.plane.scale[XYZ] = (P > 0) ? P : 0.001;
+					 	this.plane.scale[XYZ] = (P > 0) ? P : 0.0001;
 
 					}
+				}
 
+				enlarge = () => {
+					this.plane.scale.x = 10;
+					this.plane.scale.y = 10;
+					this.plane.scale.z = 10;  
 				}
  
 
 			}
 
 
+			 
 
 		</script>
 	</body>
