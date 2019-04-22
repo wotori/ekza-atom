@@ -16,7 +16,8 @@
 			
 
 			var scene = new THREE.Scene();
-			var camera = new THREE.PerspectiveCamera( 100, window.innerWidth/window.innerHeight, 0.1, 1000 );
+			var controls = new THREE.OrbitControls ( camera )
+			var camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.1, 1000 );
 
 			var raycaster = new THREE.Raycaster(), intersected =null;
 			raycaster.params.Points.threshold = 0.015;
@@ -30,17 +31,16 @@
 			var windowX = window.innerWidth / 2;
 			var windowY = window.innerHeight / 2;
 
-			// camera.position.x = 2
-			// camera.position.y = 2
-			// camera.position.z = 2
+			camera.position.x = 7
+			camera.position.y = 7
+			camera.position.z = 7
 
 			onMouseMove = (event) => {
 
 					event.preventDefault();
 					MOUSE.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 					MOUSE.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-					// mouseX = ( event.clientX - windowX ) / 100;
-			// 	mouseY = ( event.clientY - windowY ) / 100;
+
 			}
 
 			onMouseClick = (event) => {
@@ -48,8 +48,7 @@
 					event.preventDefault();
 					MOUSE.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 					MOUSE.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-					// mouseX = ( event.clientX - windowX ) / 100;
-					// 	mouseY = ( event.clientY - windowY ) / 100;
+			
 			}
 
 			ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld);
