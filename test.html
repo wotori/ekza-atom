@@ -23,6 +23,15 @@
 			var cube = new THREE.Mesh( geometry, material );
 			scene.add( cube );
 
+            var geo2 = new THREE.SphereGeometry(1, 5, 5);
+            var sphere = new THREE.Mesh (geo2, material)
+            scene.add( sphere )
+            sphere.position.set(-3, -3, 3)
+
+            camera.up = new THREE.Vector3(0,1,1);
+            camera.lookAt(new THREE.Vector3(5,5,5))
+
+
 			camera.position.z = 5;
 
 			var animate = function () {
