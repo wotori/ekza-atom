@@ -13,9 +13,9 @@
 			let RUNNING_INDEXES = [-1];
 			let AVATARS = [];
 			
-
 			var scene = new THREE.Scene();
-			var camera = new THREE.PerspectiveCamera( 100, window.innerWidth/window.innerHeight, 0.1, 1000 );
+			var camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.1, 1000 );
+			var controls = new THREE.OrbitControls( camera );
 
 			var raycaster = new THREE.Raycaster(), intersected =null;
 			raycaster.params.Points.threshold = 0.015;
@@ -24,23 +24,17 @@
 
 			var mouse = new THREE.Vector2();
 
-			var mouseX = 0;
-			var mouseY = 0;
-
 			var windowX = window.innerWidth / 2;
 			var windowY = window.innerHeight / 2;
 
-			// camera.position.x = 2
-			// camera.position.y = 2
-			// camera.position.z = 2
+			camera.position.x = 5
+			camera.position.y = 5
+			camera.position.z = 5
 
 			function onMouseMove( event ) {
 
 			mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 			mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-			// mouseX = ( event.clientX - windowX ) / 100;
-			// 	mouseY = ( event.clientY - windowY ) / 100;
 
 			}
 
@@ -49,7 +43,6 @@
 			RemoveAvatar =(object)=>{ 
 				var selectedObject = scene.getObjectByName(object.name);
 				scene.remove( selectedObject );
-				// animate(); 
 			};
 
 			var renderer = new THREE.WebGLRenderer({ antialias : true });
@@ -67,7 +60,7 @@
 			var meshMaterial = new THREE.MeshBasicMaterial( { color: 'black' } );
 			var mesh = new THREE.Mesh( geometry, meshMaterial );
 
-			//wireFrame
+			//wireFrameGeo
 			var lineMat = new THREE.LineBasicMaterial({ color: 'white' })
 			var geometryWire = new THREE.IcosahedronBufferGeometry( 2, 3 );
 			var wireframe = new THREE.WireframeGeometry( geometryWire );
@@ -76,8 +69,7 @@
 			line.material.transparent = true;
 
 			//points setup
-			
-			var pointGeo = new THREE.IcosahedronGeometry( 3.5, 4 )
+			var pointGeo = new THREE.IcosahedronGeometry( 3, 4 )
 			var pointMat = new THREE.PointsMaterial({ color : 'white', size : 0.04 });
 
 			pointGeo.vertices.forEach(function(vertex) { 
@@ -90,15 +82,7 @@
 			
 			pC =[pointsClouds];
 
-
-		
-
-			// console.log(pointsClouds)
-
-
-			scene.add(line,mesh,pointsClouds );
-
-			camera.position.z = 5;
+			scene.add(line, mesh, pointsClouds );
 
 			document.addEventListener( 'mousemove', onMouseMove, false );
 
@@ -111,22 +95,11 @@
 
 				render();
 
-				
-			
-
 				mesh.rotation.x += 0.001;
 				mesh.rotation.y += 0.001;
 
 				line.rotation.x += 0.001;
 				line.rotation.y += 0.001;
-
-			
-
-				// pointsClouds.geometry.vertices.forEach(function(particle) {
-				// 	particle.x += (Math.random() / 500)-(Math.random() / 500);
-				// 	particle.y += (Math.random() / 500)-(Math.random() / 500);
-				// 	particle.z += (Math.random() / 500)-(Math.random() / 500);
-				// } )
 
 				pointsClouds.rotation.x += 0.001;
 				pointsClouds.rotation.y += 0.001;
@@ -134,10 +107,6 @@
 				pointsClouds.geometry.verticesNeedUpdate = true;
 				pointsClouds.matrixAutoUpdate = true;
 				pointsClouds.updateMatrix();
-
-				// plane.position.set(pointsClouds.geometry.faceVertexUvs[0].x,pointsClouds.geometry.faceVertexUvs[0].y,pointsClouds.geometry.faceVertexUvs[0].z)
-				
-
 
 			}
 	
@@ -165,18 +134,9 @@
 
 			function render(){
 
-		
-
 			raycaster.setFromCamera( mouse, camera );
-			
-			// var vector = pointsClouds.geometry.vertices[1000].clone();
-			// vector.applyMatrix4( pointsClouds.matrixWorld );
 
-	
 			var intersects = raycaster.intersectObjects( pC );
-
-			
-			
 
 			if ( intersects.length > 0 ) {
 
@@ -189,16 +149,11 @@
 																	console.log(FIRST.index)
 																  )
 															  : void null;
-
-
-					
-				
 			} 
 			else {
 					
 					if ( intersected ) intersected.map((i,j)=>{i.object.material.color.set( 0x00afaf );})
 
-					// intersects[0].object.material.color.set( 0xff0000 );
 					intersected = null;
 			};
 
@@ -209,12 +164,11 @@
 
 
 			//camera
-			camera.position.x += ( mouse.x - camera.position.x ) * .05;
-			camera.position.y += ( mouse.y - camera.position.y ) * .05;
+			// camera.position.x += ( mouse.x - camera.position.x ) * .05;
+			// camera.position.y += ( mouse.y - camera.position.y ) * .05;
 			camera.lookAt( scene.position );
 
-		    //FIND INTERSECTION
-			
+		  //FIND INTERSECTION
 			camera.updateMatrixWorld();
 
 			renderer.render( scene, camera );
