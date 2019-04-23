@@ -60,9 +60,10 @@
 					camY = curObjs[curObjs.length - 1].matrix.elements[13]
 					camZ = curObjs[curObjs.length - 1].matrix.elements[14]
 					if (timesClicked % 2 != 0){
-						camera.position.set (camX, camY, camZ)
+						cameraUpdater()
 					} else {
-						camera.position.set (0, 0, 12)
+						// camera.position.set (0, 0, 12)
+						cameraUpdater()
 					}
 					intersects[0].object.dissolving = false;
 			}
@@ -169,8 +170,22 @@
 				camX = curObjs[curObjs.length - 1].matrix.elements[12]
 				camY = curObjs[curObjs.length - 1].matrix.elements[13]
 				camZ = curObjs[curObjs.length - 1].matrix.elements[14]
-				camera.position.set (camX, camY, camZ)
+
+				curX = camera.position.x
+				curY = camera.position.y
+				curZ = camera.position.z
+
+				if (timesClicked % 2 != 0){
+					console.log('tracking dot')
+					camera.position.set (camX, camY, camZ)
+					// camera.position.set (curX+=0.01, curY+=0.01, curZ+=0.01)
+				} else {
+					console.log('resetCamera')
+					camera.position.set (0, 0, 10)
+				}
+				
 			}
+			
 			window.requestAnimationFrame(animate);
 	
 			class PlaneAvatar extends THREE.Mesh {
