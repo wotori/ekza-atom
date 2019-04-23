@@ -15,7 +15,7 @@
 			
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.1, 1000 );
-      var controls = new THREE.OrbitControls ( camera );
+      		var controls = new THREE.OrbitControls ( camera );
 
 			var raycaster = new THREE.Raycaster(), intersected =null;
 			raycaster.params.Points.threshold = 0.015;
@@ -122,10 +122,6 @@
 						i.scale.z <= 0.1 ? i.removeFromGroup(i.parent) : (i.run(ConvertToWorld(i.name)),i.dissolve())
 			)
 
-
-			//camera
-			// camera.position.x += ( MOUSE.x - camera.position.x ) * .05;
-			// camera.position.y += ( MOUSE.y - camera.position.y ) * .05;
 			camera.lookAt( scene.position );
 
 			//FIND INTERSECTION
