@@ -49,17 +49,21 @@
 					MOUSE.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 			}
 
+			var timesClicked = 0;
 			onMouseClick = (event) => {
+					timesClicked ++;
+					log(timesClicked)
 					const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
 					log(pointID = intersects[0].object.name)
 					curObjs = PLANE_GROUP.children
-					console.log(curObjs[0].matrix)
-					console.log(curObjs[0].matrix.elements)
-					console.log(camX = curObjs[curObjs.length - 1].matrix.elements[12])
-					console.log(camY = curObjs[curObjs.length - 1].matrix.elements[13])
-					console.log(camZ = curObjs[curObjs.length - 1].matrix.elements[14])
-					console.log(camera.position)
-					camera.position.set (camX, camY, camZ)
+					camX = curObjs[curObjs.length - 1].matrix.elements[12]
+					camY = curObjs[curObjs.length - 1].matrix.elements[13]
+					camZ = curObjs[curObjs.length - 1].matrix.elements[14]
+					if (timesClicked % 2 != 0){
+						camera.position.set (camX, camY, camZ)
+					} else {
+						camera.position.set (0, 0, 12)
+					}
 					intersects[0].object.dissolving = false;
 			}
 
