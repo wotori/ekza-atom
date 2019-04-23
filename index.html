@@ -51,9 +51,11 @@
 
 			onMouseClick = (event) => {
 					const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
-					log(intersects[0].object.name)
+					log(pointID = intersects[0].object.name)
+					console.log(typeof intersects[0].position)
 					intersects[0].object.dissolving = false;
 			}
+
 
 			//GLOBAL FUNCTIONS
 
@@ -131,7 +133,8 @@
 
 			};
 
-
+			pointsClouds.geometry.verticesNeedUpdate = true;
+			pointsClouds.matrixAutoUpdate = true;
 			animate = () => {
 
 				window.requestAnimationFrame(animate);
@@ -148,8 +151,7 @@
 				pointsClouds.rotation.x += 0.001;
 				pointsClouds.rotation.y += 0.001;
 
-				pointsClouds.geometry.verticesNeedUpdate = true;
-				pointsClouds.matrixAutoUpdate = true;
+
 
 			}
 
@@ -184,8 +186,6 @@
 				enlarge = () => this.scale = new THREE.Vector3(20,20,10) 
 
 			}
-
-			// setForEachProp = (obj,value) => {for(var prop in obj) { obj[prop] = value }}
 			
 
 		</script>
