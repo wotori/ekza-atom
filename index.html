@@ -15,7 +15,7 @@
 			
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.1, 1000 );
-      		var controls = new THREE.OrbitControls ( camera );
+      var controls = new THREE.OrbitControls ( camera );
 
 			var raycaster = new THREE.Raycaster(), intersected =null;
 			raycaster.params.Points.threshold = 0.015;
@@ -30,11 +30,6 @@
 			var PLANE_GROUP = new THREE.Group();
 			scene.add(PLANE_GROUP);
 			
-			PLANE_GROUP.enlarge = (name) => 
-					// this.plane.scale.x = 10;
-					// this.plane.scale.y = 10;
-					// this.plane.scale.z = 10;  
-						setForEachProp(this.plane.scale,10);
 
 		
 
@@ -49,19 +44,20 @@
 
 			onMouseMove = (event) => {
 					event.preventDefault();
+					raycaster.setFromCamera( MOUSE, camera );
 					MOUSE.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 					MOUSE.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
 			}
 
 			onMouseClick = (event) => {
-					raycaster.setFromCamera( MOUSE, camera );
-					let intersects = raycaster.intersectObjects([PLANE_GROUP]);
-					// PLANE_GROUP.scale.set(5,5,5);
-					console.log(intersects[0]);
+					const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
+					log(intersects[0].object.name)
+					intersects[0].object.dissolving = false;
 			}
 
-			//GLOBAL FUNCTION
+			//GLOBAL FUNCTIONS
+
+			log = (s) => console.log(s);  
 
 			ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld);
 			
@@ -108,9 +104,8 @@
 
 			//RENDER
 
-		    render = (time) => {
+		  render = (time) => {
 
-			raycaster.setFromCamera( MOUSE, camera );
 			let intersects = raycaster.intersectObjects( [pointsClouds] );
 
 			intersects.length > 0 
@@ -159,7 +154,6 @@
 
 				pointsClouds.geometry.verticesNeedUpdate = true;
 				pointsClouds.matrixAutoUpdate = true;
-				pointsClouds.updateMatrix();
 
 			}
 
@@ -171,6 +165,7 @@
 
 					super(new THREE.SphereGeometry( 0.4, 20, 20 ),new THREE.MeshBasicMaterial({color: 0xffff00, side: THREE.DoubleSide}));
 					this.name = AnchorPointIndex;
+					this.dissolving = true;
 					Group.add(this);
 
 				};
@@ -180,16 +175,17 @@
 				run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 			
 				dissolve = () => {
-			
+			  if (this.dissolving) {
 					for(var XYZ in this.scale) {
 
 						let P = this.scale[XYZ] - Math.random()/100;
 					 	this.scale[XYZ] = (P > 0) ? P : 0.0001;
 
-					}
+					}} 
+
 				}
 
-				enlarge = () => this.plane.scale = new THREE.Vector3(10,10,10) 
+				enlarge = () => this.scale = new THREE.Vector3(20,20,10) 
 
 			}
 
