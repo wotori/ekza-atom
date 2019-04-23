@@ -52,7 +52,11 @@
 			onMouseClick = (event) => {
 					const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
 					log(pointID = intersects[0].object.name)
-					console.log(typeof intersects[0].position)
+					console.log(PLANE_GROUP.children[0].matrix.elements)
+					console.log(PLANE_GROUP.children[0].matrix.elements[0])
+					console.log(PLANE_GROUP.children[0].matrix.elements[5])
+					console.log(PLANE_GROUP.children[0].matrix.elements[10])
+					console.log(camera.position)
 					intersects[0].object.dissolving = false;
 			}
 
@@ -97,7 +101,9 @@
 			 })
 
 			var pointsClouds = new THREE.Points( pointGeo, pointMat );
-			scene.add(line,mesh,pointsClouds );
+			var objGroup = new THREE.Group()
+			objGroup.add (line,mesh,pointsClouds)
+			scene.add( objGroup );
 
 			camera.position.z = 5;
 
@@ -135,6 +141,7 @@
 
 			pointsClouds.geometry.verticesNeedUpdate = true;
 			pointsClouds.matrixAutoUpdate = true;
+			
 			animate = () => {
 
 				window.requestAnimationFrame(animate);
@@ -142,14 +149,8 @@
 				var time = clock.getElapsedTime();
 				render(time);
 
-				mesh.rotation.x += 0.001;
-				mesh.rotation.y += 0.001;
-
-				line.rotation.x += 0.001;
-				line.rotation.y += 0.001;
-
-				pointsClouds.rotation.x += 0.001;
-				pointsClouds.rotation.y += 0.001;
+				objGroup.rotation.x += 0.001;
+				objGroup.rotation.y += 0.001;
 
 
 
