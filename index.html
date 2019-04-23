@@ -135,7 +135,7 @@
 			} 
 			else {
 					
-					if ( intersected ) intersected.map((i,j)=>{i.object.material.color.set( 0x00afaf );})
+					if ( intersected ) intersected.map((i,j)=>{i.object.material.color.set( "0x00afaf" );})
 
 					// intersects[0].object.material.color.set( 0xff0000 );
 					intersected = null;
@@ -213,7 +213,7 @@
 				constructor(index) {
 
 					this.index = index;
-					this.plane_geometry = new THREE.SphereGeometry( 0.4, 9, 9 );
+					this.plane_geometry = new THREE.SphereGeometry( 0.4, 13, 13 );
 					this.plane_material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
 					this.plane = new THREE.Mesh( this.plane_geometry, this.plane_material );
 					
