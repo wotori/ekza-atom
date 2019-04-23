@@ -159,8 +159,18 @@
 				objGroup.rotation.x += 0.001;
 				objGroup.rotation.y += 0.001;
 
+				if (timesClicked % 2 != 0) {
+					cameraUpdater()
+				}
+
 			}
 
+			var cameraUpdater = function() {
+				camX = curObjs[curObjs.length - 1].matrix.elements[12]
+				camY = curObjs[curObjs.length - 1].matrix.elements[13]
+				camZ = curObjs[curObjs.length - 1].matrix.elements[14]
+				camera.position.set (camX, camY, camZ)
+			}
 			window.requestAnimationFrame(animate);
 	
 			class PlaneAvatar extends THREE.Mesh {
