@@ -9,20 +9,23 @@
 	<body>
 		<script src="engine/three.js"></script>
 		<script src="engine/libs/OrbitControls.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/17.3.0/Tween.min.js"></script>
 		<script>
 			let RUNNING_INDEXES = [-1];
 			let AVATARS = [];
 			
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.1, 1000 );
-            var controls = new THREE.OrbitControls ( camera )
+      var controls = new THREE.OrbitControls ( camera );
 
 			var raycaster = new THREE.Raycaster(), intersected =null;
 			raycaster.params.Points.threshold = 0.015;
 
 			var renderer;
 
-			var mouse = new THREE.Vector2();
+			var MOUSE = new THREE.Vector2();
+
+			var clock = new THREE.Clock();
 
 			var windowX = window.innerWidth / 2;
 			var windowY = window.innerHeight / 2;
@@ -31,19 +34,33 @@
 			camera.position.y = 7
 			camera.position.z = 7
 
-			function onMouseMove( event ) {
 
-			mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-			mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+			onMouseMove = (event) => {
+
+					event.preventDefault();
+					MOUSE.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+					MOUSE.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+			}
+
+			onMouseClick = (event) => {
+
+					event.preventDefault();
+					
 
 			}
 
 			ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld);
 			
-			RemoveAvatar =(object)=>{ 
-				var selectedObject = scene.getObjectByName(object.name);
-				scene.remove( selectedObject );
-			};
+			RemoveAvatar = (object,iAVATAR) =>  {
+				
+				//  object == undefined ? console.log('##@') : void null;
+				 object.geometry.dispose();
+				 object.material.dispose();
+				 scene.remove(object);
+				 AVATARS.splice(iAVATAR,1);
+
+			}
 
 			var renderer = new THREE.WebGLRenderer({ antialias : true });
 			renderer.setSize( window.innerWidth, window.innerHeight );
@@ -85,15 +102,94 @@
 
 			camera.position.z = 5;
 
-			document.addEventListener( 'mousemove', onMouseMove, false );
+			document.addEventListener('mousemove', onMouseMove, false );
+			document.addEventListener('mousedown', onMouseClick, false);
 
-			animate();
 
-			function animate(){
+		  render = (time) => {
 
-				requestAnimationFrame( animate );
+			// console.log(time)
+			TWEEN.update(time);
 
-				render();
+			raycaster.setFromCamera( MOUSE, camera );
+
+			// var vector = pointsClouds.geometry.vertices[1000].clone();
+			// vector.applyMatrix4( pointsClouds.matrixWorld );
+
+
+			var intersects = raycaster.intersectObjects( pC );
+
+
+
+			if ( intersects.length > 0 ) {
+
+					intersected = Array.from(intersects);
+					let FIRST = intersected[0];
+					// console.log(FIRST.index);
+					RUNNING_INDEXES.indexOf(FIRST.index) == -1 ? (
+																	RUNNING_INDEXES.push(FIRST.index),
+																	AVATARS.push(new PlaneAvatar(FIRST.index))
+																	)
+																: void null;	
+				
+			} 
+			else {
+					
+					if ( intersected ) intersected.map((i,j)=>{i.object.material.color.set( 0x00afaf );})
+
+					// intersects[0].object.material.color.set( 0xff0000 );
+					intersected = null;
+			};
+
+	
+
+			// let AvatarsToRemove=[];
+	
+					AVATARS.map((i,j) =>
+						
+						i != undefined ?
+								
+								(i.plane.scale.z <= 0.1 ? RemoveAvatar(i.plane,j)
+																				: (i.run(ConvertToWorld(i.index)),i.dissolve())
+								) : void null
+					)
+
+			// AvatarsToRemove.map((i)=>{
+
+			// 	console.log(i.name)
+			// 	AVATARS.splice(i,1);
+
+			// 	// console.log(i);
+			// 	// //IsRealRemove? 
+			// 	// console.log(AVATARS[i]);
+			// 	// //IsRealRemove? test
+
+			// });
+
+			console.log(AVATARS.length);	
+
+
+			//camera
+			// camera.position.x += ( MOUSE.x - camera.position.x ) * .05;
+			// camera.position.y += ( MOUSE.y - camera.position.y ) * .05;
+			camera.lookAt( scene.position );
+
+				//FIND INTERSECTION
+
+			camera.updateMatrixWorld();
+
+			renderer.render( scene, camera );
+
+			};
+
+
+			animate = () => {
+
+				window.requestAnimationFrame(animate);
+
+				var time = clock.getElapsedTime();
+
+				render(time);
 
 				mesh.rotation.x += 0.001;
 				mesh.rotation.y += 0.001;
@@ -109,76 +205,62 @@
 				pointsClouds.updateMatrix();
 
 			}
+
+			window.requestAnimationFrame(animate);
 	
 			class PlaneAvatar {
 				
 				constructor(index) {
 
 					this.index = index;
-					this.plane_geometry = new THREE.SphereGeometry( 0.1, 9, 9 );
+					this.plane_geometry = new THREE.SphereGeometry( 0.4, 9, 9 );
 					this.plane_material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
 					this.plane = new THREE.Mesh( this.plane_geometry, this.plane_material );
-				
+					
+					// console.log(this.plane);
+
 					scene.add(this.plane);
+					
 				};
 
-				run = (vector) =>{
+				run = (vector) => { 
 					this.plane.position.set(vector.x,vector.y,vector.z);
+				};
+
+				// dissolve = () => new TWEEN.Tween({
+				// 			scale: 3
+				// 	}).to ({
+				// 			scale : 1
+				// 	}, 2000).onUpdate( () => {
+				// 							// this.plane.scale.x = this.scale;
+				// 							// this.plane.scale.y = this.scale;
+				// 							// this.plane.scale.z = this.scale;
+				// 							console.log(this.scale)
+				// 					}).onComplete(() => {
+				// 							console.log('done')
+				//  });
+				
+				dissolve = () => {	
+			
+					for(var XYZ in this.plane.scale) {
+
+						let P = this.plane.scale[XYZ] - Math.random()/100;
+					 	this.plane.scale[XYZ] = (P > 0) ? P : 0.0001;
+
+					}
 				}
+
+				enlarge = () => {
+					this.plane.scale.x = 10;
+					this.plane.scale.y = 10;
+					this.plane.scale.z = 10;  
+				}
+ 
 
 			}
 
-			function render(){
 
-			raycaster.setFromCamera( mouse, camera );
-			
-			// var vector = pointsClouds.geometry.vertices[1000].clone();
-			// vector.applyMatrix4( pointsClouds.matrixWorld );
-
-			var intersects = raycaster.intersectObjects( pC );
-
-			if ( intersects.length > 0 ) {
-
-					intersected = Array.from(intersects);
-					let FIRST = intersected[0];
-					console.log(FIRST.index);
-					RUNNING_INDEXES.indexOf(FIRST.index) == -1 ? (
-																	RUNNING_INDEXES.push(FIRST.index),
-																	AVATARS.push(new PlaneAvatar(FIRST.index)),
-																	console.log(FIRST.index)
-																  )
-															  : void null;
-
-
-					
-				
-			} 
-			else {
-					
-					if ( intersected ) intersected.map((i,j)=>{i.object.material.color.set( 0x00afaf );})
-
-					// intersects[0].object.material.color.set( 0xff0000 );
-					intersected = null;
-			};
-
-
-			AVATARS.map((i)=>
-				i.run(ConvertToWorld(i.index))
-			);
-
-
-			//camera
-			// camera.position.x += ( mouse.x - camera.position.x ) * .05;
-			// camera.position.y += ( mouse.y - camera.position.y ) * .05;
-			camera.lookAt( scene.position );
-
-		    //FIND INTERSECTION
-			
-			camera.updateMatrixWorld();
-
-			renderer.render( scene, camera );
-
-			};
+			 
 
 		</script>
 	</body>
