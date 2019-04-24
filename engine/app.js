@@ -2,7 +2,7 @@ let RUNNING_INDEXES = [-1];
 
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.01, 1000 );
-let controls = new THREE.OrbitControls ( camera );
+// let controls = new THREE.OrbitControls ( camera );
 let raycaster = new THREE.Raycaster(), intersected =null;
 raycaster.params.Points.threshold = 0.015;
 let MOUSE = new THREE.Vector2();
@@ -17,9 +17,7 @@ scene.add(PLANE_GROUP);
 let windowX = window.innerWidth / 2;
 let windowY = window.innerHeight / 2;
 
-camera.position.x = 0
-camera.position.y = 0
-camera.position.z = 10;
+camera.position.set(0,0,9);
 
 //GLOBAL EVENTS
 
@@ -36,15 +34,15 @@ onMouseClick = (event) => {
 	const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
 	log(intersects[0].object.name);
 	curObjs = PLANE_GROUP.children;
-	camX = curObjs[curObjs.length - 1].matrix.elements[12]
-	camY = curObjs[curObjs.length - 1].matrix.elements[13]
-	camZ = curObjs[curObjs.length - 1].matrix.elements[14]
-	if (timesClicked % 2 != 0){
-		cameraUpdater()
-	} else {
-		// camera.position.set (0, 0, 12)
-		cameraUpdater()
-	}
+	// camX = curObjs[curObjs.length - 1].matrix.elements[12]
+	// camY = curObjs[curObjs.length - 1].matrix.elements[13]
+	// camZ = curObjs[curObjs.length - 1].matrix.elements[14]
+	// if (timesClicked % 2 != 0){
+	// 	cameraUpdater()
+	// } else {
+	// 	camera.position.set (0, 0, 9)
+	// 	cameraUpdater()
+	// }
 	intersects[0].object.dissolving = false;
 }
 
@@ -106,7 +104,7 @@ intersects.length > 0
 ?
 	RUNNING_INDEXES.indexOf(intersects[0].index) == -1 
 			? (		
-					picindex < 6 ? picindex++ : picindex = 0, 
+					picindex < 18 ? picindex++ : picindex = 0, 
 					RUNNING_INDEXES.push(intersects[0].index),
 					PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex))
 				)
@@ -154,12 +152,11 @@ curY = camera.position.y
 curZ = camera.position.z
 
 if (timesClicked % 2 != 0){
-	console.log('tracking dot')
-	camera.position.set (camX, camY, camZ)
+	// camera.position.set (camX, camY, camZ)
 	camera.lookAt(camX, camY, camZ)
 } else {
 	console.log('resetCamera')
-	camera.position.set (0, 0, 10)
+	camera.position.set (0, 0, 9)
 	camera.setFocalLength(28)
 }
 
@@ -175,7 +172,8 @@ constructor(Group,AnchorPointIndex,picindex) {
 	super(new THREE.CircleGeometry(0.7,32,32),new THREE.MeshBasicMaterial( { map: texture} ));
 	this.name = AnchorPointIndex;
 	this.dissolving = true;
-	this.position.set(0,0,0)
+	// this.position.set(0,0,0)
+	this.position.set(camera.position)
 	Group.add(this);
 
 };
@@ -184,17 +182,17 @@ removeFromGroup = (Group) => Group.remove(this);
 
 run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
-dissolve = () => {
-if (this.dissolving) {
-		for(let XYZ in this.scale) {
-
-			let P = this.scale[XYZ] - Math.random()/100;
-			this.scale[XYZ] = (P > 0) ? P : 0.0001;
-
-}} 
-
-}
+dissolve = () => this.dissolving ? animateByStep(this.scale, Math.random()/100, 0.0001) : void null
 
 enlarge = () => this.scale = new THREE.Vector3(20,20,10) 
 
+}
+
+
+
+animateByStep = (obj,step,threshold) => {
+	for(let XYZ in obj) {
+		const P = obj[XYZ] - step;
+		obj[XYZ] = P > 0 ? P : threshold;
+	}
 }
