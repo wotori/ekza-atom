@@ -43,6 +43,8 @@ onMouseClick = (event) => {
 	// 	camera.position.set (0, 0, 9)
 	// 	cameraUpdater()
 	// }
+	Globus.visible = false;
+
 	intersects[0].object.dissolving = false;
 }
 
@@ -63,10 +65,10 @@ lights[ 0 ].position.set( 0, 200, 0 );
 scene.add( lights[ 0 ] );
 
 
-//blackGeo
-let geometry = new THREE.IcosahedronGeometry( 1.97, 3 );
-let meshMaterial = new THREE.MeshBasicMaterial( { color: 'black' } );
-let mesh = new THREE.Mesh( geometry, meshMaterial );
+//Globus
+let SphereGeometry = new THREE.IcosahedronGeometry( 1.97, 3 );
+let SphereMaterial = new THREE.MeshBasicMaterial( { color: 'black' } );
+let SphereMesh = new THREE.Mesh( SphereGeometry, SphereMaterial );
 
 //wireFrame
 let lineMat = new THREE.LineBasicMaterial({ color: 'white' })
@@ -76,7 +78,7 @@ let line = new THREE.LineSegments( wireframe, lineMat );
 line.material.opacity = 1;
 line.material.transparent = true;
 
-//points setup
+//pointClouds
 let pointGeo = new THREE.IcosahedronGeometry( 3.5, 4 )
 let pointMat = new THREE.PointsMaterial({ color : 'white', size : 0.04 });
 
@@ -87,9 +89,11 @@ vertex.z += (Math.random() - 0.5);
 })
 
 let pointsClouds = new THREE.Points( pointGeo, pointMat );
-let objGroup = new THREE.Group()
-objGroup.add (line,mesh,pointsClouds)
-scene.add( objGroup );
+let Globus = new THREE.Group()
+Globus.add (line,SphereMesh)
+scene.add(Globus);
+scene.add(pointsClouds);
+
 
 document.addEventListener('mousemove', onMouseMove, false );
 document.addEventListener('mousedown', onMouseClick, false);
@@ -133,8 +137,12 @@ window.requestAnimationFrame(animate);
 let time = clock.getElapsedTime();
 render(time);
 
-objGroup.rotation.x += 0.001;
-objGroup.rotation.y += 0.001;
+Globus.rotation.x += 0.001;
+Globus.rotation.y += 0.001;
+pointsClouds.rotation.x += 0.001+Math.random() /1500;
+pointsClouds.rotation.y += 0.001+Math.random() /1500;
+
+Globus.rotation.x 
 
 if (timesClicked % 2 != 0) {
 	cameraUpdater()
