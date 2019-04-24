@@ -32,10 +32,9 @@ onMouseMove = (event) => {
 var timesClicked = 0;
 onMouseClick = (event) => {
 	timesClicked ++;
-	log(timesClicked)
 	const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
-	log(pointID = intersects[0].object.name)
-	curObjs = PLANE_GROUP.children
+	log(intersects[0].object.name);
+	curObjs = PLANE_GROUP.children;
 	camX = curObjs[curObjs.length - 1].matrix.elements[12]
 	camY = curObjs[curObjs.length - 1].matrix.elements[13]
 	camZ = curObjs[curObjs.length - 1].matrix.elements[14]
@@ -45,7 +44,7 @@ onMouseClick = (event) => {
 		// camera.position.set (0, 0, 12)
 		cameraUpdater()
 	}
-	// intersects[0].object.dissolving = false;
+	intersects[0].object.dissolving = false;
 }
 
 //GLOBAL FUNCTIONS
@@ -63,6 +62,7 @@ var lights = [];
 lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
 lights[ 0 ].position.set( 0, 200, 0 );
 scene.add( lights[ 0 ] );
+
 
 //blackGeo
 var geometry = new THREE.IcosahedronGeometry( 1.97, 3 );
