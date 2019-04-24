@@ -192,7 +192,7 @@ enlarge = () => this.scale = new THREE.Vector3(20,20,10)
 
 animateByStep = (obj,step,threshold) => {
 	for(let XYZ in obj) {
-		const P = obj[XYZ] - step;
+		const P = obj[XYZ] - step + Math.random()/250;
 		obj[XYZ] = P > 0 ? P : threshold;
 	}
 }
