@@ -16,12 +16,14 @@
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.01, 1000 );
       		var controls = new THREE.OrbitControls ( camera );
+<<<<<<< HEAD
 
 			var raycaster = new THREE.Raycaster();
+=======
+			var raycaster = new THREE.Raycaster(), intersected =null;
+>>>>>>> camera_zoom
 			raycaster.params.Points.threshold = 0.015;
-
 			var renderer;
-
 			var MOUSE = new THREE.Vector2();
 
 			var clock = new THREE.Clock();
@@ -153,7 +155,6 @@
 			animate = () => {
 
 				window.requestAnimationFrame(animate);
-
 				var time = clock.getElapsedTime();
 				render(time);
 
@@ -178,10 +179,11 @@
 				if (timesClicked % 2 != 0){
 					console.log('tracking dot')
 					camera.position.set (camX, camY, camZ)
-					// camera.position.set (curX+=0.01, curY+=0.01, curZ+=0.01)
+					camera.lookAt(camX, camY, camZ)
 				} else {
 					console.log('resetCamera')
 					camera.position.set (0, 0, 10)
+					camera.setFocalLength(28)
 				}
 				
 			}
