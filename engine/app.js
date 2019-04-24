@@ -28,18 +28,22 @@ onMouseMove = (event) => {
 	MOUSE.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 }
 
-let timesClicked = 0;
-
+let Selected;
 let objToTrackName = -1;
 
 onMouseClick = (event) => {
 	if (objToTrackName == -1) { 
-	const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
-	const Selected = intersects[0].object;
-	Globus.visible = false;
-	pointsClouds.visible =false;
-	Selected.dissolving = false;
-	objToTrackName  = Selected.name;
+		const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
+		Selected = intersects[0].object;
+		Globus.visible = false;
+		pointsClouds.visible =false;
+		Selected.dissolving = false;
+		objToTrackName  = Selected.name;
+	} else {
+		objToTrackName = -1;
+		Selected.dissolving = true;
+		Globus.visible = true;
+		pointsClouds.visible =true;
 	}
 }
 
@@ -49,7 +53,18 @@ log = (s) => console.log(s);
 
 ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld);
 
-cameraTrackObj = (obj) => zoomIn(obj.position) 
+Zoom = (end,z) => 
+	tween = new TWEEN.Tween(camera.position) // Create a new tween that modifies obj.
+			.to({ x: end.x, y: end.y }, 1000) // Move to (300, 200) in 1 second.
+			.easing(TWEEN.Easing.Quadratic.Out) // Use an easing function to make the animation smooth.
+			.onUpdate(function() { // Called after tween.js updates 'coords'.
+				// Move 'box' to the position described by 'coords' with a CSS translation.
+				// box.style.setProperty('transform', 'translate(' + coords.x + 'px, ' + coords.y + 'px)');
+				// camera.position.set(obj.position.x,obj.position.y,7);
+			})
+			.start(); // Start the tween immediately.
+
+// cameraTrackObj = (obj) => zoomIn(obj.position) 
 	
 
 let renderer = new THREE.WebGLRenderer({ antialias : true });
@@ -97,22 +112,6 @@ document.addEventListener('mousemove', onMouseMove, false );
 document.addEventListener('mousedown', onMouseClick, false);
 
 
-let tween;
-
-zoomIn = (end) => {
-	tween = new TWEEN.Tween(camera.position) // Create a new tween that modifies obj.
-			.to({ x: end.x, y: end.y }, 1000) // Move to (300, 200) in 1 second.
-			.easing(TWEEN.Easing.Quadratic.Out) // Use an easing function to make the animation smooth.
-			.onUpdate(function() { // Called after tween.js updates 'coords'.
-				// Move 'box' to the position described by 'coords' with a CSS translation.
-				// box.style.setProperty('transform', 'translate(' + coords.x + 'px, ' + coords.y + 'px)');
-				// camera.position.set(obj.position.x,obj.position.y,7);
-			})
-			.start(); // Start the tween immediately.
-
-}
-
-
 
 //RENDER
 
@@ -136,12 +135,12 @@ intersects.length > 0
 				
 PLANE_GROUP.children.map((i,j) =>
 		i.scale.z <= 0.1 ? i.removeFromGroup(i.parent) : (i.run(ConvertToWorld(i.name)),
-														  objToTrackName == i.name ? (cameraTrackObj(i),objToTrackName = i.name) : void null,
+														  objToTrackName == i.name ? (Zoom(i.position),objToTrackName = i.name) : void null,
 														  i.dissolve())
 )
 
 
-objToTrackName == -1 ? camera.lookAt( scene.position ) : void null;
+objToTrackName == -1 ? (camera.lookAt( scene.position ), Zoom(0,0,9)) : void null;
 
 //FIND INTERSECTION
 
