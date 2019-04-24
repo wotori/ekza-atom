@@ -29,23 +29,17 @@ onMouseMove = (event) => {
 }
 
 let timesClicked = 0;
-onMouseClick = (event) => {
-	timesClicked ++;
-	const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
-	log(intersects[0].object.name);
-	curObjs = PLANE_GROUP.children;
-	// camX = curObjs[curObjs.length - 1].matrix.elements[12]
-	// camY = curObjs[curObjs.length - 1].matrix.elements[13]
-	// camZ = curObjs[curObjs.length - 1].matrix.elements[14]
-	// if (timesClicked % 2 != 0){
-	// 	cameraUpdater()
-	// } else {
-	// 	camera.position.set (0, 0, 9)
-	// 	cameraUpdater()
-	// }
-	Globus.visible = false;
 
-	intersects[0].object.dissolving = false;
+let objToTrackName = -1;
+
+onMouseClick = (event) => {
+	if (objToTrackName == -1) { 
+	const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
+	const Selected = intersects[0].object;
+	Globus.visible = false;
+	Selected.dissolving = false;
+	objToTrackName  = Selected.name;
+	}
 }
 
 //GLOBAL FUNCTIONS
@@ -53,6 +47,9 @@ onMouseClick = (event) => {
 log = (s) => console.log(s);  
 
 ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld);
+
+cameraTrackObj = (obj) => camera.position.set(obj.position.x,obj.position.y,7);
+	
 
 let renderer = new THREE.WebGLRenderer({ antialias : true });
 renderer.setSize( window.innerWidth, window.innerHeight );
@@ -106,7 +103,7 @@ let intersects = raycaster.intersectObjects( [pointsClouds] );
 
 intersects.length > 0 
 ?
-	RUNNING_INDEXES.indexOf(intersects[0].index) == -1 
+	RUNNING_INDEXES.indexOf(intersects[0].index) == -1 && objToTrackName == -1
 			? (		
 					picindex < 18 ? picindex++ : picindex = 0, 
 					RUNNING_INDEXES.push(intersects[0].index),
@@ -116,10 +113,13 @@ intersects.length > 0
 : void null; 
 				
 PLANE_GROUP.children.map((i,j) =>
-		i.scale.z <= 0.1 ? i.removeFromGroup(i.parent) : (i.run(ConvertToWorld(i.name)),i.dissolve())
+		i.scale.z <= 0.1 ? i.removeFromGroup(i.parent) : (i.run(ConvertToWorld(i.name)),
+														  objToTrackName == i.name ? (cameraTrackObj(i),objToTrackName = i.name) : void null,
+														  i.dissolve())
 )
 
-camera.lookAt( scene.position );
+
+objToTrackName == -1 ? camera.lookAt( scene.position ) : void null;
 
 //FIND INTERSECTION
 
@@ -144,31 +144,9 @@ pointsClouds.rotation.y += 0.001+Math.random() /1500;
 
 Globus.rotation.x 
 
-if (timesClicked % 2 != 0) {
-	cameraUpdater()
 }
 
-}
 
-let cameraUpdater = function() {
-camX = curObjs[curObjs.length - 1].matrix.elements[12]
-camY = curObjs[curObjs.length - 1].matrix.elements[13]
-camZ = curObjs[curObjs.length - 1].matrix.elements[14]
-
-curX = camera.position.x
-curY = camera.position.y
-curZ = camera.position.z
-
-if (timesClicked % 2 != 0){
-	// camera.position.set (camX, camY, camZ)
-	camera.lookAt(camX, camY, camZ)
-} else {
-	console.log('resetCamera')
-	camera.position.set (0, 0, 9)
-	camera.setFocalLength(28)
-}
-
-}
 
 window.requestAnimationFrame(animate);
 
