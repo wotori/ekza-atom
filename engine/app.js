@@ -105,9 +105,10 @@ let intersects = raycaster.intersectObjects( [pointsClouds] );
 intersects.length > 0 
 ?
 	RUNNING_INDEXES.indexOf(intersects[0].index) == -1 
-			? (
+			? (		
+					picindex < 6 ? picindex++ : picindex = 0, 
 					RUNNING_INDEXES.push(intersects[0].index),
-					PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,))
+					PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex))
 				)
 			: void null 
 : void null; 
@@ -168,9 +169,9 @@ window.requestAnimationFrame(animate);
 
 class PlaneAvatar extends THREE.Mesh {
 
-constructor(Group,AnchorPointIndex) {
+constructor(Group,AnchorPointIndex,picindex) {
 
-	const texture = new THREE.TextureLoader().load( "userpics/1.jpg" );
+	const texture = new THREE.TextureLoader().load( "userpics/"+picindex+".jpg" );
 	super(new THREE.CircleGeometry(0.7,32,32),new THREE.MeshBasicMaterial( { map: texture} ));
 	this.name = AnchorPointIndex;
 	this.dissolving = true;
