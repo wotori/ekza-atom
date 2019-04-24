@@ -1,24 +1,25 @@
 let RUNNING_INDEXES = [-1];
 
-var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.01, 1000 );
-var controls = new THREE.OrbitControls ( camera );
-var raycaster = new THREE.Raycaster(), intersected =null;
+let scene = new THREE.Scene();
+let camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.01, 1000 );
+let controls = new THREE.OrbitControls ( camera );
+let raycaster = new THREE.Raycaster(), intersected =null;
 raycaster.params.Points.threshold = 0.015;
-var renderer;
-var MOUSE = new THREE.Vector2();
+let MOUSE = new THREE.Vector2();
 
-var clock = new THREE.Clock();
+let clock = new THREE.Clock();
 
-var PLANE_GROUP = new THREE.Group();
+let picindex = 0;
+
+let PLANE_GROUP = new THREE.Group();
 scene.add(PLANE_GROUP);
 
-var windowX = window.innerWidth / 2;
-var windowY = window.innerHeight / 2;
+let windowX = window.innerWidth / 2;
+let windowY = window.innerHeight / 2;
 
-camera.position.x = 7
-camera.position.y = 7
-camera.position.z = 7
+camera.position.x = 0
+camera.position.y = 0
+camera.position.z = 10;
 
 //GLOBAL EVENTS
 
@@ -29,7 +30,7 @@ onMouseMove = (event) => {
 	MOUSE.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 }
 
-var timesClicked = 0;
+let timesClicked = 0;
 onMouseClick = (event) => {
 	timesClicked ++;
 	const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
@@ -53,33 +54,33 @@ log = (s) => console.log(s);
 
 ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld);
 
-var renderer = new THREE.WebGLRenderer({ antialias : true });
+let renderer = new THREE.WebGLRenderer({ antialias : true });
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
 //light
-var lights = [];
+let lights = [];
 lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
 lights[ 0 ].position.set( 0, 200, 0 );
 scene.add( lights[ 0 ] );
 
 
 //blackGeo
-var geometry = new THREE.IcosahedronGeometry( 1.97, 3 );
-var meshMaterial = new THREE.MeshBasicMaterial( { color: 'black' } );
-var mesh = new THREE.Mesh( geometry, meshMaterial );
+let geometry = new THREE.IcosahedronGeometry( 1.97, 3 );
+let meshMaterial = new THREE.MeshBasicMaterial( { color: 'black' } );
+let mesh = new THREE.Mesh( geometry, meshMaterial );
 
 //wireFrame
-var lineMat = new THREE.LineBasicMaterial({ color: 'white' })
-var geometryWire = new THREE.IcosahedronBufferGeometry( 2, 3 );
-var wireframe = new THREE.WireframeGeometry( geometryWire );
-var line = new THREE.LineSegments( wireframe, lineMat );
+let lineMat = new THREE.LineBasicMaterial({ color: 'white' })
+let geometryWire = new THREE.IcosahedronBufferGeometry( 2, 3 );
+let wireframe = new THREE.WireframeGeometry( geometryWire );
+let line = new THREE.LineSegments( wireframe, lineMat );
 line.material.opacity = 1;
 line.material.transparent = true;
 
 //points setup
-var pointGeo = new THREE.IcosahedronGeometry( 3.5, 4 )
-var pointMat = new THREE.PointsMaterial({ color : 'white', size : 0.04 });
+let pointGeo = new THREE.IcosahedronGeometry( 3.5, 4 )
+let pointMat = new THREE.PointsMaterial({ color : 'white', size : 0.04 });
 
 pointGeo.vertices.forEach(function(vertex) { 
 vertex.x += (Math.random() - 0.5);
@@ -87,12 +88,10 @@ vertex.y += (Math.random() - 0.5);
 vertex.z += (Math.random() - 0.5);
 })
 
-var pointsClouds = new THREE.Points( pointGeo, pointMat );
-var objGroup = new THREE.Group()
+let pointsClouds = new THREE.Points( pointGeo, pointMat );
+let objGroup = new THREE.Group()
 objGroup.add (line,mesh,pointsClouds)
 scene.add( objGroup );
-
-camera.position.z = 5;
 
 document.addEventListener('mousemove', onMouseMove, false );
 document.addEventListener('mousedown', onMouseClick, false);
@@ -108,7 +107,7 @@ intersects.length > 0
 	RUNNING_INDEXES.indexOf(intersects[0].index) == -1 
 			? (
 					RUNNING_INDEXES.push(intersects[0].index),
-					PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index))
+					PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,))
 				)
 			: void null 
 : void null; 
@@ -132,7 +131,7 @@ pointsClouds.matrixAutoUpdate = true;
 animate = () => {
 
 window.requestAnimationFrame(animate);
-var time = clock.getElapsedTime();
+let time = clock.getElapsedTime();
 render(time);
 
 objGroup.rotation.x += 0.001;
@@ -144,7 +143,7 @@ if (timesClicked % 2 != 0) {
 
 }
 
-var cameraUpdater = function() {
+let cameraUpdater = function() {
 camX = curObjs[curObjs.length - 1].matrix.elements[12]
 camY = curObjs[curObjs.length - 1].matrix.elements[13]
 camZ = curObjs[curObjs.length - 1].matrix.elements[14]
@@ -171,9 +170,11 @@ class PlaneAvatar extends THREE.Mesh {
 
 constructor(Group,AnchorPointIndex) {
 
-	super(new THREE.SphereGeometry( 0.4, 20, 20 ),new THREE.MeshBasicMaterial({color: 0xffff00, side: THREE.DoubleSide}));
+	const texture = new THREE.TextureLoader().load( "userpics/1.jpg" );
+	super(new THREE.CircleGeometry(0.7,32,32),new THREE.MeshBasicMaterial( { map: texture} ));
 	this.name = AnchorPointIndex;
 	this.dissolving = true;
+	this.position.set(0,0,0)
 	Group.add(this);
 
 };
@@ -184,7 +185,7 @@ run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
 dissolve = () => {
 if (this.dissolving) {
-		for(var XYZ in this.scale) {
+		for(let XYZ in this.scale) {
 
 			let P = this.scale[XYZ] - Math.random()/100;
 			this.scale[XYZ] = (P > 0) ? P : 0.0001;
