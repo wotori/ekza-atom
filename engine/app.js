@@ -37,6 +37,7 @@ onMouseClick = (event) => {
 	const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
 	const Selected = intersects[0].object;
 	Globus.visible = false;
+	pointsClouds.visible =false;
 	Selected.dissolving = false;
 	objToTrackName  = Selected.name;
 	}
@@ -48,7 +49,7 @@ log = (s) => console.log(s);
 
 ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld);
 
-cameraTrackObj = (obj) => camera.position.set(obj.position.x,obj.position.y,7);
+cameraTrackObj = (obj) => zoomIn(obj.position) 
 	
 
 let renderer = new THREE.WebGLRenderer({ antialias : true });
@@ -95,9 +96,30 @@ scene.add(pointsClouds);
 document.addEventListener('mousemove', onMouseMove, false );
 document.addEventListener('mousedown', onMouseClick, false);
 
+
+let tween;
+
+zoomIn = (end) => {
+	tween = new TWEEN.Tween(camera.position) // Create a new tween that modifies obj.
+			.to({ x: end.x, y: end.y }, 1000) // Move to (300, 200) in 1 second.
+			.easing(TWEEN.Easing.Quadratic.Out) // Use an easing function to make the animation smooth.
+			.onUpdate(function() { // Called after tween.js updates 'coords'.
+				// Move 'box' to the position described by 'coords' with a CSS translation.
+				// box.style.setProperty('transform', 'translate(' + coords.x + 'px, ' + coords.y + 'px)');
+				// camera.position.set(obj.position.x,obj.position.y,7);
+			})
+			.start(); // Start the tween immediately.
+
+}
+
+
+
 //RENDER
 
 render = (time) => {
+
+TWEEN.update();
+
 
 let intersects = raycaster.intersectObjects( [pointsClouds] );
 
