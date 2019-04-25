@@ -95,7 +95,7 @@ line.material.opacity = 1;
 line.material.transparent = true;
 
 //pointClouds
-let pointGeo = new THREE.IcosahedronGeometry( 3.5, 4 )
+let pointGeo = new THREE.IcosahedronGeometry( 3.5, 3 )
 let pointMat = new THREE.PointsMaterial({ color : 'white', size : 0.04 });
 
 pointGeo.vertices.forEach(function(vertex) { 
