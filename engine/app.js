@@ -32,18 +32,20 @@ let Selected;
 let objToTrackName = -1;
 
 onMouseClick = (event) => {
-	if (objToTrackName == -1) { 
-		const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
+	const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
+	if (objToTrackName == -1 && intersects.length >0 ) { 
 		Selected = intersects[0].object;
 		Globus.visible = false;
 		pointsClouds.visible =false;
 		Selected.dissolving = false;
+		camTweenOut.stop();
 		objToTrackName  = Selected.name;
 	} else {
 		objToTrackName = -1;
 		Selected.dissolving = true;
 		Globus.visible = true;
 		pointsClouds.visible =true;
+		camTweenOut.start();
 	}
 }
 
@@ -53,17 +55,13 @@ log = (s) => console.log(s);
 
 ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld);
 
-let Tweening = (obj,x,y,z,t) => 
-	new TWEEN.Tween(obj) // Create a new tween that modifies obj.
-			.to({ x:x, y:y, z:z }, t) // Move to (300, 200) in 1 second.
-			.easing(TWEEN.Easing.Quadratic.Out) // Use an easing function to make the animation smooth.
-			.onUpdate(function() { // Called after tween.js updates 'coords'.
-				// Move 'box' to the position described by 'coords' with a CSS translation.
-				// box.style.setProperty('transform', 'translate(' + coords.x + 'px, ' + coords.y + 'px)');
-				// camera.position.set(obj.position.x,obj.position.y,7);
-			})
-			// .start(); // Start the tween immediately.
 
+
+let camTweenOut = new TWEEN.Tween(camera.position) 
+			.to({ x:0, y:0, z:9 }, 4000) 
+			.easing(TWEEN.Easing.Quadratic.Out); 
+
+let camTweenFocusMe;
 	
 
 let renderer = new THREE.WebGLRenderer({ antialias : true });
@@ -118,28 +116,29 @@ render = (time) => {
 
 TWEEN.update();
 
+if (objToTrackName == -1){ //FIND intersection with pC
 
-let intersects = raycaster.intersectObjects( [pointsClouds] );
+	let intersects = raycaster.intersectObjects( [pointsClouds] );
 
-intersects.length > 0 
-?
-	RUNNING_INDEXES.indexOf(intersects[0].index) == -1 && objToTrackName == -1
-			? (		
-					picindex < 18 ? picindex++ : picindex = 0, 
-					RUNNING_INDEXES.push(intersects[0].index),
-					PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex))
-				)
-			: void null 
-: void null; 
+	intersects.length > 0 
+	?
+		RUNNING_INDEXES.indexOf(intersects[0].index) == -1
+				? (		
+						picindex < 18 ? picindex++ : picindex = 0, 
+						RUNNING_INDEXES.push(intersects[0].index),
+						PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex))
+					)
+				: void null 
+	: void null; 
+}
 				
 PLANE_GROUP.children.map((i,j) =>
 		i.scale.z <= 0.1 ? i.removeFromGroup(i.parent) : (i.run(ConvertToWorld(i.name)),
-														  objToTrackName == i.name ? (Tweening(camera.position,i.position.x,i.position.y,camera.position.z,1000).start(),objToTrackName = i.name) : void null,
+														  objToTrackName == i.name ? (i.camFocusMe().start(),objToTrackName = -1) : void null,
 														  i.dissolve())
 )
 
-
-objToTrackName == -1 ? (Tweening().stop(), camera.lookAt( scene.position ), Tweening(camera.position,0,0,9,1000).start()) : void null;
+objToTrackName == -1 ? camera.lookAt(scene.position): void null;
 
 //FIND INTERSECTION
 
@@ -175,15 +174,15 @@ constructor(Group,AnchorPointIndex,picindex) {
 
 	const texture = new THREE.TextureLoader().load( "userpics/"+picindex+".jpg" );
 	super(new THREE.CircleGeometry(0.4,32,32),new THREE.MeshBasicMaterial( { map: texture} ));
-	this.name = AnchorPointIndex;
-	this.dissolving = true;
+	this.name = AnchorPointIndex; 
+	this.dissolving = true; //Dissolving by default
 	this.position.set(camera.position);
 	this.dissolveTween = new TWEEN.Tween(this.scale) 
 					 	.to({ x:0.0001, y:0.0001, z:0.0001 }, 6500) 
 						.easing(TWEEN.Easing.Quadratic.Out); 
 	this.enlargeTween = new TWEEN.Tween(this.scale) 
 						.to({ x:1.5, y:1.5, z:1.5 }, 6500) 
-					    .easing(TWEEN.Easing.Quadratic.Out); 
+						.easing(TWEEN.Easing.Quadratic.Out); 
 	Group.add(this);
 
 };
@@ -191,6 +190,11 @@ constructor(Group,AnchorPointIndex,picindex) {
 removeFromGroup = (Group) => Group.remove(this);
 
 run = (vector) => this.position.set(vector.x,vector.y,vector.z);
+
+camFocusMe = () => camTweenFocusMe = new TWEEN.Tween(camera.position) 
+									 .to({ x:this.position.x, y:this.position.y, z:9 }, 1000) 
+									 .easing(TWEEN.Easing.Quadratic.Out);
+									//  .onComplete(()=>this.);
 
 dissolve = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
 
