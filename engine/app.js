@@ -38,11 +38,15 @@ onMouseClick = (event) => {
 		Globus.visible = false;
 		pointsClouds.visible =false;
 		Selected.dissolving = false;
-		camTweenOut.stop();
+		camTweenOut ? camTweenOut.stop() : void null;
 		objToTrackName  = Selected.name;
 	} else {
-		objToTrackName = -1;
 		Selected.dissolving = true;
+		camTweenOut = new TWEEN.Tween(camera.position) 
+						.to({ x:0, y:0, z:9 }, 4000) 
+						.easing(TWEEN.Easing.Quadratic.Out)
+						.onUpdate(()=>log('Tweening out')); 
+		objToTrackName = -1;
 		Globus.visible = true;
 		pointsClouds.visible =true;
 		camTweenOut.start();
@@ -57,9 +61,7 @@ ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyM
 
 
 
-let camTweenOut = new TWEEN.Tween(camera.position) 
-			.to({ x:0, y:0, z:9 }, 4000) 
-			.easing(TWEEN.Easing.Quadratic.Out); 
+let camTweenOut;
 
 let camTweenFocusMe;
 	
@@ -138,7 +140,7 @@ PLANE_GROUP.children.map((i,j) =>
 														  i.dissolve())
 )
 
-objToTrackName == -1 ? camera.lookAt(scene.position): void null;
+// objToTrackName == -1 ? camera.lookAt(scene.position): void null;
 
 //FIND INTERSECTION
 
