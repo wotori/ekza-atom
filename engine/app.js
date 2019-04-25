@@ -37,18 +37,16 @@ onMouseClick = (event) => {
 		Selected = intersects[0].object;
 		Globus.visible = false;
 		pointsClouds.visible =false;
-		preSelected ? preSelected.dissolving = true: void null;
+		preSelected && (preSelected.dissolving = true);
 		preSelected = Selected;
 		Selected.dissolving = false;
-		camTweenOut ? camTweenOut.stop() : void null;
-		// log(camTweenOut);
+		camTweenOut && camTweenOut.stop();
 		objToTrackName  = Selected.name;
 	} else {
-		Selected ? Selected.dissolving = true : void null;
+		Selected && (Selected.dissolving = true);
 		camTweenOut = new TWEEN.Tween(camera.position) 
 						.to({ x:0, y:0, z:9 }, 4000) 
-						.easing(TWEEN.Easing.Quadratic.Out)
-						.onUpdate(()=>log('Tweening out')); 
+						.easing(TWEEN.Easing.Quadratic.Out);
 		objToTrackName = -1;
 		Globus.visible = true;
 		pointsClouds.visible =true;
@@ -125,7 +123,7 @@ if (objToTrackName == -1){ //FIND intersection with pC
 
 	let intersects = raycaster.intersectObjects( [pointsClouds] );
 
-	intersects.length > 0 
+	intersects.length > 0
 	?
 		RUNNING_INDEXES.indexOf(intersects[0].index) == -1
 				? (		
@@ -139,7 +137,7 @@ if (objToTrackName == -1){ //FIND intersection with pC
 				
 PLANE_GROUP.children.map((i,j) =>
 		i.scale.z <= 0.1 ? i.removeFromGroup(i.parent) : (i.run(ConvertToWorld(i.name)),
-														  objToTrackName == i.name ? (i.camFocusMe().start(),objToTrackName = -1) : void null,
+														  objToTrackName == i.name ? (i.camFocusMe().start(),objToTrackName = -1):void null,
 														  i.dissolve())
 )
 
