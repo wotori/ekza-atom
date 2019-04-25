@@ -30,6 +30,7 @@ onMouseMove = (event) => {
 
 let Selected,preSelected;
 let objToTrackName = -1;
+let flagToMove = true;
 
 onMouseClick = (event) => {
 	const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
@@ -42,7 +43,9 @@ onMouseClick = (event) => {
 		Selected.dissolving = false;
 		camTweenOut && camTweenOut.stop();
 		objToTrackName  = Selected.name;
+		flagToMove = false;
 	} else {
+		flagToMove = true;
 		Selected && (Selected.dissolving = true);
 		camTweenOut = new TWEEN.Tween(camera.position) 
 						.to({ x:0, y:0, z:9 }, 4000) 
@@ -152,7 +155,7 @@ if (objToTrackName == -1){ //FIND intersection with pC
 
 PLANE_GROUP.children.map((i,j) =>
 		i.scale.z <= 0.1 ? i.removeFromGroup(i.parent) : (i.run(ConvertToWorld(i.name)),
-														  objToTrackName == i.name ? (i.camFocusMe(2000).start(),objToTrackName = -1):void null,
+														  objToTrackName == i.name ? (i.camFocusMe(2000).start()):void null,
 														  i.dissolve())
 )
 
@@ -174,7 +177,7 @@ let time = clock.getElapsedTime();
 render(time);
 
 log(objToTrackName);
-if (!Selected) {
+if (!Selected || flagToMove) {
 Globus.rotation.x -= 0.001;
 Globus.rotation.y -= 0.001;
 pointsClouds.rotation.x -= 0.001+Math.random() /1400;
