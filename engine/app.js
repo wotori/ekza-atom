@@ -53,9 +53,9 @@ log = (s) => console.log(s);
 
 ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld);
 
-Zoom = (end,z) => 
-	tween = new TWEEN.Tween(camera.position) // Create a new tween that modifies obj.
-			.to({ x: end.x, y: end.y }, 1000) // Move to (300, 200) in 1 second.
+Tweening = (obj,x,y,z,t) => 
+	new TWEEN.Tween(obj) // Create a new tween that modifies obj.
+			.to({ x:x, y:y, z:z }, t) // Move to (300, 200) in 1 second.
 			.easing(TWEEN.Easing.Quadratic.Out) // Use an easing function to make the animation smooth.
 			.onUpdate(function() { // Called after tween.js updates 'coords'.
 				// Move 'box' to the position described by 'coords' with a CSS translation.
@@ -135,12 +135,12 @@ intersects.length > 0
 				
 PLANE_GROUP.children.map((i,j) =>
 		i.scale.z <= 0.1 ? i.removeFromGroup(i.parent) : (i.run(ConvertToWorld(i.name)),
-														  objToTrackName == i.name ? (Zoom(i.position),objToTrackName = i.name) : void null,
+														  objToTrackName == i.name ? (Tweening(camera.position,i.position.x,i.position.y,camera.position.z,1000),objToTrackName = i.name, i.dissolving=false) : void null,
 														  i.dissolve())
 )
 
 
-objToTrackName == -1 ? (camera.lookAt( scene.position ), Zoom(0,0,9)) : void null;
+objToTrackName == -1 ? (camera.lookAt( scene.position ), Tweening(camera.position,0,0,9,1000)) : void null;
 
 //FIND INTERSECTION
 
@@ -160,10 +160,9 @@ render(time);
 
 Globus.rotation.x += 0.001;
 Globus.rotation.y += 0.001;
-pointsClouds.rotation.x += 0.001+Math.random() /1500;
-pointsClouds.rotation.y += 0.001+Math.random() /1500;
+pointsClouds.rotation.x += 0.001+Math.random() /1400;
+pointsClouds.rotation.y += 0.001+Math.random() /1400;
 
-Globus.rotation.x 
 
 }
 
@@ -176,7 +175,7 @@ class PlaneAvatar extends THREE.Mesh {
 constructor(Group,AnchorPointIndex,picindex) {
 
 	const texture = new THREE.TextureLoader().load( "userpics/"+picindex+".jpg" );
-	super(new THREE.CircleGeometry(0.7,32,32),new THREE.MeshBasicMaterial( { map: texture} ));
+	super(new THREE.CircleGeometry(0.4,32,32),new THREE.MeshBasicMaterial( { map: texture} ));
 	this.name = AnchorPointIndex;
 	this.dissolving = true;
 	// this.position.set(0,0,0)
@@ -189,17 +188,10 @@ removeFromGroup = (Group) => Group.remove(this);
 
 run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
-dissolve = () => this.dissolving ? animateByStep(this.scale, Math.random()/100, 0.0001) : void null
+dissolve = () => this.dissolving ? Tweening(this.scale,0.0001,0.0001,0.0001,6500) : void null;
 
-enlarge = () => this.scale = new THREE.Vector3(20,20,10) 
+enlarge = () => this.scale = new THREE.Vector3(20,20,10);
 
 }
 
 
-
-animateByStep = (obj,step,threshold) => {
-	for(let XYZ in obj) {
-		const P = obj[XYZ] - step + Math.random()/250;
-		obj[XYZ] = P > 0 ? P : threshold;
-	}
-}
