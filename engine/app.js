@@ -195,7 +195,7 @@ class PlaneAvatar extends THREE.Mesh {
 
 constructor(Group,AnchorPointIndex,picindex) {
 
-	const texture = new THREE.TextureLoader().load( "userpics/"+picindex+".jpg" );
+	const texture = new THREE.TextureLoader().load( "userpics/"+picindex+".png" );
 	super(new THREE.CircleGeometry(0.4,32,32),new THREE.MeshBasicMaterial( { map: texture} ));
 	this.name = AnchorPointIndex; 
 	this.dissolving = true; //Dissolving by default
