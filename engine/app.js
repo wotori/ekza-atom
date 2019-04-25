@@ -117,7 +117,6 @@ document.addEventListener('mousedown', onMouseClick, false);
 
 //RENDER
 
-let T =100;
 
 render = (time) => {
 
@@ -140,22 +139,11 @@ if (objToTrackName == -1){ //FIND intersection with pC
 }
 
 
-// Selected && camera.lookAt(Selected.position)
 
-
-
-// if (Selected && !Selected.camFocusArrived && camTweenFocusMe){
-// 	T>1 ?
-// 		(T-=1,camTweenFocusMe.stop(),Selected.camFocusMe(T),log(T))
-// 		:camera.lookAt(Selected.position);
-// };
-// Selected && Selected.camFocusArrived  ? (log('Arrived')):void null;
-
-// camera.position.set(Selected.position.x,Selected.position.y,9)
 
 PLANE_GROUP.children.map((i,j) =>
 		i.scale.z <= 0.1 ? i.removeFromGroup(i.parent) : (i.run(ConvertToWorld(i.name)),
-														  objToTrackName == i.name ? (i.camFocusMe(2000).start()):void null,
+														  objToTrackName == i.name ? (i.camFocusMe(2000).start(),objToTrackName=-1):void null,
 														  i.dissolve())
 )
 
@@ -176,7 +164,7 @@ window.requestAnimationFrame(animate);
 let time = clock.getElapsedTime();
 render(time);
 
-log(objToTrackName);
+// log(objToTrackName);
 if (!Selected || flagToMove) {
 Globus.rotation.x -= 0.001;
 Globus.rotation.y -= 0.001;
