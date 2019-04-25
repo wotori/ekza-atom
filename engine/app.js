@@ -53,7 +53,7 @@ log = (s) => console.log(s);
 
 ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld);
 
-Tweening = (obj,x,y,z,t) => 
+let Tweening = (obj,x,y,z,t) => 
 	new TWEEN.Tween(obj) // Create a new tween that modifies obj.
 			.to({ x:x, y:y, z:z }, t) // Move to (300, 200) in 1 second.
 			.easing(TWEEN.Easing.Quadratic.Out) // Use an easing function to make the animation smooth.
@@ -62,9 +62,8 @@ Tweening = (obj,x,y,z,t) =>
 				// box.style.setProperty('transform', 'translate(' + coords.x + 'px, ' + coords.y + 'px)');
 				// camera.position.set(obj.position.x,obj.position.y,7);
 			})
-			.start(); // Start the tween immediately.
+			// .start(); // Start the tween immediately.
 
-// cameraTrackObj = (obj) => zoomIn(obj.position) 
 	
 
 let renderer = new THREE.WebGLRenderer({ antialias : true });
@@ -96,9 +95,9 @@ let pointGeo = new THREE.IcosahedronGeometry( 3.5, 4 )
 let pointMat = new THREE.PointsMaterial({ color : 'white', size : 0.04 });
 
 pointGeo.vertices.forEach(function(vertex) { 
-vertex.x += (Math.random() - 0.5);
-vertex.y += (Math.random() - 0.5);
-vertex.z += (Math.random() - 0.5);
+	vertex.x += (Math.random() - 0.5);
+	vertex.y += (Math.random() - 0.5);
+	vertex.z += (Math.random() - 0.5);
 })
 
 let pointsClouds = new THREE.Points( pointGeo, pointMat );
@@ -135,12 +134,12 @@ intersects.length > 0
 				
 PLANE_GROUP.children.map((i,j) =>
 		i.scale.z <= 0.1 ? i.removeFromGroup(i.parent) : (i.run(ConvertToWorld(i.name)),
-														  objToTrackName == i.name ? (Tweening(camera.position,i.position.x,i.position.y,camera.position.z,1000),objToTrackName = i.name, i.dissolving=false) : void null,
+														  objToTrackName == i.name ? (Tweening(camera.position,i.position.x,i.position.y,camera.position.z,1000).start(),objToTrackName = i.name) : void null,
 														  i.dissolve())
 )
 
 
-objToTrackName == -1 ? (camera.lookAt( scene.position ), Tweening(camera.position,0,0,9,1000)) : void null;
+objToTrackName == -1 ? (Tweening().stop(), camera.lookAt( scene.position ), Tweening(camera.position,0,0,9,1000).start()) : void null;
 
 //FIND INTERSECTION
 
@@ -158,10 +157,10 @@ window.requestAnimationFrame(animate);
 let time = clock.getElapsedTime();
 render(time);
 
-Globus.rotation.x += 0.001;
-Globus.rotation.y += 0.001;
-pointsClouds.rotation.x += 0.001+Math.random() /1400;
-pointsClouds.rotation.y += 0.001+Math.random() /1400;
+Globus.rotation.x -= 0.001;
+Globus.rotation.y -= 0.001;
+pointsClouds.rotation.x -= 0.001+Math.random() /1400;
+pointsClouds.rotation.y -= 0.001+Math.random() /1400;
 
 
 }
@@ -178,8 +177,13 @@ constructor(Group,AnchorPointIndex,picindex) {
 	super(new THREE.CircleGeometry(0.4,32,32),new THREE.MeshBasicMaterial( { map: texture} ));
 	this.name = AnchorPointIndex;
 	this.dissolving = true;
-	// this.position.set(0,0,0)
-	this.position.set(camera.position)
+	this.position.set(camera.position);
+	this.dissolveTween = new TWEEN.Tween(this.scale) 
+					 	.to({ x:0.0001, y:0.0001, z:0.0001 }, 6500) 
+						.easing(TWEEN.Easing.Quadratic.Out); 
+	this.enlargeTween = new TWEEN.Tween(this.scale) 
+						.to({ x:1.5, y:1.5, z:1.5 }, 6500) 
+					    .easing(TWEEN.Easing.Quadratic.Out); 
 	Group.add(this);
 
 };
@@ -188,9 +192,7 @@ removeFromGroup = (Group) => Group.remove(this);
 
 run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
-dissolve = () => this.dissolving ? Tweening(this.scale,0.0001,0.0001,0.0001,6500) : void null;
-
-enlarge = () => this.scale = new THREE.Vector3(20,20,10);
+dissolve = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
 
 }
 
