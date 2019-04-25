@@ -61,7 +61,6 @@ log = (s) => console.log(s);
 ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld);
 
 
-
 let camTweenOut;
 
 let camTweenFocusMe;
@@ -115,6 +114,8 @@ document.addEventListener('mousedown', onMouseClick, false);
 
 //RENDER
 
+let T =100;
+
 render = (time) => {
 
 TWEEN.update();
@@ -134,14 +135,27 @@ if (objToTrackName == -1){ //FIND intersection with pC
 				: void null 
 	: void null; 
 }
-				
+
+
+// Selected && camera.lookAt(Selected.position)
+
+
+
+// if (Selected && !Selected.camFocusArrived && camTweenFocusMe){
+// 	T>1 ?
+// 		(T-=1,camTweenFocusMe.stop(),Selected.camFocusMe(T),log(T))
+// 		:camera.lookAt(Selected.position);
+// };
+// Selected && Selected.camFocusArrived  ? (log('Arrived')):void null;
+
+// camera.position.set(Selected.position.x,Selected.position.y,9)
+
 PLANE_GROUP.children.map((i,j) =>
 		i.scale.z <= 0.1 ? i.removeFromGroup(i.parent) : (i.run(ConvertToWorld(i.name)),
-														  objToTrackName == i.name ? (i.camFocusMe().start(),objToTrackName = -1):void null,
+														  objToTrackName == i.name ? (i.camFocusMe(2000).start(),objToTrackName = -1):void null,
 														  i.dissolve())
 )
 
-// objToTrackName == -1 ? camera.lookAt(scene.position): void null;
 
 //FIND INTERSECTION
 
@@ -159,10 +173,13 @@ window.requestAnimationFrame(animate);
 let time = clock.getElapsedTime();
 render(time);
 
+log(objToTrackName);
+if (!Selected) {
 Globus.rotation.x -= 0.001;
 Globus.rotation.y -= 0.001;
 pointsClouds.rotation.x -= 0.001+Math.random() /1400;
 pointsClouds.rotation.y -= 0.001+Math.random() /1400;
+}
 
 
 }
@@ -186,6 +203,7 @@ constructor(Group,AnchorPointIndex,picindex) {
 	this.enlargeTween = new TWEEN.Tween(this.scale) 
 						.to({ x:1.5, y:1.5, z:1.5 }, 6500) 
 						.easing(TWEEN.Easing.Quadratic.Out); 
+	// this.camFocusArrived = false;
 	Group.add(this);
 
 };
@@ -194,10 +212,10 @@ removeFromGroup = (Group) => Group.remove(this);
 
 run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
-camFocusMe = () => camTweenFocusMe = new TWEEN.Tween(camera.position) 
-									 .to({ x:this.position.x, y:this.position.y, z:9 }, 1000) 
-									 .easing(TWEEN.Easing.Quadratic.Out);
-									//  .onComplete(()=>this.);
+camFocusMe = (t) => camTweenFocusMe = new TWEEN.Tween(camera.position) 
+									 .to({ x:this.position.x, y:this.position.y, z:9 }, t) 
+									 .easing(TWEEN.Easing.Quadratic.Out)
+									//  .onUpdate(()=>this.camFocusArrived=false)
 
 dissolve = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
 
