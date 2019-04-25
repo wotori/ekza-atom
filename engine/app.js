@@ -28,20 +28,23 @@ onMouseMove = (event) => {
 	MOUSE.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 }
 
-let Selected;
+let Selected,preSelected;
 let objToTrackName = -1;
 
 onMouseClick = (event) => {
 	const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
-	if (objToTrackName == -1 && intersects.length >0 ) { 
+	if (objToTrackName == -1 && intersects.length >0 ) { //click on avatar
 		Selected = intersects[0].object;
 		Globus.visible = false;
 		pointsClouds.visible =false;
+		preSelected ? preSelected.dissolving = true: void null;
+		preSelected = Selected;
 		Selected.dissolving = false;
 		camTweenOut ? camTweenOut.stop() : void null;
+		// log(camTweenOut);
 		objToTrackName  = Selected.name;
 	} else {
-		Selected.dissolving = true;
+		Selected ? Selected.dissolving = true : void null;
 		camTweenOut = new TWEEN.Tween(camera.position) 
 						.to({ x:0, y:0, z:9 }, 4000) 
 						.easing(TWEEN.Easing.Quadratic.Out)
