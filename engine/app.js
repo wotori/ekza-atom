@@ -102,7 +102,7 @@ line.material.opacity = 1;
 line.material.transparent = true;
 
 
-function createCanvasMaterial(color, size) {
+createCanvasMaterial = (color, size) => {
 	var matCanvas = document.createElement('canvas');
 	matCanvas.width = matCanvas.height = size;
 	var matContext = matCanvas.getContext('2d');
@@ -122,10 +122,19 @@ function createCanvasMaterial(color, size) {
   }
 
 //pointClouds
-let pointGeo = new THREE.IcosahedronGeometry( 3.5, 3 )
-let pointMat = new THREE.PointsMaterial({ color : 'white', size : 0.04 });
+let pointGeo = new THREE.IcosahedronGeometry( 3.5, 4 )
+// let pointMat = new THREE.PointsMaterial({ color : 'white', size : 0.04 });
+let pointMat =  new THREE.PointsMaterial({
+	size: 0.04,
+	map: createCanvasMaterial('white', 256),
+	transparent: true,
+	depthWrite: false
+  });
+
+
 
 pointGeo.vertices.forEach(function(vertex) { 
+	vertex.color =
 	vertex.x += (Math.random() - 0.5);
 	vertex.y += (Math.random() - 0.5);
 	vertex.z += (Math.random() - 0.5);
@@ -211,11 +220,7 @@ class PlaneAvatar extends THREE.Mesh {
 
 constructor(Group,AnchorPointIndex,picindex) {
 
-<<<<<<< HEAD
 	const texture = new THREE.TextureLoader().load( "userpics/"+picindex+".png" );
-=======
-	const texture = new THREE.TextureLoader().load( "userpics/Frame-"+picindex+".png" );
->>>>>>> gudzo
 	super(new THREE.CircleGeometry(0.4,32,32),new THREE.MeshBasicMaterial( { map: texture} ));
 	this.name = AnchorPointIndex; 
 	this.dissolving = true; //Dissolving by default
