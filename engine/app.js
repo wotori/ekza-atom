@@ -44,16 +44,21 @@ onMouseClick = (event) => {
 		camTweenOut && camTweenOut.stop();
 		objToTrackName  = Selected.name;
 		flagToMove = false;
-	} else {
+	} else {  // Move out
 		flagToMove = true;
 		Selected && (Selected.dissolving = true);
 		camTweenOut = new TWEEN.Tween(camera.position) 
 						.to({ x:0, y:0, z:9 }, 4000) 
-						.easing(TWEEN.Easing.Quadratic.Out);
+						.easing(TWEEN.Easing.Quadratic.InOut);
+		log(Globus)
+		opacityTween = new TWEEN.Tween(Globus.opacity) 
+						.to(0, 4000) 
+						.easing(TWEEN.Easing.Quadratic.InOut);
 		objToTrackName = -1;
 		Globus.visible = true;
 		pointsClouds.visible =true;
 		camTweenOut.start();
+		opacityTween.start();
 	}
 }
 
@@ -65,6 +70,8 @@ ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyM
 
 
 let camTweenOut;
+
+let opacityTween;
 
 let camTweenFocusMe;
 	
@@ -93,6 +100,26 @@ let wireframe = new THREE.WireframeGeometry( geometryWire );
 let line = new THREE.LineSegments( wireframe, lineMat );
 line.material.opacity = 1;
 line.material.transparent = true;
+
+
+function createCanvasMaterial(color, size) {
+	var matCanvas = document.createElement('canvas');
+	matCanvas.width = matCanvas.height = size;
+	var matContext = matCanvas.getContext('2d');
+	// create exture object from canvas.
+	var texture = new THREE.Texture(matCanvas);
+	// Draw a circle
+	var center = size / 2;
+	matContext.beginPath();
+	matContext.arc(center, center, size/2, 0, 2 * Math.PI, false);
+	matContext.closePath();
+	matContext.fillStyle = color;
+	matContext.fill();
+	// need to set needsUpdate
+	texture.needsUpdate = true;
+	// return a texture made from the canvas
+	return texture;
+  }
 
 //pointClouds
 let pointGeo = new THREE.IcosahedronGeometry( 3.5, 3 )
@@ -131,7 +158,7 @@ if (objToTrackName == -1){ //FIND intersection with pC
 	?
 		RUNNING_INDEXES.indexOf(intersects[0].index) == -1
 				? (		
-						picindex < 18 ? picindex++ : picindex = 0, 
+						picindex < 61 ? picindex++ : picindex = 0, 
 						RUNNING_INDEXES.push(intersects[0].index),
 						PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex))
 					)
@@ -184,7 +211,11 @@ class PlaneAvatar extends THREE.Mesh {
 
 constructor(Group,AnchorPointIndex,picindex) {
 
+<<<<<<< HEAD
 	const texture = new THREE.TextureLoader().load( "userpics/"+picindex+".png" );
+=======
+	const texture = new THREE.TextureLoader().load( "userpics/Frame-"+picindex+".png" );
+>>>>>>> gudzo
 	super(new THREE.CircleGeometry(0.4,32,32),new THREE.MeshBasicMaterial( { map: texture} ));
 	this.name = AnchorPointIndex; 
 	this.dissolving = true; //Dissolving by default
@@ -206,7 +237,7 @@ run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
 camFocusMe = (t) => camTweenFocusMe = new TWEEN.Tween(camera.position) 
 									 .to({ x:this.position.x, y:this.position.y, z:9 }, t) 
-									 .easing(TWEEN.Easing.Quadratic.Out)
+									 .easing(TWEEN.Easing.Quadratic.InOut)
 									//  .onUpdate(()=>this.camFocusArrived=false)
 
 dissolve = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
