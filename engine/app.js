@@ -58,7 +58,7 @@ onMouseClick = (event) => {
 		Globus.visible = true;
 		pointsClouds.visible =true;
 		camTweenOut.start();
-		opacityTween.start();
+		// opacityTween.start();
 	}
 }
 
