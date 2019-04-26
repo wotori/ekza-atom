@@ -70,6 +70,7 @@ let camTweenFocusMe;
 	
 
 let renderer = new THREE.WebGLRenderer({ antialias : true });
+renderer.setClearColor (0x13131B, 1)
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
@@ -82,19 +83,19 @@ scene.add( lights[ 0 ] );
 
 //Globus
 let SphereGeometry = new THREE.IcosahedronGeometry( 1.97, 3 );
-let SphereMaterial = new THREE.MeshBasicMaterial( { color: 'black' } );
+let SphereMaterial = new THREE.MeshBasicMaterial( { color: 0x13131B } );
 let SphereMesh = new THREE.Mesh( SphereGeometry, SphereMaterial );
 
 //wireFrame
-let lineMat = new THREE.LineBasicMaterial({ color: 'white' })
-let geometryWire = new THREE.IcosahedronBufferGeometry( 2, 3 );
+let lineMat = new THREE.LineBasicMaterial({ color: 0x3C4051 })
+let geometryWire = new THREE.IcosahedronBufferGeometry( 2, 2 );
 let wireframe = new THREE.WireframeGeometry( geometryWire );
 let line = new THREE.LineSegments( wireframe, lineMat );
 line.material.opacity = 1;
 line.material.transparent = true;
 
 //pointClouds
-let pointGeo = new THREE.IcosahedronGeometry( 3.5, 4 )
+let pointGeo = new THREE.IcosahedronGeometry( 3.5, 3 )
 let pointMat = new THREE.PointsMaterial({ color : 'white', size : 0.04 });
 
 pointGeo.vertices.forEach(function(vertex) { 
@@ -183,7 +184,7 @@ class PlaneAvatar extends THREE.Mesh {
 
 constructor(Group,AnchorPointIndex,picindex) {
 
-	const texture = new THREE.TextureLoader().load( "userpics/"+picindex+".jpg" );
+	const texture = new THREE.TextureLoader().load( "userpics/"+picindex+".png" );
 	super(new THREE.CircleGeometry(0.4,32,32),new THREE.MeshBasicMaterial( { map: texture} ));
 	this.name = AnchorPointIndex; 
 	this.dissolving = true; //Dissolving by default
