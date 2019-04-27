@@ -36,8 +36,15 @@ onMouseClick = (event) => {
 	const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
 	if (objToTrackName == -1 && intersects.length >0 ) { //click on avatar
 		Selected = intersects[0].object;
-		Globus.visible = false;
-		pointsClouds.visible =false;
+		// Globus.visible = false;
+		// pointsClouds.visible =false;
+
+		opacityTweenTo1.stop();
+
+		
+
+		opacityTweenTo0.start();
+
 		preSelected && (preSelected.dissolving = true);
 		preSelected = Selected;
 		Selected.dissolving = false;
@@ -53,15 +60,14 @@ onMouseClick = (event) => {
 		camTweenOut = new TWEEN.Tween(camera.position) 
 						.to({ x:0, y:0, z:9 }, 4000) 
 						.easing(TWEEN.Easing.Quadratic.InOut);
-		log(Globus)
-		opacityTween = new TWEEN.Tween(Globus.opacity) 
-						.to(0, 4000) 
-						.easing(TWEEN.Easing.Quadratic.InOut);
+		// log(Globus)
+		opacityTweenTo0.stop();
+
 		objToTrackName = -1;
-		Globus.visible = true;
-		pointsClouds.visible =true;
+		// Globus.visible = true;
+		// pointsClouds.visible =true;
 		camTweenOut.start();
-		// opacityTween.start();
+		opacityTweenTo1.start();
 
 		CosmoZadnik.visible = false
 	}
@@ -96,7 +102,6 @@ createCanvasMaterial = (color, size) => {
 
 let camTweenOut;
 
-let opacityTween;
 
 let camTweenFocusMe;
 	
@@ -238,6 +243,22 @@ scene.add(pointsClouds);
 
 document.addEventListener('mousemove', onMouseMove, false );
 document.addEventListener('mousedown', onMouseClick, false);
+// Globus.children[1].material.opacity =0;
+
+
+
+
+let opacityTweenTo0 = new TWEEN.Tween(Globus.children[0].material.opacity) 
+							.to(0, 10000) 
+							.easing(TWEEN.Easing.Quadratic.InOut)
+							// .onUpdate(()=>log(0))
+
+
+let opacityTweenTo1 = new TWEEN.Tween(Globus.children[0].material.opacity) 
+							.to(1, 10000) 
+							.easing(TWEEN.Easing.Quadratic.InOut)
+							.onUpdate(()=>log(Globus.children[0].material.opacity))
+
 
 
 
