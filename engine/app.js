@@ -44,6 +44,9 @@ onMouseClick = (event) => {
 		camTweenOut && camTweenOut.stop();
 		objToTrackName  = Selected.name;
 		flagToMove = false;
+
+		CosmoZadnik.visible = true;
+
 	} else {  // Move out
 		flagToMove = true;
 		Selected && (Selected.dissolving = true);
@@ -59,6 +62,8 @@ onMouseClick = (event) => {
 		pointsClouds.visible =true;
 		camTweenOut.start();
 		// opacityTween.start();
+
+		CosmoZadnik.visible = false
 	}
 }
 
@@ -67,40 +72,6 @@ onMouseClick = (event) => {
 log = (s) => console.log(s);  
 
 ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld);
-
-
-let camTweenOut;
-
-let opacityTween;
-
-let camTweenFocusMe;
-	
-
-let renderer = new THREE.WebGLRenderer({ antialias : true });
-renderer.setClearColor (0x13131B, 1)
-renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
-
-//light
-let lights = [];
-lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
-lights[ 0 ].position.set( 0, 200, 0 );
-scene.add( lights[ 0 ] );
-
-
-//Globus
-let SphereGeometry = new THREE.IcosahedronGeometry( 1.97, 3 );
-let SphereMaterial = new THREE.MeshBasicMaterial( { color: 0x13131B } );
-let SphereMesh = new THREE.Mesh( SphereGeometry, SphereMaterial );
-
-//wireFrame
-let lineMat = new THREE.LineBasicMaterial({ color: 0x3C4051 })
-let geometryWire = new THREE.IcosahedronBufferGeometry( 2, 2 );
-let wireframe = new THREE.WireframeGeometry( geometryWire );
-let line = new THREE.LineSegments( wireframe, lineMat );
-line.material.opacity = 1;
-line.material.transparent = true;
-
 
 createCanvasMaterial = (color, size) => {
 	var matCanvas = document.createElement('canvas');
@@ -120,6 +91,124 @@ createCanvasMaterial = (color, size) => {
 	// return a texture made from the canvas
 	return texture;
   }
+
+
+
+let camTweenOut;
+
+let opacityTween;
+
+let camTweenFocusMe;
+	
+
+//
+
+let renderer = new THREE.WebGLRenderer({ antialias : true });
+renderer.setClearColor (0x13131B, 1)
+renderer.setSize( window.innerWidth, window.innerHeight );
+document.body.appendChild( renderer.domElement );
+
+//Zadnik
+
+parameters = [
+	[
+		[1, 1, 0.5], 1.3
+	],
+	[
+		[0.95, 1, 0.5], 1.1
+	],
+	[
+		[0.90, 1, 0.5], 1.7
+	],
+	[
+		[0.85, 1, 0.5], 1.2
+	],
+	[
+		[0.80, 1, 0.5], 0.8
+	]
+];
+parameterCount = parameters.length;
+
+zadnikGeometry = new THREE.Geometry(); /*	NO ONE SAID ANYTHING ABOUT MATH! UGH!	*/
+
+zadnokParticleCount = 100000; /* Leagues under the sea */
+
+/*	Hope you took your motion sickness pills;
+We're about to get loopy.	*/
+
+for (i = 0; i < zadnokParticleCount; i++) {
+
+	var vertex = new THREE.Vector3();
+	vertex.x = Math.random() * 2000 - 1000;
+	vertex.y = Math.random() * 2000 - 1000;
+	vertex.z = Math.random() * 2000 - 1000;
+
+	zadnikGeometry.vertices.push(vertex);
+}
+
+
+
+let CosmoZadnik = new THREE.Group()
+
+CosmoZadnik.visible = false;
+let zadnikMaterials = []
+
+
+// for (i = 0; i < 10; i++) {
+
+// 	log(parameters[i][1])
+// }
+
+
+for (i = 0; i < parameterCount; i++) {
+
+	color = parameters[i][0];
+	size = parameters[i][1];
+
+	zadnikMaterials[i] = new THREE.PointsMaterial({
+		size: size,
+		map: createCanvasMaterial('red', 256),
+		transparent: true,
+		depthWrite: false
+	});
+
+	particles = new THREE.Points(zadnikGeometry, zadnikMaterials[i]);
+
+	particles.rotation.x = Math.random() * 6;
+	particles.rotation.y = Math.random() * 6;
+	particles.rotation.z = Math.random() * 6;
+
+	CosmoZadnik.add(particles);
+}
+
+scene.add(CosmoZadnik);
+
+
+//light
+let lights = [];
+lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+lights[ 0 ].position.set( 0, 200, 0 );
+scene.add( lights[ 0 ] );
+
+// //fog
+// fogHex = 0x011010; /* As black as your heart.	*/
+// fogDensity = 0.07; /* So not terribly dense?	*/
+
+// scene.fog = new THREE.FogExp2(fogHex, fogDensity);
+
+//Globus
+let SphereGeometry = new THREE.IcosahedronGeometry( 1.97, 3 );
+let SphereMaterial = new THREE.MeshBasicMaterial( { color: 0x13131B } );
+let SphereMesh = new THREE.Mesh( SphereGeometry, SphereMaterial );
+
+//wireFrame
+let lineMat = new THREE.LineBasicMaterial({ color: 0x3C4051 })
+let geometryWire = new THREE.IcosahedronBufferGeometry( 2, 2 );
+let wireframe = new THREE.WireframeGeometry( geometryWire );
+let line = new THREE.LineSegments( wireframe, lineMat );
+line.material.opacity = 1;
+line.material.transparent = true;
+
 
 //pointClouds
 let pointGeo = new THREE.IcosahedronGeometry( 3.5, 4 )
@@ -201,13 +290,17 @@ window.requestAnimationFrame(animate);
 let time = clock.getElapsedTime();
 render(time);
 
-// log(objToTrackName);
 if (!Selected || flagToMove) {
 Globus.rotation.x -= 0.001;
 Globus.rotation.y -= 0.001;
 pointsClouds.rotation.x -= 0.001+Math.random() /1400;
 pointsClouds.rotation.y -= 0.001+Math.random() /1400;
 }
+
+CosmoZadnik.children.map((i,j)=>
+	i.rotation.y = Date.now() * 0.00015 * (j < 4 ? j + 1 : -(j + 1))
+)
+
 
 
 }
