@@ -332,4 +332,4 @@ camFocusMe = (t) => camTweenFocusMe = new TWEEN.Tween(camera.position)
 
 dissolve = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
 
-},
+}
