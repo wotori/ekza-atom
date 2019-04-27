@@ -213,10 +213,10 @@ constructor(Group,AnchorPointIndex,picindex) {
 	this.dissolving = true; //Dissolving by default
 	this.position.set(camera.position);
 	this.dissolveTween = new TWEEN.Tween(this.scale) 
-					 	.to({ x:0.0001, y:0.0001, z:0.0001 }, 6500) 
+					 	.to({ x:0.0001, y:0.0001, z:0.0001 }, 7000) 
 						.easing(TWEEN.Easing.Quadratic.Out); 
 	this.enlargeTween = new TWEEN.Tween(this.scale) 
-						.to({ x:1.5, y:1.5, z:1.5 }, 6500) 
+						.to({ x:1.5, y:1.5, z:1.5 }, 650) 
 						.easing(TWEEN.Easing.Quadratic.Out); 
 	// this.camFocusArrived = false;
 	Group.add(this);
