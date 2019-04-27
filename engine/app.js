@@ -129,12 +129,12 @@ parameters = [
 ];
 parameterCount = parameters.length;
 
-zadnikGeometry = new THREE.Geometry(); /*	NO ONE SAID ANYTHING ABOUT MATH! UGH!	*/
+/* zadnikGeometry = new THREE.Geometry(); /*	NO ONE SAID ANYTHING ABOUT MATH! UGH!	
 
-zadnokParticleCount = 100000; /* Leagues under the sea */
+zadnokParticleCount = 100000; Leagues under the sea
 
 /*	Hope you took your motion sickness pills;
-We're about to get loopy.	*/
+We're about to get loopy.
 
 for (i = 0; i < zadnokParticleCount; i++) {
 
@@ -147,17 +147,16 @@ for (i = 0; i < zadnokParticleCount; i++) {
 }
 
 
-
 let CosmoZadnik = new THREE.Group()
 
 CosmoZadnik.visible = false;
 let zadnikMaterials = []
 
 
-// for (i = 0; i < 10; i++) {
+for (i = 0; i < 10; i++) {
 
-// 	log(parameters[i][1])
-// }
+	log(parameters[i][1])
+}
 
 
 for (i = 0; i < parameterCount; i++) {
@@ -182,7 +181,7 @@ for (i = 0; i < parameterCount; i++) {
 }
 
 scene.add(CosmoZadnik);
-
+*/
 
 //light
 let lights = [];
