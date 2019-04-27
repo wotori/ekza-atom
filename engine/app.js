@@ -51,11 +51,11 @@ onMouseClick = (event) => {
 		flagToMove = true;
 		Selected && (Selected.dissolving = true);
 		camTweenOut = new TWEEN.Tween(camera.position) 
-						.to({ x:0, y:0, z:9 }, 4000) 
+						.to({ x:0, y:0, z:9 }, 1000) 
 						.easing(TWEEN.Easing.Quadratic.InOut);
 		log(Globus)
 		opacityTween = new TWEEN.Tween(Globus.opacity) 
-						.to(0, 4000) 
+						.to(0, 1000) 
 						.easing(TWEEN.Easing.Quadratic.InOut);
 		objToTrackName = -1;
 		Globus.visible = true;
@@ -211,7 +211,7 @@ line.material.transparent = true;
 
 
 //pointClouds
-let pointGeo = new THREE.IcosahedronGeometry( 3.5, 4 )
+let pointGeo = new THREE.SphereGeometry( 3.5, 27, 27 )
 // let pointMat = new THREE.PointsMaterial({ color : 'white', size : 0.04 });
 let pointMat =  new THREE.PointsMaterial({
 	size: 0.04,
@@ -219,8 +219,6 @@ let pointMat =  new THREE.PointsMaterial({
 	transparent: true,
 	depthWrite: false
   });
-
-
 
 pointGeo.vertices.forEach(function(vertex) { 
 	vertex.color =
@@ -235,14 +233,10 @@ Globus.add (line,SphereMesh)
 scene.add(Globus);
 scene.add(pointsClouds);
 
-
 document.addEventListener('mousemove', onMouseMove, false );
 document.addEventListener('mousedown', onMouseClick, false);
 
-
-
 //RENDER
-
 
 render = (time) => {
 
@@ -264,15 +258,11 @@ if (objToTrackName == -1){ //FIND intersection with pC
 	: void null; 
 }
 
-
-
-
 PLANE_GROUP.children.map((i,j) =>
 		i.scale.z <= 0.1 ? i.removeFromGroup(i.parent) : (i.run(ConvertToWorld(i.name)),
 														  objToTrackName == i.name ? (i.camFocusMe(2000).start(),objToTrackName=-1):void null,
 														  i.dissolve())
 )
-
 
 //FIND INTERSECTION
 
@@ -293,8 +283,10 @@ render(time);
 if (!Selected || flagToMove) {
 Globus.rotation.x -= 0.001;
 Globus.rotation.y -= 0.001;
-pointsClouds.rotation.x -= 0.001+Math.random() /1400;
-pointsClouds.rotation.y -= 0.001+Math.random() /1400;
+// pointsClouds.rotation.x -= 0.001+Math.random() /1400;
+pointsClouds.rotation.x -= 0.0004;
+pointsClouds.rotation.y -= 0.0004;
+// pointsClouds.rotation.y -= 0.001+Math.random() /1400;
 }
 
 CosmoZadnik.children.map((i,j)=>
@@ -314,15 +306,15 @@ class PlaneAvatar extends THREE.Mesh {
 constructor(Group,AnchorPointIndex,picindex) {
 
 	const texture = new THREE.TextureLoader().load( "userpics/Frame-"+picindex+".png" );
-	super(new THREE.CircleGeometry(0.4,32,32),new THREE.MeshBasicMaterial( { map: texture} ));
+	super(new THREE.CircleGeometry(0.3,32,32),new THREE.MeshBasicMaterial( { map: texture} ));
 	this.name = AnchorPointIndex; 
 	this.dissolving = true; //Dissolving by default
 	this.position.set(camera.position);
 	this.dissolveTween = new TWEEN.Tween(this.scale) 
-					 	.to({ x:0.0001, y:0.0001, z:0.0001 }, 6500) 
+					 	.to({ x:0.0001, y:0.0001, z:0.0001 }, 7000) 
 						.easing(TWEEN.Easing.Quadratic.Out); 
 	this.enlargeTween = new TWEEN.Tween(this.scale) 
-						.to({ x:1.5, y:1.5, z:1.5 }, 6500) 
+						.to({ x:1.5, y:1.5, z:1.5 }, 650) 
 						.easing(TWEEN.Easing.Quadratic.Out); 
 	// this.camFocusArrived = false;
 	Group.add(this);
@@ -334,12 +326,10 @@ removeFromGroup = (Group) => Group.remove(this);
 run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
 camFocusMe = (t) => camTweenFocusMe = new TWEEN.Tween(camera.position) 
-									 .to({ x:this.position.x, y:this.position.y, z:9 }, t) 
+									 .to({ x:this.position.x, y:this.position.y, z:9 }, 1000) 
 									 .easing(TWEEN.Easing.Quadratic.InOut)
 									//  .onUpdate(()=>this.camFocusArrived=false)
 
 dissolve = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
 
-}
-
-
+},
