@@ -4,7 +4,7 @@ let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.01, 1000 );
 // let controls = new THREE.OrbitControls ( camera );
 let raycaster = new THREE.Raycaster(), intersected =null;
-raycaster.params.Points.threshold = 0.015;
+raycaster.params.Points.threshold = 0.075;
 let MOUSE = new THREE.Vector2();
 
 let clock = new THREE.Clock();
@@ -243,18 +243,18 @@ document.addEventListener('mousedown', onMouseClick, false);
 // Globus.children[1].material.opacity =0;
 
 
+let GlobusAndPoinOpacity=0;
 
-
-let opacityTweenTo0 = new TWEEN.Tween(Globus.children[0].material.opacity) 
-							.to(0, 10000) 
-							.easing(TWEEN.Easing.Quadratic.InOut)
-							// .onUpdate(()=>log(0))
+let opacityTweenTo0 = new TWEEN.Tween(GlobusAndPoinOpacity) 
+							.to(10000, 10000) 
+							.easing(TWEEN.Easing.Quadratic.Out)
+							.onUpdate(()=>log(GlobusAndPoinOpacity))
 
 
 let opacityTweenTo1 = new TWEEN.Tween(Globus.children[0].material.opacity) 
-							.to(1, 10000) 
+							.to(10000, 10000) 
 							.easing(TWEEN.Easing.Quadratic.InOut)
-							.onUpdate(()=>log(Globus.children[0].material.opacity))
+							// .onUpdate(()=>log(Globus.children[0].material.opacity))
 
 
 //RENDER
@@ -327,7 +327,14 @@ class PlaneAvatar extends THREE.Mesh {
 constructor(Group,AnchorPointIndex,picindex) {
 
 	const texture = new THREE.TextureLoader().load( "userpics/Frame-"+picindex+".png" );
-	super(new THREE.CircleGeometry(0.3,32,32),new THREE.MeshBasicMaterial( { map: texture} ));
+
+	// super([new THREE.CircleGeometry(0.5,32,32),new THREE.CircleGeometry(0.9,32,32)],
+	// [new THREE.MeshBasicMaterial({ map: texture}),new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide})]);
+
+	super(new THREE.CircleGeometry(0.5,32,32),new THREE.MeshBasicMaterial({ map: texture}));
+	// this.picAvatar = new THREE.Mesh(new THREE.CircleGeometry(0.3,32,32),new THREE.MeshBasicMaterial({ map: texture})	);
+	// this.circleStatus = new THREE.Mesh(new THREE.CircleGeometry(0.5,32,32),new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} )); 
+	
 	this.name = AnchorPointIndex; 
 	this.dissolving = true; //Dissolving by default
 	this.position.set(camera.position);
@@ -337,9 +344,7 @@ constructor(Group,AnchorPointIndex,picindex) {
 	this.enlargeTween = new TWEEN.Tween(this.scale) 
 						.to({ x:1.5, y:1.5, z:1.5 }, 650) 
 						.easing(TWEEN.Easing.Quadratic.Out); 
-	// this.camFocusArrived = false;
-	Group.add(this);
-
+    Group.add(this);
 };
 
 removeFromGroup = (Group) => Group.remove(this);
@@ -347,7 +352,7 @@ removeFromGroup = (Group) => Group.remove(this);
 run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
 camFocusMe = (t) => camTweenFocusMe = new TWEEN.Tween(camera.position) 
-									 .to({ x:this.position.x, y:this.position.y, z:9 }, 1000) 
+									 .to({ x:this.position.x, y:this.position.y, z:7 }, 1000) 
 									 .easing(TWEEN.Easing.Quadratic.InOut)
 									//  .onUpdate(()=>this.camFocusArrived=false)
 
