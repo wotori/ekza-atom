@@ -21,6 +21,12 @@ camera.position.set(0,0,9);
 
 //GLOBAL EVENTS
 
+function onWindowResize(){
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+	renderer.setSize( window.innerWidth, window.innerHeight );
+}
+
 onMouseMove = (event) => {
 	event.preventDefault();
 	raycaster.setFromCamera( MOUSE, camera );
@@ -129,60 +135,6 @@ parameters = [
 ];
 parameterCount = parameters.length;
 
-/* zadnikGeometry = new THREE.Geometry(); /*	NO ONE SAID ANYTHING ABOUT MATH! UGH!	
-
-zadnokParticleCount = 100000; Leagues under the sea
-
-/*	Hope you took your motion sickness pills;
-We're about to get loopy.
-
-for (i = 0; i < zadnokParticleCount; i++) {
-
-	var vertex = new THREE.Vector3();
-	vertex.x = Math.random() * 2000 - 1000;
-	vertex.y = Math.random() * 2000 - 1000;
-	vertex.z = Math.random() * 2000 - 1000;
-
-	zadnikGeometry.vertices.push(vertex);
-}
-
-
-let CosmoZadnik = new THREE.Group()
-
-CosmoZadnik.visible = false;
-let zadnikMaterials = []
-
-
-for (i = 0; i < 10; i++) {
-
-	log(parameters[i][1])
-}
-
-
-for (i = 0; i < parameterCount; i++) {
-
-	color = parameters[i][0];
-	size = parameters[i][1];
-
-	zadnikMaterials[i] = new THREE.PointsMaterial({
-		size: size,
-		map: createCanvasMaterial('red', 256),
-		transparent: true,
-		depthWrite: false
-	});
-
-	particles = new THREE.Points(zadnikGeometry, zadnikMaterials[i]);
-
-	particles.rotation.x = Math.random() * 6;
-	particles.rotation.y = Math.random() * 6;
-	particles.rotation.z = Math.random() * 6;
-
-	CosmoZadnik.add(particles);
-}
-
-scene.add(CosmoZadnik);
-*/
-
 //light
 let lights = [];
 lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
@@ -234,6 +186,8 @@ scene.add(pointsClouds);
 
 document.addEventListener('mousemove', onMouseMove, false );
 document.addEventListener('mousedown', onMouseClick, false);
+
+window.addEventListener ( 'resize', onWindowResize, false )
 
 //RENDER
 
@@ -287,12 +241,6 @@ animate = () => {
 		pointsClouds.rotation.y -= 0.0004;
 		// pointsClouds.rotation.y -= 0.001+Math.random() /1400;
 	}
-
-	// CosmoZadnik.children.map((i,j)=>
-	// 	i.rotation.y = Date.now() * 0.00015 * (j < 4 ? j + 1 : -(j + 1))
-	// )
-
-
 
 	}
 
