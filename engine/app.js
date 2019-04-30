@@ -325,7 +325,7 @@ removeFromGroup = (Group) => Group.remove(this);
 run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
 camFocusMe = (t) => camTweenFocusMe = new TWEEN.Tween(camera.position) 
-									 .to({ x:this.position.x, y:this.position.y, z:9 }, 1000) 
+									 .to({ x:this.position.x, y:this.position.y, z:7 }, 1000) 
 									 .easing(TWEEN.Easing.Quadratic.InOut)
 									//  .onUpdate(()=>this.camFocusArrived=false)
 
