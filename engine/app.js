@@ -4,7 +4,7 @@ let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.01, 1000 );
 // let controls = new THREE.OrbitControls ( camera );
 let raycaster = new THREE.Raycaster(), intersected =null;
-raycaster.params.Points.threshold = 0.015;
+raycaster.params.Points.threshold = 0.07;
 let MOUSE = new THREE.Vector2();
 
 let clock = new THREE.Clock();
@@ -210,7 +210,7 @@ line.material.transparent = true;
 
 
 //pointClouds
-let pointGeo = new THREE.SphereGeometry( 3.5, 27, 27 )
+let pointGeo = new THREE.SphereGeometry( 3.5, 17, 17 )
 // let pointMat = new THREE.PointsMaterial({ color : 'white', size : 0.04 });
 let pointMat =  new THREE.PointsMaterial({
 	size: 0.04,
@@ -275,26 +275,26 @@ pointsClouds.matrixAutoUpdate = true;
 
 animate = () => {
 
-window.requestAnimationFrame(animate);
-let time = clock.getElapsedTime();
-render(time);
+	window.requestAnimationFrame(animate);
+	let time = clock.getElapsedTime();
+	render(time);
 
-if (!Selected || flagToMove) {
-Globus.rotation.x -= 0.001;
-Globus.rotation.y -= 0.001;
-// pointsClouds.rotation.x -= 0.001+Math.random() /1400;
-pointsClouds.rotation.x -= 0.0004;
-pointsClouds.rotation.y -= 0.0004;
-// pointsClouds.rotation.y -= 0.001+Math.random() /1400;
-}
+	if (!Selected || flagToMove) {
+		Globus.rotation.x -= 0.001;
+		Globus.rotation.y -= 0.001;
+		// pointsClouds.rotation.x -= 0.001+Math.random() /1400;
+		pointsClouds.rotation.x -= 0.0004;
+		pointsClouds.rotation.y -= 0.0004;
+		// pointsClouds.rotation.y -= 0.001+Math.random() /1400;
+	}
 
-CosmoZadnik.children.map((i,j)=>
-	i.rotation.y = Date.now() * 0.00015 * (j < 4 ? j + 1 : -(j + 1))
-)
+	// CosmoZadnik.children.map((i,j)=>
+	// 	i.rotation.y = Date.now() * 0.00015 * (j < 4 ? j + 1 : -(j + 1))
+	// )
 
 
 
-}
+	}
 
 
 
