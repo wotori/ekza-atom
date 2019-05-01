@@ -195,11 +195,6 @@ PLANE_GROUP.children.map((i,j) =>
 
 //ADD Rotation
 
-let controls = new THREE.ObjectControls ( camera, renderer.domElement, globus )
-controls.setDistance(8, 22200);
-controls.setZoomSpeed(0.001);
-controls.setRotationSpeed(1000000);
-
 
 
 //FIND INTERSECTION
@@ -214,8 +209,6 @@ pointsClouds.matrixAutoUpdate = true;
 
 animate = () => {
 
-	controls.update();
-
 	window.requestAnimationFrame(animate);
 	let time = clock.getElapsedTime();
 	render(time);
@@ -227,10 +220,76 @@ animate = () => {
 		// pointsClouds.rotation.x -= 0.0004;
 		// pointsClouds.rotation.y -= 0.0004;
 		// pointsClouds.rotation.y -= 0.001+Math.random() /1400;
-	}
+		}
 
 	}
 
+//rotation
+function groupRotation(){
+	var mouseDown = false,
+	mouseX = 0,
+	mouseY = 0;
+
+	function onMouseMove(evt) {
+		if (!mouseDown) {
+			return;
+		}
+
+		evt.preventDefault();
+
+		var deltaX = evt.clientX - mouseX,
+			deltaY = evt.clientY - mouseY;
+		mouseX = evt.clientX;
+		mouseY = evt.clientY;
+		rotateScene(deltaX, deltaY);
+	}
+
+	function onMouseDown(evt) {
+		evt.preventDefault();
+
+		mouseDown = true;
+		mouseX = evt.clientX;
+		mouseY = evt.clientY;
+	}
+
+	function onMouseUp(evt) {
+		evt.preventDefault();
+
+		mouseDown = false;
+	}
+	var ee = document.body.appendChild(renderer.domElement);
+	ee.addEventListener('mousemove', function (e) {
+		onMouseMove(e);
+	}, false);
+	ee.addEventListener('mousedown', function (e) {
+		onMouseDown(e);
+	}, false);
+	ee.addEventListener('mouseup', function (e) {
+		onMouseUp(e);
+	}, false);
+	var c=1;
+	var cc=3;
+	var ccc=3;
+	ee.addEventListener('wheel', function (e) {
+		console.log(e.deltaY);
+		if(e.deltaY>0){
+		c=c*0.95
+		cc=cc*0.95;
+		ccc=ccc*0.95
+		camera.position.set(c, cc, ccc);
+		}else{
+		c=c*1.05
+		cc=cc*1.05;
+		ccc=ccc*1.05
+		camera.position.set(c, cc, ccc);}
+	});
+
+	function rotateScene(deltaX, deltaY) {
+		globus.rotation.y += deltaX / 100;
+		globus.rotation.x += deltaY / 100;
+	} 
+}
+groupRotation()
 
 
 window.requestAnimationFrame(animate);
