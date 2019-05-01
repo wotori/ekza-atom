@@ -40,23 +40,22 @@ let flagToMove = true;
 onMouseClick = (event) => {
 	// log(objToTrackName);
 	const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
-	if (objToTrackName == -1 && intersects.length >0 ) { //click on avatar move In
+	if (objToTrackName == -1 && intersects[0] ) { //click on avatar move In
 		
 		Selected = intersects[0].object;
 
-		log('avatar')
+		log('move in')
 		
 		preSelected && (preSelected.dissolving = true);
-		preSelected = Selected;
+		preSelected = Selected;  // OSTAPs vision
 		Selected.dissolving = false;
-		camTweenOut && camTweenOut.end();
 		objToTrackName  = Selected.name;
+
 		flagToMove = false;
-		// objToTrackName = -1;
-
 		
+		//Tweens activate
+		camTweenOut && camTweenOut.end();
 		Global.map((i,j)=>{i.to1.end(),i.to0.start()});
-
 		CosmoDust.to1();
 
 	} else {  // Move out
@@ -65,17 +64,13 @@ onMouseClick = (event) => {
 
 		flagToMove = true;
 		Selected && (Selected.dissolving = true);
-		// objToTrackName = -1;
 
 
+
+		//Tweens activate
 		camTweenOut.start();
-
 		Global.map((i,j)=>{i.to0.end(),i.to1.start()});
-
 		CosmoDust.to0();
-
-
-		// Globus.children[1].visible = true
 
 
 	}
@@ -316,34 +311,35 @@ Global.map((i,j)=>{
 
 render = (time) => {
 
-TWEEN.update();
+	TWEEN.update();
 
-if (objToTrackName == -1){ //FIND intersection with pC
+	if (objToTrackName == -1){ //FIND intersection with pC
 
-	let intersects = raycaster.intersectObjects( [pointsClouds] );
+		let intersects = raycaster.intersectObjects( [pointsClouds] );
 
-	intersects.length > 0
-	?
-		RUNNING_INDEXES.indexOf(intersects[0].index) == -1
-				? (		
-						picindex < 61 ? picindex++ : picindex = 0, 
-						RUNNING_INDEXES.push(intersects[0].index),
-						PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex))
-					)
-				: void null 
-	: void null; 
-}
+		intersects.length > 0
+		?
+			RUNNING_INDEXES.indexOf(intersects[0].index) == -1
+					? (		
+							picindex < 61 ? picindex++ : picindex = 0, 
+							RUNNING_INDEXES.push(intersects[0].index),
+							PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex))
+						)
+					: void null 
+		: void null; 
+	};
 
-PLANE_GROUP.children.map((i,j) =>
-		i.scale.z <= 0.1 ? i.removeFromGroup(i.parent) : (i.run(ConvertToWorld(i.name)),
-														  objToTrackName == i.name ? (i.camFocusMe(2000).start(),objToTrackName=-1):void null,
-														  i.dissolve())
-)
+	PLANE_GROUP.children.map((i,j) =>
+			i.scale.z <= 0.01 ? i.removeFromGroup(i.parent) 
+											: (i.run(ConvertToWorld(i.name)),
+													objToTrackName == i.name ? (i.camFocusMe(2000).start(),objToTrackName=-1):void null,
+													i.dissolve())
+	)
 
-//FIND INTERSECTION
+	//FIND INTERSECTION
 
-camera.updateMatrixWorld();
-renderer.render( scene, camera );
+	camera.updateMatrixWorld();
+	renderer.render( scene, camera );
 
 };
 
