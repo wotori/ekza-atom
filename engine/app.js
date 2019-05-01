@@ -2,7 +2,7 @@ let RUNNING_INDEXES = [-1];
 
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.01, 1000 );
-// let controls = new THREE.OrbitControls ( camera );
+
 let raycaster = new THREE.Raycaster(), intersected =null;
 raycaster.params.Points.threshold = 0.07;
 let MOUSE = new THREE.Vector2();
@@ -42,7 +42,7 @@ onMouseClick = (event) => {
 	const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
 	if (objToTrackName == -1 && intersects.length >0 ) { //click on avatar
 		Selected = intersects[0].object;
-		Globus.visible = false;
+		globus.visible = false;
 		pointsClouds.visible =false;
 		preSelected && (preSelected.dissolving = true);
 		preSelected = Selected;
@@ -51,25 +51,21 @@ onMouseClick = (event) => {
 		objToTrackName  = Selected.name;
 		flagToMove = false;
 
-		CosmoZadnik.visible = true;
-
 	} else {  // Move out
 		flagToMove = true;
 		Selected && (Selected.dissolving = true);
 		camTweenOut = new TWEEN.Tween(camera.position) 
 						.to({ x:0, y:0, z:9 }, 1000) 
 						.easing(TWEEN.Easing.Quadratic.InOut);
-		log(Globus)
-		opacityTween = new TWEEN.Tween(Globus.opacity) 
+		log(globus)
+		opacityTween = new TWEEN.Tween(globus.opacity) 
 						.to(0, 1000) 
 						.easing(TWEEN.Easing.Quadratic.InOut);
 		objToTrackName = -1;
-		Globus.visible = true;
+		globus.visible = true;
 		pointsClouds.visible =true;
 		camTweenOut.start();
 		// opacityTween.start();
-
-		CosmoZadnik.visible = false
 	}
 }
 
@@ -114,27 +110,6 @@ renderer.setClearColor (0x13131B, 1)
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
-//Zadnik
-
-parameters = [
-	[
-		[1, 1, 0.5], 1.3
-	],
-	[
-		[0.95, 1, 0.5], 1.1
-	],
-	[
-		[0.90, 1, 0.5], 1.7
-	],
-	[
-		[0.85, 1, 0.5], 1.2
-	],
-	[
-		[0.80, 1, 0.5], 0.8
-	]
-];
-parameterCount = parameters.length;
-
 //light
 let lights = [];
 lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
@@ -147,7 +122,7 @@ scene.add( lights[ 0 ] );
 
 // scene.fog = new THREE.FogExp2(fogHex, fogDensity);
 
-//Globus
+//globus
 let SphereGeometry = new THREE.IcosahedronGeometry( 1.97, 3 );
 let SphereMaterial = new THREE.MeshBasicMaterial( { color: 0x13131B } );
 let SphereMesh = new THREE.Mesh( SphereGeometry, SphereMaterial );
@@ -179,10 +154,10 @@ pointGeo.vertices.forEach(function(vertex) {
 })
 
 let pointsClouds = new THREE.Points( pointGeo, pointMat );
-let Globus = new THREE.Group()
-Globus.add (line,SphereMesh)
-scene.add(Globus);
-scene.add(pointsClouds);
+let globus = new THREE.Group()
+globus.add (line,SphereMesh, pointsClouds)
+scene.add(globus);
+// scene.add(pointsClouds);
 
 document.addEventListener('mousemove', onMouseMove, false );
 document.addEventListener('mousedown', onMouseClick, false);
@@ -217,6 +192,16 @@ PLANE_GROUP.children.map((i,j) =>
 														  i.dissolve())
 )
 
+
+//ADD Rotation
+
+let controls = new THREE.ObjectControls ( camera, renderer.domElement, globus )
+controls.setDistance(8, 22200);
+controls.setZoomSpeed(0.001);
+controls.setRotationSpeed(1000000);
+
+
+
 //FIND INTERSECTION
 
 camera.updateMatrixWorld();
@@ -229,16 +214,18 @@ pointsClouds.matrixAutoUpdate = true;
 
 animate = () => {
 
+	controls.update();
+
 	window.requestAnimationFrame(animate);
 	let time = clock.getElapsedTime();
 	render(time);
 
 	if (!Selected || flagToMove) {
-		Globus.rotation.x -= 0.001;
-		Globus.rotation.y -= 0.001;
+		globus.rotation.x -= 0.001;
+		globus.rotation.y -= 0.001;
 		// pointsClouds.rotation.x -= 0.001+Math.random() /1400;
-		pointsClouds.rotation.x -= 0.0004;
-		pointsClouds.rotation.y -= 0.0004;
+		// pointsClouds.rotation.x -= 0.0004;
+		// pointsClouds.rotation.y -= 0.0004;
 		// pointsClouds.rotation.y -= 0.001+Math.random() /1400;
 	}
 
