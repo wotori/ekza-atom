@@ -3,6 +3,7 @@ let RUNNING_INDEXES = [-1];
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.01, 1000 );
 // let controls = new THREE.OrbitControls ( camera );
+// controls.autoRotate = true;
 let raycaster = new THREE.Raycaster(), intersected =null;
 raycaster.params.Points.threshold = 0.075;
 let MOUSE = new THREE.Vector2();
@@ -32,44 +33,51 @@ let Selected,preSelected;
 let objToTrackName = -1;
 let flagToMove = true;
 
+
+// Global = [Globus.children[0].material,Globus.children[1].material,pointsClouds.material];
+
+
 onMouseClick = (event) => {
+	// log(objToTrackName);
 	const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
-	if (objToTrackName == -1 && intersects.length >0 ) { //click on avatar
-		Selected = intersects[0].object;
-		// Globus.visible = false;
-		// pointsClouds.visible =false;
-
-		opacityTweenTo1.stop();
-
+	if (objToTrackName == -1 && intersects.length >0 ) { //click on avatar move In
 		
+		Selected = intersects[0].object;
 
-		opacityTweenTo0.start();
-
+		log('avatar')
+		
 		preSelected && (preSelected.dissolving = true);
 		preSelected = Selected;
 		Selected.dissolving = false;
-		camTweenOut && camTweenOut.stop();
+		camTweenOut && camTweenOut.end();
 		objToTrackName  = Selected.name;
 		flagToMove = false;
+		// objToTrackName = -1;
 
-		CosmoZadnik.visible = true;
+		
+		Global.map((i,j)=>{i.to1.end(),i.to0.start()});
+
+		CosmoDust.to1();
 
 	} else {  // Move out
+
+		log('move out'); 
+
 		flagToMove = true;
 		Selected && (Selected.dissolving = true);
-		camTweenOut = new TWEEN.Tween(camera.position) 
-						.to({ x:0, y:0, z:9 }, 1000) 
-						.easing(TWEEN.Easing.Quadratic.InOut);
-		// log(Globus)
-		opacityTweenTo0.stop();
+		// objToTrackName = -1;
 
-		objToTrackName = -1;
-		// Globus.visible = true;
-		// pointsClouds.visible =true;
+
 		camTweenOut.start();
-		opacityTweenTo1.start();
 
-		CosmoZadnik.visible = false
+		Global.map((i,j)=>{i.to0.end(),i.to1.start()});
+
+		CosmoDust.to0();
+
+
+		// Globus.children[1].visible = true
+
+
 	}
 }
 
@@ -96,12 +104,13 @@ createCanvasMaterial = (color, size) => {
 	texture.needsUpdate = true;
 	// return a texture made from the canvas
 	return texture;
-  }
+}
 
 
 
-let camTweenOut;
-
+let camTweenOut = new TWEEN.Tween(camera.position) 
+						.to({ x:0, y:0, z:9 }, 1000) 
+						.easing(TWEEN.Easing.Quadratic.InOut);
 
 let camTweenFocusMe;
 	
@@ -113,7 +122,7 @@ renderer.setClearColor (0x13131B, 1)
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
-//Zadnik
+//Dust
 
 parameters = [
 	[
@@ -134,9 +143,9 @@ parameters = [
 ];
 parameterCount = parameters.length;
 
-zadnikGeometry = new THREE.Geometry(); /*	NO ONE SAID ANYTHING ABOUT MATH! UGH!	*/
+DustGeometry = new THREE.Geometry(); /*	NO ONE SAID ANYTHING ABOUT MATH! UGH!	*/
 
-zadnokParticleCount = 100000; /* Leagues under the sea */
+zadnokParticleCount = 10000; /* Leagues under the sea */
 
 /*	Hope you took your motion sickness pills;
 We're about to get loopy.	*/
@@ -148,15 +157,14 @@ for (i = 0; i < zadnokParticleCount; i++) {
 	vertex.y = Math.random() * 2000 - 1000;
 	vertex.z = Math.random() * 2000 - 1000;
 
-	zadnikGeometry.vertices.push(vertex);
+	DustGeometry.vertices.push(vertex);
 }
 
 
 
-let CosmoZadnik = new THREE.Group()
+let CosmoDust = new THREE.Group()
 
-CosmoZadnik.visible = false;
-let zadnikMaterials = []
+let DustMaterials = []
 
 
 // for (i = 0; i < 10; i++) {
@@ -170,23 +178,24 @@ for (i = 0; i < parameterCount; i++) {
 	color = parameters[i][0];
 	size = parameters[i][1];
 
-	zadnikMaterials[i] = new THREE.PointsMaterial({
+	DustMaterials[i] = new THREE.PointsMaterial({
 		size: size,
-		map: createCanvasMaterial('red', 256),
+		map: createCanvasMaterial('white', 256),
 		transparent: true,
-		depthWrite: false
+		depthWrite: true,
+		opacity:0
 	});
 
-	particles = new THREE.Points(zadnikGeometry, zadnikMaterials[i]);
+	particles = new THREE.Points(DustGeometry, DustMaterials[i]);
 
 	particles.rotation.x = Math.random() * 6;
 	particles.rotation.y = Math.random() * 6;
 	particles.rotation.z = Math.random() * 6;
 
-	CosmoZadnik.add(particles);
+	CosmoDust.add(particles);
 }
 
-scene.add(CosmoZadnik);
+scene.add(CosmoDust);
 
 
 //light
@@ -233,28 +242,74 @@ pointGeo.vertices.forEach(function(vertex) {
 })
 
 let pointsClouds = new THREE.Points( pointGeo, pointMat );
+
+
 let Globus = new THREE.Group()
 Globus.add (line,SphereMesh)
-scene.add(Globus);
-scene.add(pointsClouds);
+
+let GlobusAndPoints = new THREE.Group();
+GlobusAndPoints.add(Globus,pointsClouds)
+
+// scene.add(Globus);
+scene.add(GlobusAndPoints);
 
 document.addEventListener('mousemove', onMouseMove, false );
 document.addEventListener('mousedown', onMouseClick, false);
 // Globus.children[1].material.opacity =0;
 
 
-let GlobusAndPoinOpacity=0;
-
-let opacityTweenTo0 = new TWEEN.Tween(GlobusAndPoinOpacity) 
-							.to(10000, 10000) 
-							.easing(TWEEN.Easing.Quadratic.Out)
-							.onUpdate(()=>log(GlobusAndPoinOpacity))
 
 
-let opacityTweenTo1 = new TWEEN.Tween(Globus.children[0].material.opacity) 
-							.to(10000, 10000) 
-							.easing(TWEEN.Easing.Quadratic.InOut)
-							// .onUpdate(()=>log(Globus.children[0].material.opacity))
+//OPACITY TWEENS
+
+CosmoDust.opacity1 = [];
+CosmoDust.opacity0 = [];
+
+CosmoDust.children.map((i)=>{
+
+	CosmoDust.opacity0.push(new TWEEN.Tween(i.material) 
+														.to({opacity:0}, 2000) 
+														.easing(TWEEN.Easing.Exponential.Out))
+														// .onUpdate(()=>i.material.opacity))
+
+	CosmoDust.opacity1.push(new TWEEN.Tween(i.material) 
+														.to({opacity:1}, 2000) 
+														.easing(TWEEN.Easing.Exponential.Out))
+														// .onUpdate(()=>log(i.material.opacity)))
+});
+
+
+CosmoDust.to0 = () => {
+	CosmoDust.opacity1.map((i)=>i.end())
+	CosmoDust.opacity0.map((i)=>i.start())
+}
+
+CosmoDust.to1 = () => {
+	CosmoDust.opacity0.map((i)=>i.end())
+	CosmoDust.opacity1.map((i)=>i.start())
+}
+
+
+
+
+let Global = [Globus.children[0].material,SphereMesh.material,pointsClouds.material];
+
+Global.map((i,j)=>{
+  
+  i.to0 =  new TWEEN.Tween(i) 
+				.to({opacity:0}, 1500) 
+				.easing(TWEEN.Easing.Exponential.Out)
+				.onComplete(()=>i.visible=false)
+							
+  i.to1 =  new TWEEN.Tween(i) 
+				.to({opacity:1}, 1500) 
+				.easing(TWEEN.Easing.Exponential.Out)
+				.onStart(()=>i.visible=true)									
+})
+
+
+
+
 
 
 //RENDER
@@ -297,6 +352,7 @@ pointsClouds.matrixAutoUpdate = true;
 
 animate = () => {
 
+
 window.requestAnimationFrame(animate);
 let time = clock.getElapsedTime();
 render(time);
@@ -310,9 +366,11 @@ pointsClouds.rotation.y -= 0.0004;
 // pointsClouds.rotation.y -= 0.001+Math.random() /1400;
 }
 
-CosmoZadnik.children.map((i,j)=>
+CosmoDust.children.map((i,j)=>
 	i.rotation.y = Date.now() * 0.00015 * (j < 4 ? j + 1 : -(j + 1))
 )
+
+
 
 
 
