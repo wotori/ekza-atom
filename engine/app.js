@@ -82,7 +82,6 @@ onMouseClick = (event) => {
 }
 
 //GLOBAL FUNCTIONS
-
 log = (s) => console.log(s);  
 
 ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld);
@@ -106,16 +105,11 @@ createCanvasMaterial = (color, size) => {
 	return texture;
 }
 
-
-
 let camTweenOut = new TWEEN.Tween(camera.position) 
 						.to({ x:0, y:0, z:9 }, 1600) 
 						.easing(TWEEN.Easing.Quadratic.InOut);
 
 let camTweenFocusMe;
-	
-
-//
 
 let renderer = new THREE.WebGLRenderer({ antialias : true });
 renderer.setClearColor (0x13131B, 1)
@@ -125,21 +119,11 @@ document.body.appendChild( renderer.domElement );
 //Dust
 
 parameters = [
-	[
-		[1, 1, 0.5], 0.3
-	],
-	[
-		[0.95, 1, 0.5], 1.1
-	],
-	[
-		[0.90, 1, 0.5], 0.7
-	],
-	[
-		[0.85, 1, 0.5], 1.2
-	],
-	[
-		[0.80, 1, 0.5], 0.8
-	]
+	[ [1, 1, 1], 1],
+	[ [0.95, 1, 0.5], 0],
+	[ [0.90, 1, 0.5], 0],
+	[ [0.85, 1, 0.5], 1],
+	[ [1, 1, 1], 0]
 ];
 parameterCount = parameters.length;
 
@@ -147,9 +131,7 @@ DustGeometry = new THREE.Geometry(); /*	NO ONE SAID ANYTHING ABOUT MATH! UGH!	*/
 
 zadnokParticleCount = 10000; /* Leagues under the sea */
 
-/*	Hope you took your motion sickness pills;
-We're about to get loopy.	*/
-
+//Particles
 for (i = 0; i < zadnokParticleCount; i++) {
 
 	var vertex = new THREE.Vector3();
@@ -160,18 +142,8 @@ for (i = 0; i < zadnokParticleCount; i++) {
 	DustGeometry.vertices.push(vertex);
 }
 
-
-
 let CosmoDust = new THREE.Group()
-
 let DustMaterials = []
-
-
-// for (i = 0; i < 10; i++) {
-
-// 	log(parameters[i][1])
-// }
-
 
 for (i = 0; i < parameterCount; i++) {
 
@@ -199,16 +171,10 @@ scene.add(CosmoDust);
 
 
 //light
-let lights = [];
-lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
-lights[ 0 ].position.set( 0, 200, 0 );
-scene.add( lights[ 0 ] );
-
-// //fog
-// fogHex = 0x011010; /* As black as your heart.	*/
-// fogDensity = 0.07; /* So not terribly dense?	*/
-
-// scene.fog = new THREE.FogExp2(fogHex, fogDensity);
+// let lights = [];
+// lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+// lights[ 0 ].position.set( 0, 200, 0 );
+// scene.add( lights[ 0 ] );
 
 //Globus
 let SphereGeometry = new THREE.IcosahedronGeometry( 1.97, 3 );
@@ -222,7 +188,6 @@ let wireframe = new THREE.WireframeGeometry( geometryWire );
 let line = new THREE.LineSegments( wireframe, lineMat );
 line.material.opacity = 1;
 line.material.transparent = true;
-
 
 //pointClouds
 let pointGeo = new THREE.SphereGeometry( 3.5, 17, 17 )
@@ -243,7 +208,6 @@ pointGeo.vertices.forEach(function(vertex) {
 
 let pointsClouds = new THREE.Points( pointGeo, pointMat );
 
-
 let Globus = new THREE.Group()
 Globus.add (line,SphereMesh)
 
@@ -255,13 +219,8 @@ scene.add(GlobusAndPoints);
 
 document.addEventListener('mousemove', onMouseMove, false );
 document.addEventListener('mouseup', onMouseClick, false);
-// Globus.children[1].material.opacity =0;
-
-
-
 
 //OPACITY TWEENS
-
 CosmoDust.opacity1 = [];
 CosmoDust.opacity0 = [];
 
@@ -289,9 +248,6 @@ CosmoDust.to1 = () => {
 	CosmoDust.opacity1.map((i)=>i.start())
 }
 
-
-
-
 let Global = [Globus.children[0],Globus.children[1],SphereMesh,pointsClouds];
 
 Global.map((i,j)=>{
@@ -307,15 +263,9 @@ Global.map((i,j)=>{
 				.onStart(()=>i.visible=true)
 })
 
-
-
-
-
-
 window.addEventListener ( 'resize', onWindowResize, false )
 
 //RENDER
-
 render = (time) => {
 
 	TWEEN.update();
@@ -358,26 +308,34 @@ render = (time) => {
 pointsClouds.geometry.verticesNeedUpdate = true;
 pointsClouds.matrixAutoUpdate = true;
 
-animate = () => {
+class PlaneAvatar extends THREE.Mesh {
 
-	window.requestAnimationFrame(animate);
-	let time = clock.getElapsedTime();
-	render(time);
+	constructor(Group,AnchorPointIndex,picindex) {
 
-	if (!Selected || flagToMove) {
-	Globus.rotation.x -= 0.0001;
-	Globus.rotation.y -= 0.0001;
+		const texture = new THREE.TextureLoader().load( "userpics/Frame-"+picindex+".png" );
+		super(new THREE.CircleGeometry(0.35,64,64),new THREE.MeshBasicMaterial({ map: texture}));
+		
+		this.name = AnchorPointIndex; 
+		this.dissolving = true; //Dissolving by default
+		this.position.set(camera.position);
+		this.dissolveTween = new TWEEN.Tween(this.scale) 
+							.to({ x:0.0001, y:0.0001, z:0.0001 }, 7000) 
+							.easing(TWEEN.Easing.Quadratic.Out); 
+		this.enlargeTween = new TWEEN.Tween(this.scale) 
+							.to({ x:1.5, y:1.5, z:1.5 }, 650) 
+							.easing(TWEEN.Easing.Quadratic.Out); 
+		Group.add(this);
+};
 
-	line.rotation.y -= 0.0005;
-	line.rotation.y -= 0.0005;
+removeFromGroup = (Group) => Group.remove(this);
 
-	pointsClouds.rotation.x -= 0.0002;
-	pointsClouds.rotation.y -= 0.0002;
-	}
+run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
-	CosmoDust.children.map((i,j)=>
-		i.rotation.y = Date.now() * 0.00005
-	)
+camFocusMe = (t) => camTweenFocusMe = new TWEEN.Tween(camera.position) 
+									 .to({ x:this.position.x, y:this.position.y, z:8 }, 1000) 
+									 .easing(TWEEN.Easing.Quadratic.InOut)
+
+dissolve = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
 
 }
 
@@ -450,37 +408,28 @@ function groupRotation(){
 }
 groupRotation()
 
+animate = () => {
+
+	window.requestAnimationFrame(animate);
+	let time = clock.getElapsedTime();
+	render(time);
+
+	if (!Selected || flagToMove) {
+		Globus.rotation.x -= 0.0001;
+		Globus.rotation.y -= 0.0001;
+
+		line.rotation.y -= 0.0005;
+		line.rotation.y -= 0.0005;
+
+		pointsClouds.rotation.x -= 0.0002;
+		pointsClouds.rotation.y -= 0.0002;
+	}
+
+	CosmoDust.children.map((i,j)=>
+		i.rotation.y = Date.now() * 0.00003
+	)
+}
 
 window.requestAnimationFrame(animate);
 
-class PlaneAvatar extends THREE.Mesh {
 
-constructor(Group,AnchorPointIndex,picindex) {
-
-	const texture = new THREE.TextureLoader().load( "userpics/Frame-"+picindex+".png" );
-	super(new THREE.CircleGeometry(0.35,64,64),new THREE.MeshBasicMaterial({ map: texture}));
-	
-	this.name = AnchorPointIndex; 
-	this.dissolving = true; //Dissolving by default
-	this.position.set(camera.position);
-	this.dissolveTween = new TWEEN.Tween(this.scale) 
-					 	.to({ x:0.0001, y:0.0001, z:0.0001 }, 7000) 
-						.easing(TWEEN.Easing.Quadratic.Out); 
-	this.enlargeTween = new TWEEN.Tween(this.scale) 
-						.to({ x:1.5, y:1.5, z:1.5 }, 650) 
-						.easing(TWEEN.Easing.Quadratic.Out); 
-    Group.add(this);
-};
-
-removeFromGroup = (Group) => Group.remove(this);
-
-run = (vector) => this.position.set(vector.x,vector.y,vector.z);
-
-camFocusMe = (t) => camTweenFocusMe = new TWEEN.Tween(camera.position) 
-									 .to({ x:this.position.x, y:this.position.y, z:8 }, 1000) 
-									 .easing(TWEEN.Easing.Quadratic.InOut)
-									//  .onUpdate(()=>this.camFocusArrived=false)
-
-dissolve = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
-
-}
