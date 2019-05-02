@@ -376,7 +376,7 @@ animate = () => {
 	}
 
 	CosmoDust.children.map((i,j)=>
-		i.rotation.y = Date.now() * 0.00015 * (j < 4 ? j + 1 : -(j + 1))
+		i.rotation.y = Date.now() * 0.00005
 	)
 
 }
@@ -458,7 +458,7 @@ class PlaneAvatar extends THREE.Mesh {
 constructor(Group,AnchorPointIndex,picindex) {
 
 	const texture = new THREE.TextureLoader().load( "userpics/Frame-"+picindex+".png" );
-	super(new THREE.CircleGeometry(0.3,64,64),new THREE.MeshBasicMaterial({ map: texture}));
+	super(new THREE.CircleGeometry(0.25,64,64),new THREE.MeshBasicMaterial({ map: texture}));
 	
 	this.name = AnchorPointIndex; 
 	this.dissolving = true; //Dissolving by default
@@ -477,10 +477,12 @@ removeFromGroup = (Group) => Group.remove(this);
 run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
 camFocusMe = (t) => camTweenFocusMe = new TWEEN.Tween(camera.position) 
-									 .to({ x:this.position.x, y:this.position.y, z:7 }, 1000) 
+									 .to({ x:this.position.x, y:this.position.y, z:8 }, 1000) 
 									 .easing(TWEEN.Easing.Quadratic.InOut)
 									//  .onUpdate(()=>this.camFocusArrived=false)
 
 dissolve = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
 
 }
+
+// :D
