@@ -36,7 +36,7 @@ onMouseMove = (event) => {
 	MOUSE.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	MOUSE.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 	raycaster.setFromCamera( MOUSE, camera );
-
+	log(pointsClouds.visible)
 }
 
 let Selected,preSelected;
@@ -295,16 +295,16 @@ CosmoDust.to1 = () => {
 
 
 
-let Global = [Globus.children[0].material,Globus.children[1].material,SphereMesh.material,pointsClouds.material];
+let Global = [Globus.children[0],Globus.children[1],SphereMesh,pointsClouds];
 
 Global.map((i,j)=>{
   
-  i.to0 =  new TWEEN.Tween(i) 
+  i.to0 =  new TWEEN.Tween(i.material) 
 				.to({opacity:0}, 1500) 
 				.easing(TWEEN.Easing.Exponential.Out)
 				.onComplete(()=>i.visible=false)
 							
-  i.to1 =  new TWEEN.Tween(i) 
+  i.to1 =  new TWEEN.Tween(i.material) 
 				.to({opacity:1}, 1000) 
 				.easing(TWEEN.Easing.Exponential.Out)
 				.onStart(()=>j==1&&(i.visible=true))
