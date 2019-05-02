@@ -458,7 +458,7 @@ class PlaneAvatar extends THREE.Mesh {
 constructor(Group,AnchorPointIndex,picindex) {
 
 	const texture = new THREE.TextureLoader().load( "userpics/Frame-"+picindex+".png" );
-	super(new THREE.CircleGeometry(0.25,64,64),new THREE.MeshBasicMaterial({ map: texture}));
+	super(new THREE.CircleGeometry(0.35,64,64),new THREE.MeshBasicMaterial({ map: texture}));
 	
 	this.name = AnchorPointIndex; 
 	this.dissolving = true; //Dissolving by default
@@ -484,5 +484,3 @@ camFocusMe = (t) => camTweenFocusMe = new TWEEN.Tween(camera.position)
 dissolve = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
 
 }
-
-// :D
