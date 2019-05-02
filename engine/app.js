@@ -24,7 +24,6 @@ let windowY = window.innerHeight / 2;
 camera.position.set(0,0,9);
 
 //GLOBAL EVENTS
-
 function onWindowResize(){
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
@@ -42,7 +41,6 @@ onMouseMove = (event) => {
 let Selected,preSelected;
 let objToTrackName = -1;
 let flagToMove = true;
-
 
 onMouseClick = (event) => {
 	// log(objToTrackName);
@@ -92,6 +90,7 @@ createCanvasMaterial = (color, size) => {
 	var matContext = matCanvas.getContext('2d');
 	// create exture object from canvas.
 	var texture = new THREE.Texture(matCanvas);
+
 	// Draw a circle
 	var center = size / 2;
 	matContext.beginPath();
@@ -117,7 +116,6 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
 //Dust
-
 parameters = [
 	[ [1, 1, 1], 1],
 	[ [0.95, 1, 0.5], 0],
@@ -126,14 +124,11 @@ parameters = [
 	[ [1, 1, 1], 0]
 ];
 parameterCount = parameters.length;
-
 DustGeometry = new THREE.Geometry(); /*	NO ONE SAID ANYTHING ABOUT MATH! UGH!	*/
-
-zadnokParticleCount = 10000; /* Leagues under the sea */
+bg_particles_count = 10000; /* Leagues under the sea */
 
 //Particles
-for (i = 0; i < zadnokParticleCount; i++) {
-
+for (i = 0; i < bg_particles_count; i++) {
 	var vertex = new THREE.Vector3();
 	vertex.x = Math.random() * 2000 - 1000;
 	vertex.y = Math.random() * 2000 - 1000;
@@ -169,13 +164,6 @@ for (i = 0; i < parameterCount; i++) {
 
 scene.add(CosmoDust);
 
-
-//light
-// let lights = [];
-// lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
-// lights[ 0 ].position.set( 0, 200, 0 );
-// scene.add( lights[ 0 ] );
-
 //Globus
 let SphereGeometry = new THREE.IcosahedronGeometry( 1.97, 3 );
 let SphereMaterial = new THREE.MeshBasicMaterial( { color: 0x13131B } );
@@ -191,7 +179,6 @@ line.material.transparent = true;
 
 //pointClouds
 let pointGeo = new THREE.SphereGeometry( 3.5, 17, 17 )
-// let pointMat = new THREE.PointsMaterial({ color : 'white', size : 0.04 });
 let pointMat =  new THREE.PointsMaterial({
 	size: 0.04,
 	map: createCanvasMaterial('white', 256),
@@ -293,13 +280,7 @@ render = (time) => {
 													i.dissolve())
 	)
 
-
-//ADD Rotation
-
-
-
-//FIND INTERSECTION
-
+	//FIND INTERSECTION
 	camera.updateMatrixWorld();
 	renderer.render( scene, camera );
 
@@ -310,20 +291,23 @@ pointsClouds.matrixAutoUpdate = true;
 
 class PlaneAvatar extends THREE.Mesh {
 
-	constructor(Group,AnchorPointIndex,picindex) {
+	constructor( Group, AnchorPointIndex, picindex ) {
 
 		const texture = new THREE.TextureLoader().load( "userpics/Frame-"+picindex+".png" );
-		super(new THREE.CircleGeometry(0.35,64,64),new THREE.MeshBasicMaterial({ map: texture}));
+		super(new THREE.CircleGeometry( 0.35, 64 ,64 ), new THREE.MeshBasicMaterial({ map: texture }));
 		
 		this.name = AnchorPointIndex; 
 		this.dissolving = true; //Dissolving by default
-		this.position.set(camera.position);
-		this.dissolveTween = new TWEEN.Tween(this.scale) 
+		// this.position.set( camera.position ); // what for this line of code?
+
+		this.dissolveTween = new TWEEN.Tween( this.scale ) 
 							.to({ x:0.0001, y:0.0001, z:0.0001 }, 7000) 
-							.easing(TWEEN.Easing.Quadratic.Out); 
-		this.enlargeTween = new TWEEN.Tween(this.scale) 
+							.easing( TWEEN.Easing.Quadratic.Out ); 
+
+		this.enlargeTween = new TWEEN.Tween( this.scale ) 
 							.to({ x:1.5, y:1.5, z:1.5 }, 650) 
-							.easing(TWEEN.Easing.Quadratic.Out); 
+							.easing( TWEEN.Easing.Quadratic.Out ); 
+
 		Group.add(this);
 };
 
