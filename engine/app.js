@@ -9,6 +9,11 @@ raycaster.params.Points.threshold = 0.07;
 let raycasterClick = new THREE.Raycaster();
 raycasterClick.params.Points.threshold = 0.0001;
 
+Descript = document.getElementById('descripto');
+Descript.style.bottom = '165px';
+Descript.style.left = '170px';
+Descript.style.opacity = 1;
+
 let MOUSE = new THREE.Vector2();
 
 let clock = new THREE.Clock();
@@ -42,11 +47,19 @@ let objToTrackName = -1;
 let flagToMove = true;
 
 onMouseClick = (event) => {
+
+
+
+
+
 	raycasterClick.setFromCamera( MOUSE, camera );
 	let intersectsClick = raycasterClick.intersectObjects(PLANE_GROUP.children,true);
 	if (objToTrackName == -1 && intersectsClick[0] ) { //click on avatar move In
 		
 		Selected = intersectsClick[0].object;
+
+		Descript.innerHTML ='id'+Selected.name;
+
 		camTweenOut && camTweenOut.stop();
 		preSelected && (preSelected.dissolving = true);
 		preSelected = Selected;
@@ -71,6 +84,7 @@ onMouseClick = (event) => {
 		Global.map((i,j)=>{i.to0.stop(),i.to1.start()});
 		CosmoDust.to0();
 
+		Descript.style.opacity = 0;
 
 	}
 }
@@ -179,7 +193,7 @@ line.material.transparent = true;
 //pointClouds
 let pointGeo = new THREE.SphereGeometry( 3.5, 17, 17 )
 let pointMat =  new THREE.PointsMaterial({
-	size: 0.4,
+	size: 0.04,
 	map: createCanvasMaterial('white', 256),
 	transparent: true,
 	depthWrite: false
@@ -291,6 +305,21 @@ render = (time) => {
 
 pointsClouds.geometry.verticesNeedUpdate = true;
 pointsClouds.matrixAutoUpdate = true;
+
+
+// class Descripto{
+//    constructor(t,x,y){
+// 	   this.text = document.getElementById('descripto');
+// 	   this.text.style = {
+// 		   position:new THREE.Vector3(0,0,0),
+// 		   innerHTML: t
+// 		//    top: 10,
+// 		//    left: 10
+// 	   };
+//    }
+// }
+
+
 
 class PlaneAvatar extends THREE.Mesh {
 
