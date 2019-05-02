@@ -254,11 +254,8 @@ window.addEventListener ( 'resize', onWindowResize, false )
 
 //RENDER
 render = (time) => {
-
 	TWEEN.update();
-
 	if (objToTrackName == -1){ //FIND intersection with pC
-
 		let intersects = raycaster.intersectObjects( [pointsClouds] );
 
 		intersects.length > 0
