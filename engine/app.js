@@ -53,15 +53,13 @@ onMouseClick = (event) => {
 	if (objToTrackName == -1 && intersectsClick[0] ) { //click on avatar move In
 		
 		Selected = intersectsClick[0].object;
-		log('Selected:'+Selected.name)
 		camTweenOut && camTweenOut.stop();
-		preSelected && (preSelected.dissolving = true,log('Pre:'+preSelected.name));
+		preSelected && (preSelected.dissolving = true);
 		preSelected = Selected;
-		log('Pre:'+preSelected.name)
 		Selected.dissolving = false
 		objToTrackName  = Selected.name;
 
-		Global.map((i,j)=>{i.to1.end(),i.to0.start()});
+		Global.map((i,j)=>{i.to1.stop(),i.to0.start()});
 		CosmoDust.to1();
 		flagToMove = false;
 
@@ -76,7 +74,7 @@ onMouseClick = (event) => {
 	 
 		//Tweens activate
 		camTweenOut.start();
-		Global.map((i,j)=>{i.to0.end(),i.to1.start()});
+		Global.map((i,j)=>{i.to0.stop(),i.to1.start()});
 		CosmoDust.to0();
 
 
@@ -111,7 +109,7 @@ createCanvasMaterial = (color, size) => {
 
 
 let camTweenOut = new TWEEN.Tween(camera.position) 
-						.to({ x:0, y:0, z:9 }, 1000) 
+						.to({ x:0, y:0, z:9 }, 2000) 
 						.easing(TWEEN.Easing.Quadratic.InOut);
 
 let camTweenFocusMe;
@@ -256,7 +254,7 @@ GlobusAndPoints.add(Globus,pointsClouds)
 scene.add(GlobusAndPoints);
 
 document.addEventListener('mousemove', onMouseMove, false );
-document.addEventListener('mousedown', onMouseClick, false);
+document.addEventListener('mouseup', onMouseClick, false);
 // Globus.children[1].material.opacity =0;
 
 
@@ -294,7 +292,7 @@ CosmoDust.to1 = () => {
 
 
 
-let Global = [Globus.children[0].material,SphereMesh.material,pointsClouds.material];
+let Global = [Globus.children[0].material,Globus.children[1].material,SphereMesh.material,pointsClouds.material];
 
 Global.map((i,j)=>{
   
