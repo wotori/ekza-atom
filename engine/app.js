@@ -85,7 +85,10 @@ onMouseClick = (event) => {
 
 log = (s) => console.log(s);  
 
-ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld);
+ConvertToWorld = (index) => {
+	
+	return pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld)
+}
 
 createCanvasMaterial = (color, size) => {
 	var matCanvas = document.createElement('canvas');
@@ -228,7 +231,7 @@ line.material.transparent = true;
 let pointGeo = new THREE.SphereGeometry( 3.5, 17, 17 )
 // let pointMat = new THREE.PointsMaterial({ color : 'white', size : 0.04 });
 let pointMat =  new THREE.PointsMaterial({
-	size: 0.04,
+	size: 0.4,
 	map: createCanvasMaterial('white', 256),
 	transparent: true,
 	depthWrite: false
@@ -334,7 +337,8 @@ render = (time) => {
 							picindex < 61 ? picindex++ : picindex = 0, 
 							log(RUNNING_INDEXES),
 							RUNNING_INDEXES.push(intersects[0].index),
-							PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex))
+							PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex)
+							)
 						)
 					: void null )
 		: void null; 
@@ -452,6 +456,9 @@ function groupRotation(){
 	} 
 }
 groupRotation()
+
+
+
 
 
 window.requestAnimationFrame(animate);
