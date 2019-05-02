@@ -339,7 +339,7 @@ dissolve = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.
 
 }
 
-//rotation
+//rotation on mouse click and drag
 function groupRotation(){
 	var mouseDown = false,
 	mouseX = 0,
@@ -374,30 +374,11 @@ function groupRotation(){
 	}
 	var ee = document.body.appendChild(renderer.domElement);
 	ee.addEventListener('mousemove', function (e) {
-		onMouseMove(e);
-	}, false);
+		onMouseMove(e); }, false);
 	ee.addEventListener('mousedown', function (e) {
-		onMouseDown(e);
-	}, false);
+		onMouseDown(e); }, false);
 	ee.addEventListener('mouseup', function (e) {
-		onMouseUp(e);
-	}, false);
-	var c=1;
-	var cc=3;
-	var ccc=3;
-	ee.addEventListener('wheel', function (e) {
-		console.log(e.deltaY);
-		if(e.deltaY>0){
-		c=c*0.95
-		cc=cc*0.95;
-		ccc=ccc*0.95
-		camera.position.set(c, cc, ccc);
-		}else{
-		c=c*1.05
-		cc=cc*1.05;
-		ccc=ccc*1.05
-		camera.position.set(c, cc, ccc);}
-	});
+		onMouseUp(e); }, false);
 
 	function rotateScene(deltaX, deltaY) {
 		Globus.rotation.y += deltaX / 100;
@@ -431,5 +412,3 @@ animate = () => {
 }
 
 window.requestAnimationFrame(animate);
-
-
