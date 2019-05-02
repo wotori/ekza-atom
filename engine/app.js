@@ -2,10 +2,13 @@ let RUNNING_INDEXES = [-1];
 
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.01, 1000 );
-// let controls = new THREE.OrbitControls ( camera );
-// controls.autoRotate = true;
-let raycaster = new THREE.Raycaster(), intersected =null;
-raycaster.params.Points.threshold = 0.075;
+
+let raycaster = new THREE.Raycaster();
+raycaster.params.Points.threshold = 0.07;
+
+let raycasterClick = new THREE.Raycaster();
+raycasterClick.params.Points.threshold = 0.0001;
+
 let MOUSE = new THREE.Vector2();
 
 let clock = new THREE.Clock();
@@ -22,9 +25,16 @@ camera.position.set(0,0,9);
 
 //GLOBAL EVENTS
 
+function onWindowResize(){
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+	renderer.setSize( window.innerWidth, window.innerHeight );
+}
+
 onMouseMove = (event) => {
 	event.preventDefault();
 	raycaster.setFromCamera( MOUSE, camera );
+	raycasterClick.setFromCamera( MOUSE, camera );
 	MOUSE.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	MOUSE.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 }
@@ -39,24 +49,21 @@ let flagToMove = true;
 
 onMouseClick = (event) => {
 	// log(objToTrackName);
-	const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
-	if (objToTrackName == -1 && intersects[0] ) { //click on avatar move In
+	const intersectsClick = raycasterClick.intersectObjects(PLANE_GROUP.children,true);
+	if (objToTrackName == -1 && intersectsClick[0] ) { //click on avatar move In
 		
-		Selected = intersects[0].object;
-
-		log('move in')
-		
-		preSelected && (preSelected.dissolving = true);
-		preSelected = Selected;  // OSTAPs vision
-		Selected.dissolving = false;
+		Selected = intersectsClick[0].object;
+		log('Selected:'+Selected.name)
+		camTweenOut && camTweenOut.stop();
+		preSelected && (preSelected.dissolving = true,log('Pre:'+preSelected.name));
+		preSelected = Selected;
+		log('Pre:'+preSelected.name)
+		Selected.dissolving = false
 		objToTrackName  = Selected.name;
 
-		flagToMove = false;
-		
-		//Tweens activate
-		camTweenOut && camTweenOut.end();
 		Global.map((i,j)=>{i.to1.end(),i.to0.start()});
 		CosmoDust.to1();
+		flagToMove = false;
 
 	} else {  // Move out
 
@@ -64,9 +71,9 @@ onMouseClick = (event) => {
 
 		flagToMove = true;
 		Selected && (Selected.dissolving = true);
+		objToTrackName = -1;
 
-
-
+	 
 		//Tweens activate
 		camTweenOut.start();
 		Global.map((i,j)=>{i.to0.end(),i.to1.start()});
@@ -121,13 +128,13 @@ document.body.appendChild( renderer.domElement );
 
 parameters = [
 	[
-		[1, 1, 0.5], 1.3
+		[1, 1, 0.5], 0.3
 	],
 	[
 		[0.95, 1, 0.5], 1.1
 	],
 	[
-		[0.90, 1, 0.5], 1.7
+		[0.90, 1, 0.5], 0.7
 	],
 	[
 		[0.85, 1, 0.5], 1.2
@@ -220,7 +227,7 @@ line.material.transparent = true;
 
 
 //pointClouds
-let pointGeo = new THREE.SphereGeometry( 3.5, 27, 27 )
+let pointGeo = new THREE.SphereGeometry( 3.5, 17, 17 )
 // let pointMat = new THREE.PointsMaterial({ color : 'white', size : 0.04 });
 let pointMat =  new THREE.PointsMaterial({
 	size: 0.04,
@@ -299,13 +306,15 @@ Global.map((i,j)=>{
   i.to1 =  new TWEEN.Tween(i) 
 				.to({opacity:1}, 1500) 
 				.easing(TWEEN.Easing.Exponential.Out)
-				.onStart(()=>i.visible=true)									
+				.onComplete(()=>i.visible=true)									
 })
 
 
 
 
 
+
+window.addEventListener ( 'resize', onWindowResize, false )
 
 //RENDER
 
@@ -336,7 +345,12 @@ render = (time) => {
 													i.dissolve())
 	)
 
-	//FIND INTERSECTION
+
+//ADD Rotation
+
+
+
+//FIND INTERSECTION
 
 	camera.updateMatrixWorld();
 	renderer.render( scene, camera );
@@ -366,12 +380,76 @@ CosmoDust.children.map((i,j)=>
 	i.rotation.y = Date.now() * 0.00015 * (j < 4 ? j + 1 : -(j + 1))
 )
 
+	}
 
+//rotation
+function groupRotation(){
+	var mouseDown = false,
+	mouseX = 0,
+	mouseY = 0;
 
+	function onMouseMove(evt) {
+		if (!mouseDown) {
+			return;
+		}
 
+		evt.preventDefault();
 
+		var deltaX = evt.clientX - mouseX,
+			deltaY = evt.clientY - mouseY;
+		mouseX = evt.clientX;
+		mouseY = evt.clientY;
+		rotateScene(deltaX, deltaY);
+	}
+
+	function onMouseDown(evt) {
+		evt.preventDefault();
+
+		mouseDown = true;
+		mouseX = evt.clientX;
+		mouseY = evt.clientY;
+	}
+
+	function onMouseUp(evt) {
+		evt.preventDefault();
+
+		mouseDown = false;
+	}
+	var ee = document.body.appendChild(renderer.domElement);
+	ee.addEventListener('mousemove', function (e) {
+		onMouseMove(e);
+	}, false);
+	ee.addEventListener('mousedown', function (e) {
+		onMouseDown(e);
+	}, false);
+	ee.addEventListener('mouseup', function (e) {
+		onMouseUp(e);
+	}, false);
+	var c=1;
+	var cc=3;
+	var ccc=3;
+	ee.addEventListener('wheel', function (e) {
+		console.log(e.deltaY);
+		if(e.deltaY>0){
+		c=c*0.95
+		cc=cc*0.95;
+		ccc=ccc*0.95
+		camera.position.set(c, cc, ccc);
+		}else{
+		c=c*1.05
+		cc=cc*1.05;
+		ccc=ccc*1.05
+		camera.position.set(c, cc, ccc);}
+	});
+
+	function rotateScene(deltaX, deltaY) {
+		Globus.rotation.y += deltaX / 100;
+		Globus.rotation.x += deltaY / 100;
+		pointsClouds.rotation.y += deltaX / 100;
+		pointsClouds.rotation.x += deltaY / 100;
+	} 
 }
-
+groupRotation()
 
 
 window.requestAnimationFrame(animate);
