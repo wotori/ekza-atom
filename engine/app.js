@@ -398,7 +398,7 @@ function groupRotation(){
 			deltaY = evt.clientY - mouseY;
 		mouseX = evt.clientX;
 		mouseY = evt.clientY;
-		rotateScene(deltaX, deltaY);
+		rotateScene(deltaX/7, deltaY/7);
 	}
 
 	function onMouseDown(evt) {
