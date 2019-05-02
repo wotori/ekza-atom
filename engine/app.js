@@ -121,7 +121,7 @@ parameters = [
 ];
 parameterCount = parameters.length;
 DustGeometry = new THREE.Geometry(); /*	NO ONE SAID ANYTHING ABOUT MATH! UGH!	*/
-bg_particles_count = 2000; /* Leagues under the sea */
+bg_particles_count = 1000; /* Leagues under the sea */
 
 //Particles
 for (i = 0; i < bg_particles_count; i++) {
