@@ -307,8 +307,7 @@ Global.map((i,j)=>{
   i.to1 =  new TWEEN.Tween(i.material) 
 				.to({opacity:1}, 1000) 
 				.easing(TWEEN.Easing.Exponential.Out)
-				.onStart(()=>j==1&&(i.visible=true))
-				.onComplete(()=>i.visible=true)									
+				.onStart(()=>i.visible=true)
 })
 
 
