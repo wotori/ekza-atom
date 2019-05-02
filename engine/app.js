@@ -44,9 +44,6 @@ let objToTrackName = -1;
 let flagToMove = true;
 
 
-// Global = [Globus.children[0].material,Globus.children[1].material,pointsClouds.material];
-
-
 onMouseClick = (event) => {
 	// log(objToTrackName);
 	raycasterClick.setFromCamera( MOUSE, camera );
@@ -363,25 +360,26 @@ pointsClouds.matrixAutoUpdate = true;
 
 animate = () => {
 
+	window.requestAnimationFrame(animate);
+	let time = clock.getElapsedTime();
+	render(time);
 
-window.requestAnimationFrame(animate);
-let time = clock.getElapsedTime();
-render(time);
+	if (!Selected || flagToMove) {
+	Globus.rotation.x -= 0.0001;
+	Globus.rotation.y -= 0.0001;
 
-if (!Selected || flagToMove) {
-Globus.rotation.x -= 0.001;
-Globus.rotation.y -= 0.001;
-// pointsClouds.rotation.x -= 0.001+Math.random() /1400;
-pointsClouds.rotation.x -= 0.0004;
-pointsClouds.rotation.y -= 0.0004;
-// pointsClouds.rotation.y -= 0.001+Math.random() /1400;
-}
+	line.rotation.y -= 0.0005;
+	line.rotation.y -= 0.0005;
 
-CosmoDust.children.map((i,j)=>
-	i.rotation.y = Date.now() * 0.00015 * (j < 4 ? j + 1 : -(j + 1))
-)
-
+	pointsClouds.rotation.x -= 0.0002;
+	pointsClouds.rotation.y -= 0.0002;
 	}
+
+	CosmoDust.children.map((i,j)=>
+		i.rotation.y = Date.now() * 0.00015 * (j < 4 ? j + 1 : -(j + 1))
+	)
+
+}
 
 //rotation
 function groupRotation(){
