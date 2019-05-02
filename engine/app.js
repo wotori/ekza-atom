@@ -3,8 +3,12 @@ let RUNNING_INDEXES = [-1];
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.01, 1000 );
 
-let raycaster = new THREE.Raycaster(), intersected =null;
+let raycaster = new THREE.Raycaster();
 raycaster.params.Points.threshold = 0.07;
+
+let raycasterClick = new THREE.Raycaster();
+raycasterClick.params.Points.threshold = 0.0001;
+
 let MOUSE = new THREE.Vector2();
 
 let clock = new THREE.Clock();
@@ -29,43 +33,54 @@ function onWindowResize(){
 
 onMouseMove = (event) => {
 	event.preventDefault();
-	raycaster.setFromCamera( MOUSE, camera );
 	MOUSE.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	MOUSE.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+	raycaster.setFromCamera( MOUSE, camera );
+	log(pointsClouds.visible)
 }
 
 let Selected,preSelected;
 let objToTrackName = -1;
 let flagToMove = true;
 
+
+// Global = [Globus.children[0].material,Globus.children[1].material,pointsClouds.material];
+
+
 onMouseClick = (event) => {
-	const intersects = raycaster.intersectObjects(PLANE_GROUP.children,true);
-	if (objToTrackName == -1 && intersects.length >0 ) { //click on avatar
-		Selected = intersects[0].object;
-		globus.visible = false;
-		pointsClouds.visible =false;
+	// log(objToTrackName);
+	raycasterClick.setFromCamera( MOUSE, camera );
+	let intersectsClick = raycasterClick.intersectObjects(PLANE_GROUP.children,true);
+	if (objToTrackName == -1 && intersectsClick[0] ) { //click on avatar move In
+		
+		Selected = intersectsClick[0].object;
+		log(Selected.name)
+		camTweenOut && camTweenOut.stop();
 		preSelected && (preSelected.dissolving = true);
 		preSelected = Selected;
-		Selected.dissolving = false;
-		camTweenOut && camTweenOut.stop();
+		Selected.dissolving = false
 		objToTrackName  = Selected.name;
+
+		Global.map((i,j)=>{i.to1.stop(),i.to0.start()});
+		CosmoDust.to1();
 		flagToMove = false;
+		intersectsClick = null;
 
 	} else {  // Move out
+
+		log('move out'); 
+
 		flagToMove = true;
 		Selected && (Selected.dissolving = true);
-		camTweenOut = new TWEEN.Tween(camera.position) 
-						.to({ x:0, y:0, z:9 }, 1000) 
-						.easing(TWEEN.Easing.Quadratic.InOut);
-		log(globus)
-		opacityTween = new TWEEN.Tween(globus.opacity) 
-						.to(0, 1000) 
-						.easing(TWEEN.Easing.Quadratic.InOut);
 		objToTrackName = -1;
-		globus.visible = true;
-		pointsClouds.visible =true;
+
+	 
+		//Tweens activate
 		camTweenOut.start();
-		// opacityTween.start();
+		Global.map((i,j)=>{i.to0.stop(),i.to1.start()});
+		CosmoDust.to0();
+
+
 	}
 }
 
@@ -92,13 +107,13 @@ createCanvasMaterial = (color, size) => {
 	texture.needsUpdate = true;
 	// return a texture made from the canvas
 	return texture;
-  }
+}
 
 
 
-let camTweenOut;
-
-let opacityTween;
+let camTweenOut = new TWEEN.Tween(camera.position) 
+						.to({ x:0, y:0, z:9 }, 1600) 
+						.easing(TWEEN.Easing.Quadratic.InOut);
 
 let camTweenFocusMe;
 	
@@ -109,6 +124,82 @@ let renderer = new THREE.WebGLRenderer({ antialias : true });
 renderer.setClearColor (0x13131B, 1)
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
+
+//Dust
+
+parameters = [
+	[
+		[1, 1, 0.5], 0.3
+	],
+	[
+		[0.95, 1, 0.5], 1.1
+	],
+	[
+		[0.90, 1, 0.5], 0.7
+	],
+	[
+		[0.85, 1, 0.5], 1.2
+	],
+	[
+		[0.80, 1, 0.5], 0.8
+	]
+];
+parameterCount = parameters.length;
+
+DustGeometry = new THREE.Geometry(); /*	NO ONE SAID ANYTHING ABOUT MATH! UGH!	*/
+
+zadnokParticleCount = 10000; /* Leagues under the sea */
+
+/*	Hope you took your motion sickness pills;
+We're about to get loopy.	*/
+
+for (i = 0; i < zadnokParticleCount; i++) {
+
+	var vertex = new THREE.Vector3();
+	vertex.x = Math.random() * 2000 - 1000;
+	vertex.y = Math.random() * 2000 - 1000;
+	vertex.z = Math.random() * 2000 - 1000;
+
+	DustGeometry.vertices.push(vertex);
+}
+
+
+
+let CosmoDust = new THREE.Group()
+
+let DustMaterials = []
+
+
+// for (i = 0; i < 10; i++) {
+
+// 	log(parameters[i][1])
+// }
+
+
+for (i = 0; i < parameterCount; i++) {
+
+	color = parameters[i][0];
+	size = parameters[i][1];
+
+	DustMaterials[i] = new THREE.PointsMaterial({
+		size: size,
+		map: createCanvasMaterial('white', 256),
+		transparent: true,
+		depthWrite: true,
+		opacity:0
+	});
+
+	particles = new THREE.Points(DustGeometry, DustMaterials[i]);
+
+	particles.rotation.x = Math.random() * 6;
+	particles.rotation.y = Math.random() * 6;
+	particles.rotation.z = Math.random() * 6;
+
+	CosmoDust.add(particles);
+}
+
+scene.add(CosmoDust);
+
 
 //light
 let lights = [];
@@ -122,7 +213,7 @@ scene.add( lights[ 0 ] );
 
 // scene.fog = new THREE.FogExp2(fogHex, fogDensity);
 
-//globus
+//Globus
 let SphereGeometry = new THREE.IcosahedronGeometry( 1.97, 3 );
 let SphereMaterial = new THREE.MeshBasicMaterial( { color: 0x13131B } );
 let SphereMesh = new THREE.Mesh( SphereGeometry, SphereMaterial );
@@ -154,13 +245,75 @@ pointGeo.vertices.forEach(function(vertex) {
 })
 
 let pointsClouds = new THREE.Points( pointGeo, pointMat );
-let globus = new THREE.Group()
-globus.add (line,SphereMesh, pointsClouds)
-scene.add(globus);
-// scene.add(pointsClouds);
+
+
+let Globus = new THREE.Group()
+Globus.add (line,SphereMesh)
+
+let GlobusAndPoints = new THREE.Group();
+GlobusAndPoints.add(Globus,pointsClouds)
+
+// scene.add(Globus);
+scene.add(GlobusAndPoints);
 
 document.addEventListener('mousemove', onMouseMove, false );
-document.addEventListener('mousedown', onMouseClick, false);
+document.addEventListener('mouseup', onMouseClick, false);
+// Globus.children[1].material.opacity =0;
+
+
+
+
+//OPACITY TWEENS
+
+CosmoDust.opacity1 = [];
+CosmoDust.opacity0 = [];
+
+CosmoDust.children.map((i)=>{
+
+	CosmoDust.opacity0.push(new TWEEN.Tween(i.material) 
+														.to({opacity:0}, 2000) 
+														.easing(TWEEN.Easing.Exponential.Out))
+														// .onUpdate(()=>i.material.opacity))
+
+	CosmoDust.opacity1.push(new TWEEN.Tween(i.material) 
+														.to({opacity:1}, 2000) 
+														.easing(TWEEN.Easing.Exponential.Out))
+														// .onUpdate(()=>log(i.material.opacity)))
+});
+
+
+CosmoDust.to0 = () => {
+	CosmoDust.opacity1.map((i)=>i.end())
+	CosmoDust.opacity0.map((i)=>i.start())
+}
+
+CosmoDust.to1 = () => {
+	CosmoDust.opacity0.map((i)=>i.end())
+	CosmoDust.opacity1.map((i)=>i.start())
+}
+
+
+
+
+let Global = [Globus.children[0],Globus.children[1],SphereMesh,pointsClouds];
+
+Global.map((i,j)=>{
+  
+  i.to0 =  new TWEEN.Tween(i.material) 
+				.to({opacity:0}, 1500) 
+				.easing(TWEEN.Easing.Exponential.Out)
+				.onComplete(()=>i.visible=false)
+							
+  i.to1 =  new TWEEN.Tween(i.material) 
+				.to({opacity:1}, 1000) 
+				.easing(TWEEN.Easing.Exponential.Out)
+				.onStart(()=>i.visible=true)
+})
+
+
+
+
+
 
 window.addEventListener ( 'resize', onWindowResize, false )
 
@@ -168,29 +321,30 @@ window.addEventListener ( 'resize', onWindowResize, false )
 
 render = (time) => {
 
-TWEEN.update();
+	TWEEN.update();
 
-if (objToTrackName == -1){ //FIND intersection with pC
+	if (objToTrackName == -1){ //FIND intersection with pC
 
-	let intersects = raycaster.intersectObjects( [pointsClouds] );
+		let intersects = raycaster.intersectObjects( [pointsClouds] );
 
-	intersects.length > 0
-	?
-		RUNNING_INDEXES.indexOf(intersects[0].index) == -1
-				? (		
-						picindex < 61 ? picindex++ : picindex = 0, 
-						RUNNING_INDEXES.push(intersects[0].index),
-						PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex))
-					)
-				: void null 
-	: void null; 
-}
+		intersects.length > 0
+		?
+			RUNNING_INDEXES.indexOf(intersects[0].index) == -1
+					? (		
+							picindex < 61 ? picindex++ : picindex = 0, 
+							RUNNING_INDEXES.push(intersects[0].index),
+							PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex))
+						)
+					: void null 
+		: void null; 
+	};
 
-PLANE_GROUP.children.map((i,j) =>
-		i.scale.z <= 0.1 ? i.removeFromGroup(i.parent) : (i.run(ConvertToWorld(i.name)),
-														  objToTrackName == i.name ? (i.camFocusMe(2000).start(),objToTrackName=-1):void null,
-														  i.dissolve())
-)
+	PLANE_GROUP.children.map((i,j) =>
+			i.scale.z <= 0.01 ? i.removeFromGroup(i.parent) 
+											: (i.run(ConvertToWorld(i.name)),
+													objToTrackName == i.name ? (i.camFocusMe(2000).start(),objToTrackName=-1):void null,
+													i.dissolve())
+	)
 
 
 //ADD Rotation
@@ -199,8 +353,8 @@ PLANE_GROUP.children.map((i,j) =>
 
 //FIND INTERSECTION
 
-camera.updateMatrixWorld();
-renderer.render( scene, camera );
+	camera.updateMatrixWorld();
+	renderer.render( scene, camera );
 
 };
 
@@ -209,18 +363,23 @@ pointsClouds.matrixAutoUpdate = true;
 
 animate = () => {
 
-	window.requestAnimationFrame(animate);
-	let time = clock.getElapsedTime();
-	render(time);
 
-	if (!Selected || flagToMove) {
-		globus.rotation.x -= 0.001;
-		globus.rotation.y -= 0.001;
-		// pointsClouds.rotation.x -= 0.001+Math.random() /1400;
-		// pointsClouds.rotation.x -= 0.0004;
-		// pointsClouds.rotation.y -= 0.0004;
-		// pointsClouds.rotation.y -= 0.001+Math.random() /1400;
-		}
+window.requestAnimationFrame(animate);
+let time = clock.getElapsedTime();
+render(time);
+
+if (!Selected || flagToMove) {
+Globus.rotation.x -= 0.001;
+Globus.rotation.y -= 0.001;
+// pointsClouds.rotation.x -= 0.001+Math.random() /1400;
+pointsClouds.rotation.x -= 0.0004;
+pointsClouds.rotation.y -= 0.0004;
+// pointsClouds.rotation.y -= 0.001+Math.random() /1400;
+}
+
+CosmoDust.children.map((i,j)=>
+	i.rotation.y = Date.now() * 0.00015 * (j < 4 ? j + 1 : -(j + 1))
+)
 
 	}
 
@@ -285,8 +444,10 @@ function groupRotation(){
 	});
 
 	function rotateScene(deltaX, deltaY) {
-		globus.rotation.y += deltaX / 100;
-		globus.rotation.x += deltaY / 100;
+		Globus.rotation.y += deltaX / 100;
+		Globus.rotation.x += deltaY / 100;
+		pointsClouds.rotation.y += deltaX / 100;
+		pointsClouds.rotation.x += deltaY / 100;
 	} 
 }
 groupRotation()
@@ -299,7 +460,14 @@ class PlaneAvatar extends THREE.Mesh {
 constructor(Group,AnchorPointIndex,picindex) {
 
 	const texture = new THREE.TextureLoader().load( "userpics/Frame-"+picindex+".png" );
-	super(new THREE.CircleGeometry(0.3,32,32),new THREE.MeshBasicMaterial( { map: texture} ));
+
+	// super([new THREE.CircleGeometry(0.5,32,32),new THREE.CircleGeometry(0.9,32,32)],
+	// [new THREE.MeshBasicMaterial({ map: texture}),new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide})]);
+
+	super(new THREE.CircleGeometry(0.5,32,32),new THREE.MeshBasicMaterial({ map: texture}));
+	// this.picAvatar = new THREE.Mesh(new THREE.CircleGeometry(0.3,32,32),new THREE.MeshBasicMaterial({ map: texture})	);
+	// this.circleStatus = new THREE.Mesh(new THREE.CircleGeometry(0.5,32,32),new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} )); 
+	
 	this.name = AnchorPointIndex; 
 	this.dissolving = true; //Dissolving by default
 	this.position.set(camera.position);
@@ -309,9 +477,7 @@ constructor(Group,AnchorPointIndex,picindex) {
 	this.enlargeTween = new TWEEN.Tween(this.scale) 
 						.to({ x:1.5, y:1.5, z:1.5 }, 650) 
 						.easing(TWEEN.Easing.Quadratic.Out); 
-	// this.camFocusArrived = false;
-	Group.add(this);
-
+    Group.add(this);
 };
 
 removeFromGroup = (Group) => Group.remove(this);
