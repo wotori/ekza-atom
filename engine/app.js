@@ -1,4 +1,4 @@
-let RUNNING_INDEXES = [-1];
+let RUNNING_INDEXES = [];
 
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.01, 1000 );
@@ -36,7 +36,6 @@ onMouseMove = (event) => {
 	MOUSE.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	MOUSE.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 	raycaster.setFromCamera( MOUSE, camera );
-	log(pointsClouds.visible)
 }
 
 let Selected,preSelected;
@@ -54,7 +53,6 @@ onMouseClick = (event) => {
 	if (objToTrackName == -1 && intersectsClick[0] ) { //click on avatar move In
 		
 		Selected = intersectsClick[0].object;
-		log(Selected.name)
 		camTweenOut && camTweenOut.stop();
 		preSelected && (preSelected.dissolving = true);
 		preSelected = Selected;
@@ -68,7 +66,6 @@ onMouseClick = (event) => {
 
 	} else {  // Move out
 
-		log('move out'); 
 
 		flagToMove = true;
 		Selected && (Selected.dissolving = true);
@@ -213,9 +210,9 @@ scene.add( lights[ 0 ] );
 
 // scene.fog = new THREE.FogExp2(fogHex, fogDensity);
 
-//Globus
+//Globus 
 let SphereGeometry = new THREE.IcosahedronGeometry( 1.97, 3 );
-let SphereMaterial = new THREE.MeshBasicMaterial( { color: 0x13131B } );
+let SphereMaterial = new THREE.MeshBasicMaterial( { color: 0x13131B,transparent: true } );
 let SphereMesh = new THREE.Mesh( SphereGeometry, SphereMaterial );
 
 //wireFrame
@@ -258,7 +255,6 @@ scene.add(GlobusAndPoints);
 
 document.addEventListener('mousemove', onMouseMove, false );
 document.addEventListener('mouseup', onMouseClick, false);
-// Globus.children[1].material.opacity =0;
 
 
 
@@ -295,7 +291,10 @@ CosmoDust.to1 = () => {
 
 
 
-let Global = [Globus.children[0],Globus.children[1],SphereMesh,pointsClouds];
+let Global = [Globus.children[0],Globus.children[1],pointsClouds];
+
+
+
 
 Global.map((i,j)=>{
   
@@ -305,8 +304,8 @@ Global.map((i,j)=>{
 				.onComplete(()=>i.visible=false)
 							
   i.to1 =  new TWEEN.Tween(i.material) 
-				.to({opacity:1}, 1000) 
-				.easing(TWEEN.Easing.Exponential.Out)
+				.to({opacity:1}, 2000) 
+				.easing(TWEEN.Easing.Quadratic.InOut)
 				.onStart(()=>i.visible=true)
 })
 
@@ -329,21 +328,23 @@ render = (time) => {
 
 		intersects.length > 0
 		?
+			(log(intersects[0].index),
 			RUNNING_INDEXES.indexOf(intersects[0].index) == -1
 					? (		
 							picindex < 61 ? picindex++ : picindex = 0, 
+							log(RUNNING_INDEXES),
 							RUNNING_INDEXES.push(intersects[0].index),
 							PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex))
 						)
-					: void null 
+					: void null )
 		: void null; 
 	};
 
 	PLANE_GROUP.children.map((i,j) =>
-			i.scale.z <= 0.01 ? i.removeFromGroup(i.parent) 
-											: (i.run(ConvertToWorld(i.name)),
-													objToTrackName == i.name ? (i.camFocusMe(2000).start(),objToTrackName=-1):void null,
-													i.dissolve())
+		
+											{i.run(ConvertToWorld(i.name));
+													objToTrackName == i.name ? (i.camFocusMe(2000).start(),objToTrackName=-1):void null;
+													i.dissolve()}
 	)
 
 
@@ -430,7 +431,7 @@ function groupRotation(){
 	var cc=3;
 	var ccc=3;
 	ee.addEventListener('wheel', function (e) {
-		console.log(e.deltaY);
+		// console.log(e.deltaY);
 		if(e.deltaY>0){
 		c=c*0.95
 		cc=cc*0.95;
@@ -461,9 +462,6 @@ constructor(Group,AnchorPointIndex,picindex) {
 
 	const texture = new THREE.TextureLoader().load( "userpics/Frame-"+picindex+".png" );
 
-	// super([new THREE.CircleGeometry(0.5,32,32),new THREE.CircleGeometry(0.9,32,32)],
-	// [new THREE.MeshBasicMaterial({ map: texture}),new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide})]);
-
 	super(new THREE.CircleGeometry(0.5,32,32),new THREE.MeshBasicMaterial({ map: texture}));
 	// this.picAvatar = new THREE.Mesh(new THREE.CircleGeometry(0.3,32,32),new THREE.MeshBasicMaterial({ map: texture})	);
 	// this.circleStatus = new THREE.Mesh(new THREE.CircleGeometry(0.5,32,32),new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} )); 
@@ -472,15 +470,24 @@ constructor(Group,AnchorPointIndex,picindex) {
 	this.dissolving = true; //Dissolving by default
 	this.position.set(camera.position);
 	this.dissolveTween = new TWEEN.Tween(this.scale) 
-					 	.to({ x:0.0001, y:0.0001, z:0.0001 }, 7000) 
-						.easing(TWEEN.Easing.Quadratic.Out); 
+					 	.to({ x:0.0001, y:0.0001, z:0.0001 }, 2000) 
+						.easing(TWEEN.Easing.Quadratic.Out)
+						.onComplete(()=>this.removeFromGroup(PLANE_GROUP))
 	this.enlargeTween = new TWEEN.Tween(this.scale) 
 						.to({ x:1.5, y:1.5, z:1.5 }, 650) 
 						.easing(TWEEN.Easing.Quadratic.Out); 
     Group.add(this);
 };
 
-removeFromGroup = (Group) => Group.remove(this);
+removeFromGroup = (Group) => {
+	// log('DELETE:'+this.name)
+	const index = RUNNING_INDEXES.indexOf(this.name)
+	// log('DELETE POS:'+index)
+	RUNNING_INDEXES.splice(index);
+	// log('DELETED:'+RUNNING_INDEXES);
+
+	Group.remove(this);
+} 
 
 run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
