@@ -33,10 +33,10 @@ function onWindowResize(){
 
 onMouseMove = (event) => {
 	event.preventDefault();
-	raycaster.setFromCamera( MOUSE, camera );
-	raycasterClick.setFromCamera( MOUSE, camera );
 	MOUSE.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	MOUSE.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+	raycaster.setFromCamera( MOUSE, camera );
+
 }
 
 let Selected,preSelected;
@@ -49,10 +49,12 @@ let flagToMove = true;
 
 onMouseClick = (event) => {
 	// log(objToTrackName);
-	const intersectsClick = raycasterClick.intersectObjects(PLANE_GROUP.children,true);
+	raycasterClick.setFromCamera( MOUSE, camera );
+	let intersectsClick = raycasterClick.intersectObjects(PLANE_GROUP.children,true);
 	if (objToTrackName == -1 && intersectsClick[0] ) { //click on avatar move In
 		
 		Selected = intersectsClick[0].object;
+		log(Selected.name)
 		camTweenOut && camTweenOut.stop();
 		preSelected && (preSelected.dissolving = true);
 		preSelected = Selected;
@@ -62,6 +64,7 @@ onMouseClick = (event) => {
 		Global.map((i,j)=>{i.to1.stop(),i.to0.start()});
 		CosmoDust.to1();
 		flagToMove = false;
+		intersectsClick = null;
 
 	} else {  // Move out
 
@@ -109,7 +112,7 @@ createCanvasMaterial = (color, size) => {
 
 
 let camTweenOut = new TWEEN.Tween(camera.position) 
-						.to({ x:0, y:0, z:9 }, 2000) 
+						.to({ x:0, y:0, z:9 }, 1600) 
 						.easing(TWEEN.Easing.Quadratic.InOut);
 
 let camTweenFocusMe;
@@ -302,8 +305,9 @@ Global.map((i,j)=>{
 				.onComplete(()=>i.visible=false)
 							
   i.to1 =  new TWEEN.Tween(i) 
-				.to({opacity:1}, 1500) 
+				.to({opacity:1}, 1000) 
 				.easing(TWEEN.Easing.Exponential.Out)
+				.onStart(()=>j==1&&(i.visible=true))
 				.onComplete(()=>i.visible=true)									
 })
 
