@@ -59,6 +59,8 @@ onMouseClick = (event) => {
 		Selected = intersectsClick[0].object;
 
 		Descript.innerHTML ='id'+Selected.name;
+		Descript.style.opacity = 1;
+
 
 		camTweenOut && camTweenOut.stop();
 		preSelected && (preSelected.dissolving = true);
