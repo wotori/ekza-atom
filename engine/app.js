@@ -24,7 +24,6 @@ let windowY = window.innerHeight / 2;
 camera.position.set(0,0,9);
 
 //GLOBAL EVENTS
-
 function onWindowResize(){
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
@@ -42,12 +41,7 @@ let Selected,preSelected;
 let objToTrackName = -1;
 let flagToMove = true;
 
-
-// Global = [Globus.children[0].material,Globus.children[1].material,pointsClouds.material];
-
-
 onMouseClick = (event) => {
-	// log(objToTrackName);
 	raycasterClick.setFromCamera( MOUSE, camera );
 	let intersectsClick = raycasterClick.intersectObjects(PLANE_GROUP.children,true);
 	if (objToTrackName == -1 && intersectsClick[0] ) { //click on avatar move In
@@ -82,7 +76,6 @@ onMouseClick = (event) => {
 }
 
 //GLOBAL FUNCTIONS
-
 log = (s) => console.log(s);  
 
 ConvertToWorld = (index) => {
@@ -96,6 +89,7 @@ createCanvasMaterial = (color, size) => {
 	var matContext = matCanvas.getContext('2d');
 	// create exture object from canvas.
 	var texture = new THREE.Texture(matCanvas);
+
 	// Draw a circle
 	var center = size / 2;
 	matContext.beginPath();
@@ -109,16 +103,11 @@ createCanvasMaterial = (color, size) => {
 	return texture;
 }
 
-
-
 let camTweenOut = new TWEEN.Tween(camera.position) 
 						.to({ x:0, y:0, z:9 }, 1600) 
 						.easing(TWEEN.Easing.Quadratic.InOut);
 
 let camTweenFocusMe;
-	
-
-//
 
 let renderer = new THREE.WebGLRenderer({ antialias : true });
 renderer.setClearColor (0x13131B, 1)
@@ -126,35 +115,19 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
 //Dust
-
 parameters = [
-	[
-		[1, 1, 0.5], 0.3
-	],
-	[
-		[0.95, 1, 0.5], 1.1
-	],
-	[
-		[0.90, 1, 0.5], 0.7
-	],
-	[
-		[0.85, 1, 0.5], 1.2
-	],
-	[
-		[0.80, 1, 0.5], 0.8
-	]
+	[ [1, 1, 1], 1],
+	[ [0.95, 1, 0.5], 0],
+	[ [0.90, 1, 0.5], 0],
+	[ [0.85, 1, 0.5], 1],
+	[ [1, 1, 1], 0]
 ];
 parameterCount = parameters.length;
-
 DustGeometry = new THREE.Geometry(); /*	NO ONE SAID ANYTHING ABOUT MATH! UGH!	*/
+bg_particles_count = 10000; /* Leagues under the sea */
 
-zadnokParticleCount = 10000; /* Leagues under the sea */
-
-/*	Hope you took your motion sickness pills;
-We're about to get loopy.	*/
-
-for (i = 0; i < zadnokParticleCount; i++) {
-
+//Particles
+for (i = 0; i < bg_particles_count; i++) {
 	var vertex = new THREE.Vector3();
 	vertex.x = Math.random() * 2000 - 1000;
 	vertex.y = Math.random() * 2000 - 1000;
@@ -163,18 +136,8 @@ for (i = 0; i < zadnokParticleCount; i++) {
 	DustGeometry.vertices.push(vertex);
 }
 
-
-
 let CosmoDust = new THREE.Group()
-
 let DustMaterials = []
-
-
-// for (i = 0; i < 10; i++) {
-
-// 	log(parameters[i][1])
-// }
-
 
 for (i = 0; i < parameterCount; i++) {
 
@@ -200,20 +163,7 @@ for (i = 0; i < parameterCount; i++) {
 
 scene.add(CosmoDust);
 
-
-//light
-let lights = [];
-lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
-lights[ 0 ].position.set( 0, 200, 0 );
-scene.add( lights[ 0 ] );
-
-// //fog
-// fogHex = 0x011010; /* As black as your heart.	*/
-// fogDensity = 0.07; /* So not terribly dense?	*/
-
-// scene.fog = new THREE.FogExp2(fogHex, fogDensity);
-
-//Globus 
+//Globus
 let SphereGeometry = new THREE.IcosahedronGeometry( 1.97, 3 );
 let SphereMaterial = new THREE.MeshBasicMaterial( { color: 0x13131B,transparent: true } );
 let SphereMesh = new THREE.Mesh( SphereGeometry, SphereMaterial );
@@ -226,10 +176,8 @@ let line = new THREE.LineSegments( wireframe, lineMat );
 line.material.opacity = 1;
 line.material.transparent = true;
 
-
 //pointClouds
 let pointGeo = new THREE.SphereGeometry( 3.5, 17, 17 )
-// let pointMat = new THREE.PointsMaterial({ color : 'white', size : 0.04 });
 let pointMat =  new THREE.PointsMaterial({
 	size: 0.4,
 	map: createCanvasMaterial('white', 256),
@@ -246,7 +194,6 @@ pointGeo.vertices.forEach(function(vertex) {
 
 let pointsClouds = new THREE.Points( pointGeo, pointMat );
 
-
 let Globus = new THREE.Group()
 Globus.add (line,SphereMesh)
 
@@ -259,11 +206,7 @@ scene.add(GlobusAndPoints);
 document.addEventListener('mousemove', onMouseMove, false );
 document.addEventListener('mouseup', onMouseClick, false);
 
-
-
-
 //OPACITY TWEENS
-
 CosmoDust.opacity1 = [];
 CosmoDust.opacity0 = [];
 
@@ -272,12 +215,10 @@ CosmoDust.children.map((i)=>{
 	CosmoDust.opacity0.push(new TWEEN.Tween(i.material) 
 														.to({opacity:0}, 2000) 
 														.easing(TWEEN.Easing.Exponential.Out))
-														// .onUpdate(()=>i.material.opacity))
 
 	CosmoDust.opacity1.push(new TWEEN.Tween(i.material) 
 														.to({opacity:1}, 2000) 
 														.easing(TWEEN.Easing.Exponential.Out))
-														// .onUpdate(()=>log(i.material.opacity)))
 });
 
 
@@ -312,21 +253,12 @@ Global.map((i,j)=>{
 				.onStart(()=>i.visible=true)
 })
 
-
-
-
-
-
 window.addEventListener ( 'resize', onWindowResize, false )
 
 //RENDER
-
 render = (time) => {
-
 	TWEEN.update();
-
 	if (objToTrackName == -1){ //FIND intersection with pC
-
 		let intersects = raycaster.intersectObjects( [pointsClouds] );
 
 		intersects.length > 0
@@ -351,13 +283,7 @@ render = (time) => {
 													i.dissolve()}
 	)
 
-
-//ADD Rotation
-
-
-
-//FIND INTERSECTION
-
+	//FIND INTERSECTION
 	camera.updateMatrixWorld();
 	renderer.render( scene, camera );
 
@@ -366,29 +292,47 @@ render = (time) => {
 pointsClouds.geometry.verticesNeedUpdate = true;
 pointsClouds.matrixAutoUpdate = true;
 
-animate = () => {
+class PlaneAvatar extends THREE.Mesh {
 
+	constructor( Group, AnchorPointIndex, picindex ) {
 
-window.requestAnimationFrame(animate);
-let time = clock.getElapsedTime();
-render(time);
+		const texture = new THREE.TextureLoader().load( "userpics/Frame-"+picindex+".png" );
+		super(new THREE.CircleGeometry( 0.35, 64 ,64 ), new THREE.MeshBasicMaterial({ map: texture }));
+		
+		this.name = AnchorPointIndex; 
+		this.dissolving = true; //Dissolving by default
+		// this.position.set( camera.position ); // set initial position
 
-if (!Selected || flagToMove) {
-Globus.rotation.x -= 0.001;
-Globus.rotation.y -= 0.001;
-// pointsClouds.rotation.x -= 0.001+Math.random() /1400;
-pointsClouds.rotation.x -= 0.0004;
-pointsClouds.rotation.y -= 0.0004;
-// pointsClouds.rotation.y -= 0.001+Math.random() /1400;
+		this.dissolveTween = new TWEEN.Tween( this.scale ) 
+							.to({ x:0.0001, y:0.0001, z:0.0001 }, 7000) 
+							.easing( TWEEN.Easing.Quadratic.Out )
+							.onComplete(()=>this.removeFromGroup(PLANE_GROUP))
+
+		this.enlargeTween = new TWEEN.Tween( this.scale ) 
+							.to({ x:1.5, y:1.5, z:1.5 }, 650) 
+							.easing( TWEEN.Easing.Quadratic.Out ); 
+
+		Group.add(this);
+};
+
+removeFromGroup = (Group) => {
+		const index = RUNNING_INDEXES.indexOf(this.name)
+		RUNNING_INDEXES.splice(index);
+		Group.remove(this);
 }
 
-CosmoDust.children.map((i,j)=>
-	i.rotation.y = Date.now() * 0.00015 * (j < 4 ? j + 1 : -(j + 1))
-)
 
-	}
+run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
-//rotation
+camFocusMe = (t) => camTweenFocusMe = new TWEEN.Tween(camera.position) 
+									 .to({ x:this.position.x, y:this.position.y, z:8 }, 1000) 
+									 .easing(TWEEN.Easing.Quadratic.InOut)
+
+dissolve = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
+
+}
+
+//rotation on mouse click and drag
 function groupRotation(){
 	var mouseDown = false,
 	mouseX = 0,
@@ -405,7 +349,7 @@ function groupRotation(){
 			deltaY = evt.clientY - mouseY;
 		mouseX = evt.clientX;
 		mouseY = evt.clientY;
-		rotateScene(deltaX, deltaY);
+		rotateScene(deltaX/7, deltaY/7);
 	}
 
 	function onMouseDown(evt) {
@@ -423,30 +367,11 @@ function groupRotation(){
 	}
 	var ee = document.body.appendChild(renderer.domElement);
 	ee.addEventListener('mousemove', function (e) {
-		onMouseMove(e);
-	}, false);
+		onMouseMove(e); }, false);
 	ee.addEventListener('mousedown', function (e) {
-		onMouseDown(e);
-	}, false);
+		onMouseDown(e); }, false);
 	ee.addEventListener('mouseup', function (e) {
-		onMouseUp(e);
-	}, false);
-	var c=1;
-	var cc=3;
-	var ccc=3;
-	ee.addEventListener('wheel', function (e) {
-		// console.log(e.deltaY);
-		if(e.deltaY>0){
-		c=c*0.95
-		cc=cc*0.95;
-		ccc=ccc*0.95
-		camera.position.set(c, cc, ccc);
-		}else{
-		c=c*1.05
-		cc=cc*1.05;
-		ccc=ccc*1.05
-		camera.position.set(c, cc, ccc);}
-	});
+		onMouseUp(e); }, false);
 
 	function rotateScene(deltaX, deltaY) {
 		Globus.rotation.y += deltaX / 100;
@@ -457,52 +382,23 @@ function groupRotation(){
 }
 groupRotation()
 
+animate = () => {
 
+	window.requestAnimationFrame(animate);
+	let time = clock.getElapsedTime();
+	render(time);
 
+	if (!Selected || flagToMove) {
+		Globus.rotation.x -= 0.0003;
+		Globus.rotation.y -= 0.0003;
 
+		pointsClouds.rotation.x -= 0.0002;
+		pointsClouds.rotation.y -= 0.0002;
+	}
+
+	CosmoDust.children.map((i,j)=>
+		i.rotation.y = Date.now() * 0.00003
+	)
+}
 
 window.requestAnimationFrame(animate);
-
-class PlaneAvatar extends THREE.Mesh {
-
-constructor(Group,AnchorPointIndex,picindex) {
-
-	const texture = new THREE.TextureLoader().load( "userpics/Frame-"+picindex+".png" );
-
-	super(new THREE.CircleGeometry(0.5,32,32),new THREE.MeshBasicMaterial({ map: texture}));
-	// this.picAvatar = new THREE.Mesh(new THREE.CircleGeometry(0.3,32,32),new THREE.MeshBasicMaterial({ map: texture})	);
-	// this.circleStatus = new THREE.Mesh(new THREE.CircleGeometry(0.5,32,32),new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} )); 
-	
-	this.name = AnchorPointIndex; 
-	this.dissolving = true; //Dissolving by default
-	this.position.set(camera.position);
-	this.dissolveTween = new TWEEN.Tween(this.scale) 
-					 	.to({ x:0.0001, y:0.0001, z:0.0001 }, 2000) 
-						.easing(TWEEN.Easing.Quadratic.Out)
-						.onComplete(()=>this.removeFromGroup(PLANE_GROUP))
-	this.enlargeTween = new TWEEN.Tween(this.scale) 
-						.to({ x:1.5, y:1.5, z:1.5 }, 650) 
-						.easing(TWEEN.Easing.Quadratic.Out); 
-    Group.add(this);
-};
-
-removeFromGroup = (Group) => {
-	// log('DELETE:'+this.name)
-	const index = RUNNING_INDEXES.indexOf(this.name)
-	// log('DELETE POS:'+index)
-	RUNNING_INDEXES.splice(index);
-	// log('DELETED:'+RUNNING_INDEXES);
-
-	Group.remove(this);
-} 
-
-run = (vector) => this.position.set(vector.x,vector.y,vector.z);
-
-camFocusMe = (t) => camTweenFocusMe = new TWEEN.Tween(camera.position) 
-									 .to({ x:this.position.x, y:this.position.y, z:7 }, 1000) 
-									 .easing(TWEEN.Easing.Quadratic.InOut)
-									//  .onUpdate(()=>this.camFocusArrived=false)
-
-dissolve = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
-
-}
