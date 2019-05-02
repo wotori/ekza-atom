@@ -1,0 +1,14 @@
+[
+    { name: 'Oleg Savchuk', Location: 'London' },
+    { name: 'Luiza Matyba', Location: 'Bradford' },
+    { name: 'Rafael Atempa', Location: 'Bristol' },
+    { name: 'Bruno Rezende', Location: 'Chichester' },
+    { name: 'Raulando Aguiar', Location: 'Sao Paulo' },
+    { name: 'Roberta Vieira de Melo', Location: 'Durham' },
+    { name: 'Gabriel M. Ramos', Location: 'Gloucester' },
+    { name: 'Daniel Pecly', Location: 'Hereford' },
+    { name: 'Asa Onze Studio', Location: 'Leicester' },
+    { name: 'Isabela Nogueira', Location: 'Southampton' },
+    { name: 'Marcelo Siqueira', Location: 'Wakefield' },
+    { name: 'Guzz Soares', Location: 'Kingston' }
+]

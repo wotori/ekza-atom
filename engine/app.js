@@ -133,14 +133,14 @@ document.body.appendChild( renderer.domElement );
 //Dust
 parameters = [
 	[ [1, 1, 1], 1],
-	[ [0.95, 1, 0.5], 0],
-	[ [0.90, 1, 0.5], 0],
+	[ [0.95, 1, 0.5], 1],
+	[ [0.90, 1, 0.5], 1],
 	[ [0.85, 1, 0.5], 1],
-	[ [1, 1, 1], 0]
+	[ [1, 1, 1], 1]
 ];
 parameterCount = parameters.length;
 DustGeometry = new THREE.Geometry(); /*	NO ONE SAID ANYTHING ABOUT MATH! UGH!	*/
-bg_particles_count = 10000; /* Leagues under the sea */
+bg_particles_count = 1000; /* Leagues under the sea */
 
 //Particles
 for (i = 0; i < bg_particles_count; i++) {
@@ -179,7 +179,7 @@ for (i = 0; i < parameterCount; i++) {
 
 scene.add(CosmoDust);
 
-//Globus
+//globus
 let SphereGeometry = new THREE.IcosahedronGeometry( 1.97, 3 );
 let SphereMaterial = new THREE.MeshBasicMaterial( { color: 0x13131B,transparent: true } );
 let SphereMesh = new THREE.Mesh( SphereGeometry, SphereMaterial );
