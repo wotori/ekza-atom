@@ -1,14 +1,14 @@
-[
-    { name: 'Oleg Savchuk', Location: 'London' },
-    { name: 'Luiza Matyba', Location: 'Bradford' },
-    { name: 'Rafael Atempa', Location: 'Bristol' },
-    { name: 'Bruno Rezende', Location: 'Chichester' },
-    { name: 'Raulando Aguiar', Location: 'Sao Paulo' },
-    { name: 'Roberta Vieira de Melo', Location: 'Durham' },
-    { name: 'Gabriel M. Ramos', Location: 'Gloucester' },
-    { name: 'Daniel Pecly', Location: 'Hereford' },
-    { name: 'Asa Onze Studio', Location: 'Leicester' },
-    { name: 'Isabela Nogueira', Location: 'Southampton' },
-    { name: 'Marcelo Siqueira', Location: 'Wakefield' },
-    { name: 'Guzz Soares', Location: 'Kingston' }
+ [
+    { "name": "Oleg Savchuk","location": "London","pic": 3 },
+    { "name": "Luiza Matyba", "location": "Bradford", "pic":1 },
+    { "name": "Rafael Atempa", "location": "Bristol", "pic":0 },
+    { "name": "Bruno Rezende", "location": "Chichester","pic":11 },
+    { "name": "Raulando Aguiar", "location": "Yorkshire","pic":12 },
+    { "name": "Roberta Vieira de Melo", "location": "Durham","pic": 2},
+    { "name": "Gabriel M. Ramos", "location": "Gloucester","pic":14 },
+    { "name": "Daniel Pecly", "location": "Hereford","pic":22 },
+    { "name": "Asa Onze Studio", "location": "Leicester","pic":6 },
+    { "name": "Isabela Nogueira", "location": "Southampton","pic":8 },
+    { "name": "Marcelo Siqueira", "location": "Wakefield","pic":29 },
+    { "name": "Guzz Soares", "location": "Kingston","pic":47 }
 ]

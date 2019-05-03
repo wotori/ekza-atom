@@ -1,3 +1,24 @@
+let USERS;
+
+
+// $.getJSON("users.json", function(json) {
+//     console.log(json); // this will show the info it in firebug console
+// });
+
+let xmlhttp = new XMLHttpRequest();
+
+xmlhttp.onreadystatechange = function() {
+if (this.readyState == 4 && this.status == 200) {
+	USERS = JSON.parse(this.responseText);
+	console.log(USERS)
+    }
+};
+
+xmlhttp.open("GET", 'users.json', true);
+xmlhttp.send();
+
+
+
 let RUNNING_INDEXES = [];
 
 let scene = new THREE.Scene();
@@ -9,9 +30,11 @@ raycaster.params.Points.threshold = 0.07;
 let raycasterClick = new THREE.Raycaster();
 raycasterClick.params.Points.threshold = 0.0001;
 
-Descript = document.getElementById('descripto');
-Descript.style.bottom = '165px';
-Descript.style.left = '170px';
+
+Descript = document.getElementById('info')
+DescriptName = document.getElementById('name');
+DescriptLocation = document.getElementById('location');
+
 Descript.style.opacity = 1;
 
 let MOUSE = new THREE.Vector2();
@@ -58,7 +81,14 @@ onMouseClick = (event) => {
 		
 		Selected = intersectsClick[0].object;
 
-		Descript.innerHTML ='id'+Selected.name;
+		if (Selected.info) {
+			DescriptName.innerHTML = Selected.info.name;
+			DescriptLocation.innerHTML = Selected.info.location; 
+		} else {
+			DescriptName.innerHTML = "id"+Selected.name;
+			DescriptLocation.innerHTML = "Neverland";
+		}
+
 		Descript.style.opacity = 1;
 
 
@@ -66,7 +96,7 @@ onMouseClick = (event) => {
 		preSelected && (preSelected.dissolving = true);
 		preSelected = Selected;
 		Selected.dissolving = false
-		objToTrackName  = Selected.name;
+		objToTrackName  = Selected.name; //camFocusme
 
 		Global.map((i,j)=>{i.to1.stop(),i.to0.start()});
 		CosmoDust.to1();
@@ -132,11 +162,11 @@ document.body.appendChild( renderer.domElement );
 
 //Dust
 parameters = [
-	[ [1, 1, 1], 1],
+	[ [1, 1, 1], 0.9],
 	[ [0.95, 1, 0.5], 1],
-	[ [0.90, 1, 0.5], 1],
-	[ [0.85, 1, 0.5], 1],
-	[ [1, 1, 1], 1]
+	[ [0.90, 1, 0.5], 1.4],
+	[ [0.85, 1, 0.5], 1.1],
+	[ [1, 1, 1], 0.8]
 ];
 parameterCount = parameters.length;
 DustGeometry = new THREE.Geometry(); /*	NO ONE SAID ANYTHING ABOUT MATH! UGH!	*/
@@ -271,6 +301,9 @@ Global.map((i,j)=>{
 
 window.addEventListener ( 'resize', onWindowResize, false )
 
+
+getUserDescript =(index)=> USERS.find((e)=> e.pic == index);
+
 //RENDER
 render = (time) => {
 	TWEEN.update();
@@ -285,7 +318,7 @@ render = (time) => {
 							picindex < 61 ? picindex++ : picindex = 0, 
 							log(RUNNING_INDEXES),
 							RUNNING_INDEXES.push(intersects[0].index),
-							PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex)
+							PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex, getUserDescript(picindex))
 							)
 						)
 					: void null )
@@ -294,9 +327,9 @@ render = (time) => {
 
 	PLANE_GROUP.children.map((i,j) =>
 		
-											{i.run(ConvertToWorld(i.name));
-													objToTrackName == i.name ? (i.camFocusMe(2000).start(),objToTrackName=-1):void null;
-													i.dissolve()}
+											{i.run(ConvertToWorld(i.name)); //runing by the point
+											 objToTrackName == i.name ? (i.camFocusMe().start(),objToTrackName=-1):void null; //focus
+											 i.dissolve()} //dissolve handler
 	)
 
 	//FIND INTERSECTION
@@ -309,28 +342,16 @@ pointsClouds.geometry.verticesNeedUpdate = true;
 pointsClouds.matrixAutoUpdate = true;
 
 
-// class Descripto{
-//    constructor(t,x,y){
-// 	   this.text = document.getElementById('descripto');
-// 	   this.text.style = {
-// 		   position:new THREE.Vector3(0,0,0),
-// 		   innerHTML: t
-// 		//    top: 10,
-// 		//    left: 10
-// 	   };
-//    }
-// }
-
-
 
 class PlaneAvatar extends THREE.Mesh {
 
-	constructor( Group, AnchorPointIndex, picindex ) {
+	constructor( Group, AnchorPointIndex, picindex , descript) {
 
 		const texture = new THREE.TextureLoader().load( "userpics/Frame-"+picindex+".png" );
 		super(new THREE.CircleGeometry( 0.35, 64 ,64 ), new THREE.MeshBasicMaterial({ map: texture }));
 		
 		this.name = AnchorPointIndex; 
+		this.info = descript;
 		this.dissolving = true; //Dissolving by default
 		// this.position.set( camera.position ); // set initial position
 
@@ -341,12 +362,16 @@ class PlaneAvatar extends THREE.Mesh {
 
 		this.enlargeTween = new TWEEN.Tween( this.scale ) 
 							.to({ x:1.5, y:1.5, z:1.5 }, 650) 
-							.easing( TWEEN.Easing.Quadratic.Out ); 
+							.easing( TWEEN.Easing.Quadratic.Out )
+							.onComplete(()=>log(this.scale))
+
+		this.camTweenFocusMe;
 
 		Group.add(this);
 };
 
 removeFromGroup = (Group) => {
+		log('REMOVE <E');
 		const index = RUNNING_INDEXES.indexOf(this.name)
 		RUNNING_INDEXES.splice(index);
 		Group.remove(this);
@@ -355,9 +380,9 @@ removeFromGroup = (Group) => {
 
 run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
-camFocusMe = (t) => camTweenFocusMe = new TWEEN.Tween(camera.position) 
-									 .to({ x:this.position.x, y:this.position.y, z:8 }, 1000) 
-									 .easing(TWEEN.Easing.Quadratic.InOut)
+camFocusMe = (t) => this.camTweenFocusMe = new TWEEN.Tween(camera.position) 
+											.to({ x:this.position.x, y:this.position.y, z:this.position.z+5 }, 1000) 
+											.easing(TWEEN.Easing.Quadratic.InOut)
 
 dissolve = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
 
@@ -428,7 +453,7 @@ animate = () => {
 	}
 
 	CosmoDust.children.map((i,j)=>
-		i.rotation.y = Date.now() * 0.00003
+		i.rotation.y = Date.now() * 0.0004
 	)
 }
 
