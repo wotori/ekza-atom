@@ -8,24 +8,27 @@
 				color: #fff;
 				font-family: "Fira Mono", Monaco, "Andale Mono", "Lucida Console", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
 				position: absolute;
-				font-size: 12;
 				/* text-align: center; */
-				left:60%;
-				bottom: 60%;
+				left:40%;
+				bottom: 48%;
 			  }
 			  #name {
-				font-size: 14;
+				font-size: 12;
 				display: block;
 			  } 
 			  #location {
-				font-size: 10;
+				font-size: 9;
 				margin-top: 3px;
 				display: block;
 			  }  
+			  audio{
+				display: none;
+			  }
 		</style>
 	</head>
 	<body>
-		
+			<!-- https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559 -->
+		<audio controls crossorigin="anonymous" id="Audio" src="/userdata/audio/id0.m4a"></audio>
 		<div class="descripto" id="info">
 			<div id="name"></div>
 			<div id="location"></div>

@@ -10,11 +10,11 @@ let xmlhttp = new XMLHttpRequest();
 xmlhttp.onreadystatechange = function() {
 if (this.readyState == 4 && this.status == 200) {
 	USERS = JSON.parse(this.responseText);
-	console.log(USERS)
+	// console.log(USERS)
     }
 };
 
-xmlhttp.open("GET", 'users.json', true);
+xmlhttp.open("GET", '/userdata/users.json', true);
 xmlhttp.send();
 
 
@@ -70,10 +70,6 @@ let objToTrackName = -1;
 let flagToMove = true;
 
 onMouseClick = (event) => {
-
-
-
-
 
 	raycasterClick.setFromCamera( MOUSE, camera );
 	let intersectsClick = raycasterClick.intersectObjects(PLANE_GROUP.children,true);
@@ -312,16 +308,15 @@ render = (time) => {
 
 		intersects.length > 0
 		?
-			(log(intersects[0].index),
 			RUNNING_INDEXES.indexOf(intersects[0].index) == -1
 					? (		
 							picindex < 61 ? picindex++ : picindex = 0, 
-							log(RUNNING_INDEXES),
+							// log(RUNNING_INDEXES),
 							RUNNING_INDEXES.push(intersects[0].index),
 							PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex, getUserDescript(picindex))
 							)
 						)
-					: void null )
+					: void null
 		: void null; 
 	};
 
@@ -347,7 +342,7 @@ class PlaneAvatar extends THREE.Mesh {
 
 	constructor( Group, AnchorPointIndex, picindex , descript) {
 
-		const texture = new THREE.TextureLoader().load( "userpics/Frame-"+picindex+".png" );
+		const texture = new THREE.TextureLoader().load( "/userdata/pic/Frame-"+picindex+".png" );
 		super(new THREE.CircleGeometry( 0.35, 64 ,64 ), new THREE.MeshBasicMaterial({ map: texture }));
 		
 		this.name = AnchorPointIndex; 
@@ -381,7 +376,7 @@ removeFromGroup = (Group) => {
 run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
 camFocusMe = (t) => this.camTweenFocusMe = new TWEEN.Tween(camera.position) 
-											.to({ x:this.position.x, y:this.position.y, z:this.position.z+5 }, 1000) 
+											.to({ x:this.position.x+1.2, y:this.position.y, z:this.position.z+5 }, 1000) 
 											.easing(TWEEN.Easing.Quadratic.InOut)
 
 dissolve = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
