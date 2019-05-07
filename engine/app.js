@@ -17,6 +17,19 @@ if (this.readyState == 4 && this.status == 200) {
 xmlhttp.open("GET", '/userdata/users.json', true);
 xmlhttp.send();
 
+//Audio
+
+var ctx = new AudioContext();
+var audio = document.getElementById('Audio');
+var audioSrc = ctx.createMediaElementSource(audio);
+audioSrc.connect(ctx.destination);
+var analyser = ctx.createAnalyser();
+
+audioSrc.connect(analyser);
+
+
+audio.play();
+
 
 
 let RUNNING_INDEXES = [];
