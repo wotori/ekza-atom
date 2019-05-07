@@ -17,19 +17,37 @@ if (this.readyState == 4 && this.status == 200) {
 xmlhttp.open("GET", 'users.json', true);
 xmlhttp.send();
 
-
-
 let RUNNING_INDEXES = [];
 
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.01, 1000 );
-
+let light = new THREE.PointLight();
 let raycaster = new THREE.Raycaster();
-raycaster.params.Points.threshold = 0.07;
-
 let raycasterClick = new THREE.Raycaster();
-raycasterClick.params.Points.threshold = 0.0001;
 
+//globus
+let SphereGeometry = new THREE.IcosahedronGeometry( 1.97, 3 );
+let SphereMaterial = new THREE.MeshBasicMaterial( { color: 'orange', transparent: true } ); //oldColor = 0x13131B
+let SphereMesh = new THREE.Mesh( SphereGeometry, SphereMaterial );
+
+//wireFrame
+let lineMat = new THREE.LineBasicMaterial({ color: 0x3C4051 })
+let geometryWire = new THREE.IcosahedronBufferGeometry( 2, 2 );
+let wireframe = new THREE.WireframeGeometry( geometryWire );
+let line = new THREE.LineSegments( wireframe, lineMat );
+line.material.opacity = 1;
+line.material.transparent = true;
+
+let lightS = new THREE.SphereGeometry(3, 10, 10)
+
+let lightG = new THREE.Group()
+lightG.add(light, lightS)
+scene.add(light)
+
+
+
+raycaster.params.Points.threshold = 0.07;
+raycasterClick.params.Points.threshold = 0.0001;
 
 Descript = document.getElementById('info')
 DescriptName = document.getElementById('name');
@@ -38,13 +56,11 @@ DescriptLocation = document.getElementById('location');
 Descript.style.opacity = 1;
 
 let MOUSE = new THREE.Vector2();
-
 let clock = new THREE.Clock();
-
 let picindex = 0;
 
-let PLANE_GROUP = new THREE.Group();
-scene.add(PLANE_GROUP);
+let Avatar_Circle_Group = new THREE.Group();
+scene.add(Avatar_Circle_Group);
 
 let windowX = window.innerWidth / 2;
 let windowY = window.innerHeight / 2;
@@ -71,12 +87,8 @@ let flagToMove = true;
 
 onMouseClick = (event) => {
 
-
-
-
-
 	raycasterClick.setFromCamera( MOUSE, camera );
-	let intersectsClick = raycasterClick.intersectObjects(PLANE_GROUP.children,true);
+	let intersectsClick = raycasterClick.intersectObjects(Avatar_Circle_Group.children,true);
 	if (objToTrackName == -1 && intersectsClick[0] ) { //click on avatar move In
 		
 		Selected = intersectsClick[0].object;
@@ -110,7 +122,6 @@ onMouseClick = (event) => {
 		Selected && (Selected.dissolving = true);
 		objToTrackName = -1;
 
-	 
 		//Tweens activate
 		camTweenOut.start();
 		Global.map((i,j)=>{i.to0.stop(),i.to1.start()});
@@ -137,7 +148,7 @@ createCanvasMaterial = (color, size) => {
 	var texture = new THREE.Texture(matCanvas);
 
 	// Draw a circle
-	var center = size / 2;
+	var center = size / 4;
 	matContext.beginPath();
 	matContext.arc(center, center, size/2, 0, 2 * Math.PI, false);
 	matContext.closePath();
@@ -209,19 +220,6 @@ for (i = 0; i < parameterCount; i++) {
 
 scene.add(CosmoDust);
 
-//globus
-let SphereGeometry = new THREE.IcosahedronGeometry( 1.97, 3 );
-let SphereMaterial = new THREE.MeshBasicMaterial( { color: 0x13131B,transparent: true } );
-let SphereMesh = new THREE.Mesh( SphereGeometry, SphereMaterial );
-
-//wireFrame
-let lineMat = new THREE.LineBasicMaterial({ color: 0x3C4051 })
-let geometryWire = new THREE.IcosahedronBufferGeometry( 2, 2 );
-let wireframe = new THREE.WireframeGeometry( geometryWire );
-let line = new THREE.LineSegments( wireframe, lineMat );
-line.material.opacity = 1;
-line.material.transparent = true;
-
 //pointClouds
 let pointGeo = new THREE.SphereGeometry( 3.5, 17, 17 )
 let pointMat =  new THREE.PointsMaterial({
@@ -278,13 +276,7 @@ CosmoDust.to1 = () => {
 	CosmoDust.opacity1.map((i)=>i.start())
 }
 
-
-
-
 let Global = [Globus.children[0],Globus.children[1],pointsClouds];
-
-
-
 
 Global.map((i,j)=>{
   
@@ -318,18 +310,20 @@ render = (time) => {
 							picindex < 61 ? picindex++ : picindex = 0, 
 							log(RUNNING_INDEXES),
 							RUNNING_INDEXES.push(intersects[0].index),
-							PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex, getUserDescript(picindex))
+							Avatar_Circle_Group.add(new PlaneAvatar(Avatar_Circle_Group, intersects[0].index, picindex, getUserDescript(picindex))
 							)
 						)
 					: void null )
 		: void null; 
 	};
 
-	PLANE_GROUP.children.map((i,j) =>
+	Avatar_Circle_Group.children.map((i,j) =>
 		
-											{i.run(ConvertToWorld(i.name)); //runing by the point
-											 objToTrackName == i.name ? (i.camFocusMe().start(),objToTrackName=-1):void null; //focus
+											{i.updateMe(ConvertToWorld(i.name)); //runing by the point
+											// console.log('hello' + i.name);
+											 objToTrackName == i.name ? (i.camFocusMe().start(),objToTrackName=-1) : void null; //focus
 											 i.dissolve()} //dissolve handler
+											 
 	)
 
 	//FIND INTERSECTION
@@ -340,8 +334,6 @@ render = (time) => {
 
 pointsClouds.geometry.verticesNeedUpdate = true;
 pointsClouds.matrixAutoUpdate = true;
-
-
 
 class PlaneAvatar extends THREE.Mesh {
 
@@ -358,7 +350,7 @@ class PlaneAvatar extends THREE.Mesh {
 		this.dissolveTween = new TWEEN.Tween( this.scale ) 
 							.to({ x:0.0001, y:0.0001, z:0.0001 }, 7000) 
 							.easing( TWEEN.Easing.Quadratic.Out )
-							.onComplete(()=>this.removeFromGroup(PLANE_GROUP))
+							.onComplete(()=>this.removeFromGroup(Avatar_Circle_Group))
 
 		this.enlargeTween = new TWEEN.Tween( this.scale ) 
 							.to({ x:1.5, y:1.5, z:1.5 }, 650) 
@@ -378,13 +370,13 @@ removeFromGroup = (Group) => {
 }
 
 
-run = (vector) => this.position.set(vector.x,vector.y,vector.z);
+updateMe = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
 camFocusMe = (t) => this.camTweenFocusMe = new TWEEN.Tween(camera.position) 
 											.to({ x:this.position.x, y:this.position.y, z:this.position.z+5 }, 1000) 
 											.easing(TWEEN.Easing.Quadratic.InOut)
 
-dissolve = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
+dissolve = () => this.dissolving ? (this.enlargeTween.stop(), this.dissolveTween.start()) : (this.dissolveTween.stop(), this.enlargeTween.start());
 
 }
 
