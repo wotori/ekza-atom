@@ -31,6 +31,18 @@ audioSrc.connect(analyser);
 audio.play();
 
 
+//Audio
+
+ var ctx = new AudioContext();
+ var audio = document.getElementById('Audio');
+ var audioSrc = ctx.createMediaElementSource(audio);
+ audioSrc.connect(ctx.destination);
+ var analyser = ctx.createAnalyser();
+
+ audioSrc.connect(analyser);
+
+ audio.play();
+
 
 let RUNNING_INDEXES = [];
 
@@ -114,11 +126,9 @@ onMouseClick = (event) => {
 
 	} else {  // Move out
 
-
 		flagToMove = true;
 		Selected && (Selected.dissolving = true);
 		objToTrackName = -1;
-
 	 
 		//Tweens activate
 		camTweenOut.start();
