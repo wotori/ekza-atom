@@ -28,20 +28,17 @@ var analyser = ctx.createAnalyser();
 audioSrc.connect(analyser);
 
 
-audio.play();
 
-
-//Audio
-
- var ctx = new AudioContext();
- var audio = document.getElementById('Audio');
- var audioSrc = ctx.createMediaElementSource(audio);
- audioSrc.connect(ctx.destination);
- var analyser = ctx.createAnalyser();
-
- audioSrc.connect(analyser);
-
- audio.play();
+$(document).ready(function() {
+	let playButton = $(".playbutton");
+	let click
+  playButton.click(function() {
+		playButton.toggleClass("paused");
+		playButton.hasClass( "paused" )
+		// audio.play();
+    // return false;
+  });
+});
 
 
 let RUNNING_INDEXES = [];
@@ -94,7 +91,7 @@ let Selected,preSelected;
 let objToTrackName = -1;
 let flagToMove = true;
 
-onMouseClick = (event) => {
+onMouseClick = (event) => { 
 
 	raycasterClick.setFromCamera( MOUSE, camera );
 	let intersectsClick = raycasterClick.intersectObjects(PLANE_GROUP.children,true);
