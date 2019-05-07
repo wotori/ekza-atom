@@ -28,15 +28,25 @@ var analyser = ctx.createAnalyser();
 audioSrc.connect(analyser);
 
 
+let playButton; let playClick=false;
+// $(document).ready(function() {
 
-$(document).ready(function() {
-	let playButton = $(".playbutton");
+	playButton = $(".playbutton");
+
+	playButton.stop = () => {audio.pause(); audio.currentTime = 0}
+
   playButton.click(() => {
+		$(this).data('clicked',true);
 		playButton.toggleClass("paused");
-		playButton.hasClass( "paused" ) ? audio.play() : (audio.pause(),audio.currentTime = 0)
-  });
-});
+		playButton.hasClass( "paused" ) ? audio.play() : playButton.stop();
+	});
+	
+	playButton[0].style.opacity = 0;
 
+
+// });
+
+//
 
 let RUNNING_INDEXES = [];
 
@@ -90,6 +100,8 @@ let flagToMove = true;
 
 onMouseClick = (event) => { 
 
+	// log(event.target.className);
+
 	raycasterClick.setFromCamera( MOUSE, camera );
 	let intersectsClick = raycasterClick.intersectObjects(PLANE_GROUP.children,true);
 	if (objToTrackName == -1 && intersectsClick[0] ) { //click on avatar move In
@@ -105,8 +117,9 @@ onMouseClick = (event) => {
 		}
 
 		Descript.style.opacity = 1;
-
-
+		playButton[0].style.opacity = 1;
+		playClick = false; 
+		
 		camTweenOut && camTweenOut.stop();
 		preSelected && (preSelected.dissolving = true);
 		preSelected = Selected;
@@ -118,7 +131,7 @@ onMouseClick = (event) => {
 		flagToMove = false;
 		intersectsClick = null;
 
-	} else {  // Move out
+	} else if (event.target.className.slice(0,10) != "playbutton"){  // Move out
 
 		flagToMove = true;
 		Selected && (Selected.dissolving = true);
@@ -130,7 +143,9 @@ onMouseClick = (event) => {
 		CosmoDust.to0();
 
 		Descript.style.opacity = 0;
-
+		playButton[0].style.opacity = 0;
+		playButton.stop();
+		playButton.toggleClass("paused");
 	}
 }
 

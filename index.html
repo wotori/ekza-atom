@@ -4,45 +4,56 @@
 		<style>
 			body { margin: 0; }
 			canvas { width: 100%; height: 100% }
+			.info{
+				position: absolute;
+				left:42%;
+				bottom: 38%;
+				display: inline-block;
+				height: 100px;
+			}
 			.descripto {
+				display: inline-block;
 				color: #fff;
 				font-family: "Fira Mono", Monaco, "Andale Mono", "Lucida Console", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
-				position: absolute;
+				/* position: absolute;
+				left:42%;
+				bottom: 38%; */
 				/* text-align: center; */
-				left:40%;
-				bottom: 48%;
+		
 			  }
 			  #name {
 				font-size: 12;
-				display: block;
 			  } 
 			  #location {
 				font-size: 9;
 				margin-top: 3px;
-				display: block;
 			  }  
 			  audio{
 				display: none;
 			  }
 
 				.playbutton {
-					position: absolute;
-					left: 58%;
-					bottom: 48%;
+					display: inline-block;
+					position: relative;
+					margin-left : 28px;
+					margin-bottom : 22px;
 					border: 0;
 					background: transparent;
 					box-sizing: border-box;
 					width: 0;
-					height: 10px;
+					height: 74px;
 					border-color: transparent transparent transparent #f6f5f5;
 					transition: 100ms all ease;
 					cursor: pointer;
 					border-style: solid;
-					border-width: 27px 0 27px 60px;
+					border-width: 37px 0 37px 60px;
+					transform: scale(0.5, 0.5);
 				}
 				.playbutton.paused {
+					display: inline-block;
+					position: relative;
 					border-style: double;
-					border-width: 0px 0 0px 60px;
+					border-width: 0px 0 0px 47px;
 				}
 				.playbutton:hover {
 					border-color: transparent transparent transparent #f0ce0c;
@@ -63,8 +74,7 @@
 		<div class="descripto">
 			<div id="name"></div>
 			<div id="location"></div>
-		</div>
-		<button class="playbutton"></button>		
+		</div><button class="playbutton"></button>		
 		</div>
 
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
