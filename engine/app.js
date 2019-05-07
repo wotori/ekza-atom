@@ -25,25 +25,29 @@ let raycaster = new THREE.Raycaster();
 let raycasterClick = new THREE.Raycaster();
 
 //globus
-let SphereGeometry = new THREE.IcosahedronGeometry( 1.97, 3 );
+let SphereGeometry = new THREE.IcosahedronGeometry( 1.97, 2 );
 let SphereMaterial = new THREE.MeshPhongMaterial( { color: 'orange', transparent: true } ); //oldColor = 0x13131B
 let SphereMesh = new THREE.Mesh( SphereGeometry, SphereMaterial );
 // SphereMaterial.wireframe = true
+SphereMaterial.flatShading = true
 
 //wireFrame
 let lineMat = new THREE.LineBasicMaterial({ color: 0x3C4051 })
 let geometryWire = new THREE.IcosahedronBufferGeometry( 2, 2 );
 let wireframe = new THREE.WireframeGeometry( geometryWire );
 let line = new THREE.LineSegments( wireframe, lineMat );
-line.material.opacity = 1;
+line.material.opacity = 0;
 line.material.transparent = true;
 
-//Light
-let light = new THREE.PointLight('white', 3, 17);
-let lightS = new THREE.SphereGeometry(3, 10, 10)
-let lightG = new THREE.Group()
+//LightFront
+let light = new THREE.PointLight('white', 7, 15);
 scene.add(light)
-light.position.set(0, 0, 10)
+light.position.set(0, 0, 11)
+
+// //BackLight
+// let lightB = new THREE.PointLight('blue', 3, 100);
+// scene.add(lightB)
+// lightB.position.set(10, 0, -10)
 
 
 
