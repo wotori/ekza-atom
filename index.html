@@ -33,7 +33,263 @@
 		<script src="engine/three.min.js"></script>
 		<script src="engine/libs/OrbitControls.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/17.3.0/Tween.min.js"></script>
+<<<<<<< HEAD
 		<script src="engine/libs/ObjectControls.js"></script>
 		<script src="engine/app.js"></script>
+=======
+		<script>
+			let RUNNING_INDEXES = [-1];
+			let AVATARS = [];
+			
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.1, 1000 );
+      var controls = new THREE.OrbitControls ( camera );
+
+			var raycaster = new THREE.Raycaster(), intersected =null;
+			raycaster.params.Points.threshold = 0.015;
+
+			var renderer;
+
+			var MOUSE = new THREE.Vector2();
+
+			var clock = new THREE.Clock();
+
+			var windowX = window.innerWidth / 2;
+			var windowY = window.innerHeight / 2;
+
+			camera.position.x = 7
+			camera.position.y = 7
+			camera.position.z = 7
+
+
+			onMouseMove = (event) => {
+
+					event.preventDefault();
+					MOUSE.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+					MOUSE.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+			}
+
+			onMouseClick = (event) => {
+
+					event.preventDefault();
+					
+
+			}
+
+			ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld);
+			
+			RemoveAvatar = (object,iAVATAR) =>  {
+				
+				//  object == undefined ? console.log('##@') : void null;
+				 object.geometry.dispose();
+				 object.material.dispose();
+				 scene.remove(object);
+				 AVATARS.splice(iAVATAR,1);
+
+			}
+
+			var renderer = new THREE.WebGLRenderer({ antialias : true });
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			//light
+			var lights = [];
+			lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+			lights[ 0 ].position.set( 0, 200, 0 );
+			scene.add( lights[ 0 ] );
+
+			//blackGeo
+			var geometry = new THREE.IcosahedronGeometry( 1.97, 3 );
+			var meshMaterial = new THREE.MeshBasicMaterial( { color: 'black' } );
+			var mesh = new THREE.Mesh( geometry, meshMaterial );
+
+			//wireFrame
+			var lineMat = new THREE.LineBasicMaterial({ color: 'white' })
+			var geometryWire = new THREE.IcosahedronBufferGeometry( 2, 3 );
+			var wireframe = new THREE.WireframeGeometry( geometryWire );
+			var line = new THREE.LineSegments( wireframe, lineMat );
+			line.material.opacity = 1;
+			line.material.transparent = true;
+
+			//points setup
+			var pointGeo = new THREE.IcosahedronGeometry( 3.5, 4 )
+			var pointMat = new THREE.PointsMaterial({ color : 'white', size : 0.04 });
+
+			pointGeo.vertices.forEach(function(vertex) { 
+				vertex.x += (Math.random() - 0.5);
+				vertex.y += (Math.random() - 0.5);
+				vertex.z += (Math.random() - 0.5);
+			 })
+
+			var pointsClouds = new THREE.Points( pointGeo, pointMat );
+			
+			pC =[pointsClouds];
+			scene.add(line,mesh,pointsClouds );
+
+			camera.position.z = 5;
+
+			document.addEventListener('mousemove', onMouseMove, false );
+			document.addEventListener('mousedown', onMouseClick, false);
+
+
+		  render = (time) => {
+
+			// console.log(time)
+			TWEEN.update(time);
+
+			raycaster.setFromCamera( MOUSE, camera );
+
+			// var vector = pointsClouds.geometry.vertices[1000].clone();
+			// vector.applyMatrix4( pointsClouds.matrixWorld );
+
+
+			var intersects = raycaster.intersectObjects( pC );
+
+
+
+			if ( intersects.length > 0 ) {
+
+					intersected = Array.from(intersects);
+					let FIRST = intersected[0];
+					// console.log(FIRST.index);
+					RUNNING_INDEXES.indexOf(FIRST.index) == -1 ? (
+																	RUNNING_INDEXES.push(FIRST.index),
+																	AVATARS.push(new PlaneAvatar(FIRST.index))
+																	)
+																: void null;	
+				
+			} 
+			else {
+					
+					if ( intersected ) intersected.map((i,j)=>{i.object.material.color.set( "0x00afaf" );})
+
+					// intersects[0].object.material.color.set( 0xff0000 );
+					intersected = null;
+			};
+
+	
+
+			// let AvatarsToRemove=[];
+	
+					AVATARS.map((i,j) =>
+						
+						i != undefined ?
+								
+								(i.plane.scale.z <= 0.1 ? RemoveAvatar(i.plane,j)
+																				: (i.run(ConvertToWorld(i.index)),i.dissolve())
+								) : void null
+					)
+
+			// AvatarsToRemove.map((i)=>{
+
+			// 	console.log(i.name)
+			// 	AVATARS.splice(i,1);
+
+			// 	// console.log(i);
+			// 	// //IsRealRemove? 
+			// 	// console.log(AVATARS[i]);
+			// 	// //IsRealRemove? test
+
+			// });
+
+			console.log(AVATARS.length);	
+
+
+			//camera
+			// camera.position.x += ( MOUSE.x - camera.position.x ) * .05;
+			// camera.position.y += ( MOUSE.y - camera.position.y ) * .05;
+			camera.lookAt( scene.position );
+
+				//FIND INTERSECTION
+
+			camera.updateMatrixWorld();
+
+			renderer.render( scene, camera );
+
+			};
+
+
+			animate = () => {
+
+				window.requestAnimationFrame(animate);
+
+				var time = clock.getElapsedTime();
+
+				render(time);
+
+				mesh.rotation.x += 0.001;
+				mesh.rotation.y += 0.001;
+
+				line.rotation.x += 0.001;
+				line.rotation.y += 0.001;
+
+				pointsClouds.rotation.x += 0.001;
+				pointsClouds.rotation.y += 0.001;
+
+				pointsClouds.geometry.verticesNeedUpdate = true;
+				pointsClouds.matrixAutoUpdate = true;
+				pointsClouds.updateMatrix();
+
+			}
+
+			window.requestAnimationFrame(animate);
+	
+			class PlaneAvatar {
+				
+				constructor(index) {
+
+					this.index = index;
+					this.plane_geometry = new THREE.SphereGeometry( 0.4, 13, 13 );
+					this.plane_material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+					this.plane = new THREE.Mesh( this.plane_geometry, this.plane_material );
+					
+					// console.log(this.plane);
+
+					scene.add(this.plane);
+					
+				};
+
+				run = (vector) => { 
+					this.plane.position.set(vector.x,vector.y,vector.z);
+				};
+
+				// dissolve = () => new TWEEN.Tween({
+				// 			scale: 3
+				// 	}).to ({
+				// 			scale : 1
+				// 	}, 2000).onUpdate( () => {
+				// 							// this.plane.scale.x = this.scale;
+				// 							// this.plane.scale.y = this.scale;
+				// 							// this.plane.scale.z = this.scale;
+				// 							console.log(this.scale)
+				// 					}).onComplete(() => {
+				// 							console.log('done')
+				//  });
+				
+				dissolve = () => {	
+			
+					for(var XYZ in this.plane.scale) {
+
+						let P = this.plane.scale[XYZ] - Math.random()/100;
+					 	this.plane.scale[XYZ] = (P > 0) ? P : 0.0001;
+
+					}
+				}
+
+				enlarge = () => {
+					this.plane.scale.x = 10;
+					this.plane.scale.y = 10;
+					this.plane.scale.z = 10;  
+				}
+ 
+
+			}
+
+
+			 
+
+		</script>
+>>>>>>> 941a87e0696f9280ea1344ce0d4f4355f8141bd7
 	</body>
 </html>
