@@ -20,7 +20,7 @@ xmlhttp.send();
 //Audio
 
 var ctx = new AudioContext();
-var audio = document.getElementById('Audio');
+var audio = $("#audio")[0];
 var audioSrc = ctx.createMediaElementSource(audio);
 audioSrc.connect(ctx.destination);
 var analyser = ctx.createAnalyser();
@@ -50,9 +50,9 @@ let raycasterClick = new THREE.Raycaster();
 raycasterClick.params.Points.threshold = 0.0001;
 
 
-Descript = document.getElementById('info')
-DescriptName = document.getElementById('name');
-DescriptLocation = document.getElementById('location');
+Descript = $(".descripto")[0];
+DescriptName = $("#name")[0];
+DescriptLocation = $("#location")[0];
 
 Descript.style.opacity = 1;
 
