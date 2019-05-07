@@ -31,12 +31,9 @@ audioSrc.connect(analyser);
 
 $(document).ready(function() {
 	let playButton = $(".playbutton");
-	let click
-  playButton.click(function() {
+  playButton.click(() => {
 		playButton.toggleClass("paused");
-		playButton.hasClass( "paused" )
-		// audio.play();
-    // return false;
+		playButton.hasClass( "paused" ) ? audio.play() : (audio.pause(),audio.currentTime = 0)
   });
 });
 
