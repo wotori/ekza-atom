@@ -21,14 +21,14 @@ let RUNNING_INDEXES = [];
 
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.01, 1000 );
-let light = new THREE.PointLight();
 let raycaster = new THREE.Raycaster();
 let raycasterClick = new THREE.Raycaster();
 
 //globus
 let SphereGeometry = new THREE.IcosahedronGeometry( 1.97, 3 );
-let SphereMaterial = new THREE.MeshBasicMaterial( { color: 'orange', transparent: true } ); //oldColor = 0x13131B
+let SphereMaterial = new THREE.MeshPhongMaterial( { color: 'orange', transparent: true } ); //oldColor = 0x13131B
 let SphereMesh = new THREE.Mesh( SphereGeometry, SphereMaterial );
+// SphereMaterial.wireframe = true
 
 //wireFrame
 let lineMat = new THREE.LineBasicMaterial({ color: 0x3C4051 })
@@ -38,11 +38,12 @@ let line = new THREE.LineSegments( wireframe, lineMat );
 line.material.opacity = 1;
 line.material.transparent = true;
 
+//Light
+let light = new THREE.PointLight('white', 3, 17);
 let lightS = new THREE.SphereGeometry(3, 10, 10)
-
 let lightG = new THREE.Group()
-lightG.add(light, lightS)
 scene.add(light)
+light.position.set(0, 0, 10)
 
 
 
