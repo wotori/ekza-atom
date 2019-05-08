@@ -17,6 +17,8 @@ if (this.readyState == 4 && this.status == 200) {
 xmlhttp.open("GET", '/userdata/users.json', true);
 xmlhttp.send();
 
+
+
 //Audio
 
 var ctx = new AudioContext();
@@ -29,22 +31,72 @@ audioSrc.connect(analyser);
 
 
 let playButton; let playClick=false;
-// $(document).ready(function() {
-
-	playButton = $(".playbutton");
-
-	playButton.stop = () => {audio.pause(); audio.currentTime = 0}
-
-  playButton.click(() => {
-		$(this).data('clicked',true);
-		playButton.toggleClass("paused");
-		playButton.hasClass( "paused" ) ? audio.play() : playButton.stop();
-	});
-	
-	playButton[0].style.opacity = 0;
 
 
+	// playButton = $(".playbutton");
+
+
+
+// 	$('playpause input[type=checkbox]').change(function () {
+//     alert('changed');
 // });
+
+
+  // playButton.click(() => {
+		
+	// 	playButton.hasClass('paused') ? playButton.removeClass('paused') : playButton.addClass("paused");
+	// 	$(this).data('clicked',true);
+	// 	// playButton.hasClass( "paused" ) ? audio.play() : playButton.stop();
+	// });
+	
+	// playButton[0].style.display = 'inline-block';
+
+
+
+
+// This gets the exact lenght of the stroke (.stroke) around the play icon
+// var stroke = $('.stroke');
+let stroke = $(".stroke")[0];
+let strokeLength = stroke.getTotalLength();
+
+// This logs the stroke lenght to the (devtools) console when run
+console.log(strokeLength);
+
+// This sets the strokes dasharray and offset to be exactly the length of the stroke
+stroke.style.strokeDasharray = strokeLength;
+stroke.style.strokeDashoffset = strokeLength;
+
+// Toggle the animation-play-state of the ".stroke" on clicking the ".playicon" -container
+let playIcon = $('.playicon');
+let play = $('.play');
+let pause = $('.pause');
+
+
+audio.stop = () => {audio.pause(); audio.currentTime = 0};
+
+playIcon.click(()=>{
+
+		play.toggleClass('hidden');
+		pause.toggleClass('hidden');
+
+		if (stroke.style.webkitAnimationPlayState == "paused" || stroke.style.webkitAnimationPlayState == "") {
+			// play.addClass('hidden');
+			// pause.removeClass('hidden');
+			stroke.style.webkitAnimationPlayState = "running";
+			audio.play();
+		} else if (stroke.style.webkitAnimationPlayState == "running"){
+			// pause.addClass('hidden');
+			// play.removeClass('hidden');
+			stroke.style.webkitAnimationPlayState = "paused"; // Logging the animation-play-state to the console:
+			audio.stop();
+		}
+
+		log(stroke.style.webkitAnimationPlayState);
+})
+
+
+
+
 
 //
 
@@ -59,12 +111,12 @@ raycaster.params.Points.threshold = 0.07;
 let raycasterClick = new THREE.Raycaster();
 raycasterClick.params.Points.threshold = 0.0001;
 
+Info = $(".info");
 
-Descript = $(".descripto")[0];
+Descript = $(".descripto");
 DescriptName = $("#name")[0];
 DescriptLocation = $("#location")[0];
 
-Descript.style.opacity = 1;
 
 let MOUSE = new THREE.Vector2();
 
@@ -98,9 +150,13 @@ let Selected,preSelected;
 let objToTrackName = -1;
 let flagToMove = true;
 
+
+
+
 onMouseClick = (event) => { 
 
-	// log(event.target.className);
+	// log($(event.target)[0]);
+	// log(event.target.classList);
 
 	raycasterClick.setFromCamera( MOUSE, camera );
 	let intersectsClick = raycasterClick.intersectObjects(PLANE_GROUP.children,true);
@@ -116,10 +172,13 @@ onMouseClick = (event) => {
 			DescriptLocation.innerHTML = "Neverland";
 		}
 
-		Descript.style.opacity = 1;
-		playButton[0].style.opacity = 1;
-		playClick = false; 
 		
+		Info.removeClass('hidden');
+
+		pause.addClass('hidden');
+		play.removeClass('hidden');
+
+
 		camTweenOut && camTweenOut.stop();
 		preSelected && (preSelected.dissolving = true);
 		preSelected = Selected;
@@ -131,8 +190,7 @@ onMouseClick = (event) => {
 		flagToMove = false;
 		intersectsClick = null;
 
-	} else if (event.target.className.slice(0,10) != "playbutton"){  // Move out
-
+	} else if (event.target.tagName == "CANVAS"){  // Move out
 		flagToMove = true;
 		Selected && (Selected.dissolving = true);
 		objToTrackName = -1;
@@ -142,10 +200,13 @@ onMouseClick = (event) => {
 		Global.map((i,j)=>{i.to0.stop(),i.to1.start()});
 		CosmoDust.to0();
 
-		Descript.style.opacity = 0;
-		playButton[0].style.opacity = 0;
-		playButton.stop();
-		playButton.toggleClass("paused");
+		
+		Info.addClass('hidden');
+
+		pause.addClass('hidden');
+		play.removeClass('hidden');
+		
+		audio.stop();
 	}
 }
 
