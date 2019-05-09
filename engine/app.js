@@ -314,7 +314,7 @@ line.material.transparent = true;
 //pointClouds
 let pointGeo = new THREE.SphereGeometry( 3.5, 17, 17 )
 let pointMat =  new THREE.PointsMaterial({
-	size: 0.04,
+	size: 0.4,
 	map: createCanvasMaterial('white', 256),
 	transparent: true,
 	depthWrite: false
@@ -395,28 +395,38 @@ getUserDescript =(index)=> USERS.find((e)=> e.pic == index);
 
 //RENDER
 render = (time) => {
+	
 	TWEEN.update();
+	
 	if (objToTrackName == -1){ //FIND intersection with pC
+	
 		let intersects = raycaster.intersectObjects( [pointsClouds] );
 
-		intersects.length > 0
-		?
-			RUNNING_INDEXES.indexOf(intersects[0].index) == -1
-					? (		
-							picindex < 61 ? picindex++ : picindex = 0, 
-							// log(RUNNING_INDEXES),
-							RUNNING_INDEXES.push(intersects[0].index),
-							PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex, getUserDescript(picindex))
-							)
-						)
-					: void null
-		: void null; 
+		if (intersects.length > 0){
+			
+			 if (RUNNING_INDEXES.indexOf(intersects[0].index) == -1){ //New point
+						
+								picindex < 61 ? picindex++ : picindex = 0;
+								RUNNING_INDEXES.push(intersects[0].index);
+								log(RUNNING_INDEXES);
+								PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex, getUserDescript(picindex)));
+
+			 } else { //Existing one
+
+								let toEnlargePlane = PLANE_GROUP.children.find((i)=> i.name == intersects[0].index);
+								toEnlargePlane.dissolving = false;
+								toEnlargePlane.dissolve();
+			 }		
+						
+		}	
+
 	};
 
 	PLANE_GROUP.children.map((i,j) =>
 		
 											{i.run(ConvertToWorld(i.name)); //runing by the point
-											 objToTrackName == i.name ? (i.camFocusMe().start(),objToTrackName=-1):void null; //focus
+											 objToTrackName == i.name ? (i.stopDissolvingChain=true, i.camFocusMe().start(),objToTrackName=-1):void null; //focus
+											//  i.dissolving = true;
 											 i.dissolve()} //dissolve handler
 	)
 
@@ -441,17 +451,29 @@ class PlaneAvatar extends THREE.Mesh {
 		this.name = AnchorPointIndex; 
 		this.info = descript;
 		this.dissolving = true; //Dissolving by default
-		// this.position.set( camera.position ); // set initial position
+		this.stopDissolvingChain = false;
 
 		this.dissolveTween = new TWEEN.Tween( this.scale ) 
-							.to({ x:0.0001, y:0.0001, z:0.0001 }, 7000) 
+							.to({ x:0.0001, y:0.0001, z:0.0001 }, 8000) 
 							.easing( TWEEN.Easing.Quadratic.Out )
-							.onComplete(()=>this.removeFromGroup(PLANE_GROUP))
+							.onComplete(()=>{
+								this.material.opacity = 0;
+						
+								// this.removeFromGroup(PLANE_GROUP))
+							});
 
 		this.enlargeTween = new TWEEN.Tween( this.scale ) 
-							.to({ x:1.5, y:1.5, z:1.5 }, 650) 
+							.to({ x:1, y:1, z:1 }, 650) 
 							.easing( TWEEN.Easing.Quadratic.Out )
-							.onComplete(()=>log(this.scale))
+							.onStart(()=> this.material.opacity =1)
+							.onUpdate(()=> {
+								if (this.scale.z > 0.999 && !this.stopDissolvingChain) {
+									this.dissolving = true;
+									this.dissolve();
+									this.stopDissolvingChain = false;
+								}
+							});
+
 
 		this.camTweenFocusMe;
 
@@ -469,10 +491,11 @@ removeFromGroup = (Group) => {
 run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
 camFocusMe = (t) => this.camTweenFocusMe = new TWEEN.Tween(camera.position) 
-											.to({ x:this.position.x+1.2, y:this.position.y, z:this.position.z+5 }, 1000) 
+											.to({ x:this.position.x+0.8, y:this.position.y, z:this.position.z+3 }, 1000) 
 											.easing(TWEEN.Easing.Quadratic.InOut)
 
 dissolve = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
+
 
 }
 
