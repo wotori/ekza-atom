@@ -8,6 +8,7 @@
 			canvas { width: 100%; height: 100% }
 			.info {
 				position: absolute;
+				opacity: 0.1;
 				display: block;
 				left:42%;
 				bottom: 46%;
@@ -80,14 +81,20 @@
 					}
 					}
 					
-					.hide {
-					opacity: 0;
-					transform: scale(1.4);
-					filter: blur(15px);
-					}
 
+					.appear {
+					opacity: 1;
+					/* transform: scale(1); */
+					transition: transform 0.66s ease-out, opacity 1.75s ease-in-out;
+					/* filter: blur(5px); */
+
+					}
+					
 					.hidden {
 					opacity: 0;
+					transition: all 0.66s ease-out;
+					/* transform: scale(0.001); */
+					/* filter: blur(5px); */
 					}
 
 

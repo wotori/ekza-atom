@@ -174,6 +174,7 @@ onMouseClick = (event) => {
 
 		
 		Info.removeClass('hidden');
+		Info.addClass('appear');
 
 		pause.addClass('hidden');
 		play.removeClass('hidden');
@@ -201,6 +202,7 @@ onMouseClick = (event) => {
 		CosmoDust.to0();
 
 		
+
 		Info.addClass('hidden');
 
 		pause.addClass('hidden');
@@ -314,7 +316,7 @@ line.material.transparent = true;
 //pointClouds
 let pointGeo = new THREE.SphereGeometry( 3.5, 17, 17 )
 let pointMat =  new THREE.PointsMaterial({
-	size: 0.4,
+	size: 0.04,
 	map: createCanvasMaterial('white', 256),
 	transparent: true,
 	depthWrite: false
@@ -408,7 +410,7 @@ render = (time) => {
 						
 								picindex < 61 ? picindex++ : picindex = 0;
 								RUNNING_INDEXES.push(intersects[0].index);
-								log(RUNNING_INDEXES);
+								// log(RUNNING_INDEXES);
 								PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex, getUserDescript(picindex)));
 
 			 } else { //Existing one
