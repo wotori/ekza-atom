@@ -33,29 +33,11 @@ audioSrc.connect(analyser);
 let playButton; let playClick=false;
 
 
-	// playButton = $(".playbutton");
-
-
-
-// 	$('playpause input[type=checkbox]').change(function () {
-//     alert('changed');
-// });
-
-
-  // playButton.click(() => {
-		
-	// 	playButton.hasClass('paused') ? playButton.removeClass('paused') : playButton.addClass("paused");
-	// 	$(this).data('clicked',true);
-	// 	// playButton.hasClass( "paused" ) ? audio.play() : playButton.stop();
-	// });
-	
-	// playButton[0].style.display = 'inline-block';
 
 
 
 
 // This gets the exact lenght of the stroke (.stroke) around the play icon
-// var stroke = $('.stroke');
 let stroke = $(".stroke")[0];
 let strokeLength = stroke.getTotalLength();
 
@@ -74,19 +56,36 @@ let pause = $('.pause');
 
 audio.stop = () => {audio.pause(); audio.currentTime = 0};
 
+audio.canPlay = false;
+
+$('audio').on('canplaythrough',()=> audio.canPlay = true)
+
 playIcon.click(()=>{
 
-		play.toggleClass('hidden');
-		pause.toggleClass('hidden');
+
+	if (audio.canPlay){
+
+
+
+	} else {
+
+
+
+
+	}
+
+
+		// play.toggleClass('hidden');
+		// pause.toggleClass('hidden');
 
 		if (stroke.style.webkitAnimationPlayState == "paused" || stroke.style.webkitAnimationPlayState == "") {
-			// play.addClass('hidden');
-			// pause.removeClass('hidden');
+			// pause.addClass('hidden');
+			// play.removeClass('hidden');
 			stroke.style.webkitAnimationPlayState = "running";
 			audio.play();
 		} else if (stroke.style.webkitAnimationPlayState == "running"){
-			// pause.addClass('hidden');
-			// play.removeClass('hidden');
+			// play.addClass('hidden');
+			// pause.removeClass('hidden');
 			stroke.style.webkitAnimationPlayState = "paused"; // Logging the animation-play-state to the console:
 			audio.stop();
 		}
@@ -171,8 +170,17 @@ onMouseClick = (event) => {
 			DescriptName.innerHTML = "id"+Selected.name;
 			DescriptLocation.innerHTML = "Neverland";
 		}
-
 		
+		audio.canPlay = false;
+
+		if (Selected.info.audio) {
+			audio.src = Selected.info.audio
+		} else {
+			audio.src = 'https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559'
+		}
+
+		audio.load();
+
 		Info.removeClass('hidden');
 		Info.addClass('appear');
 
