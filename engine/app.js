@@ -31,7 +31,6 @@ let playIcon = $('.playicon');
 let play = $('.play');
 let pause = $('.pause');
 
-
 audio.stop = () => {audio.pause(); audio.currentTime = 0};
 
 audio.canPlay = false;
@@ -40,10 +39,6 @@ audio.playState = "paused";
 $('audio').on('canplaythrough',()=> audio.canPlay = true)
 
 playIcon.click(()=>{
-
-
-
-
 
 		if (audio.playState == "paused" || audio.playState == "") {
 			pause.removeClass('hidden');
@@ -60,12 +55,7 @@ playIcon.click(()=>{
 		log(audio.playState);
 })
 
-
-
-
-
 //
-
 let RUNNING_INDEXES = [];
 
 let scene = new THREE.Scene();
@@ -116,12 +106,8 @@ onMouseMove = (event) => {
 let Selected,preSelected;
 let focusPlaneName = -1; // Home view by default, no Plane clicked
 
-
-
-
 onMouseClick = (event) => { 
 
-	
 	if ( sectsWithPlanes[0] ) { //Home && Plane ||
 		
 		Selected = sectsWithPlanes[0].object;
@@ -131,7 +117,7 @@ onMouseClick = (event) => {
 			DescriptLocation.innerHTML = Selected.info.location; 
 		} else {
 			DescriptName.innerHTML = "id"+Selected.name;
-			DescriptLocation.innerHTML = "Neverland";
+			DescriptLocation.innerHTML = "London";
 		}
 		
 		audio.canPlay = false;
@@ -153,7 +139,6 @@ onMouseClick = (event) => {
 		audio.playState =  "paused";
 
 		// audio.playState = "paused"
-
 		camTweenOut && (camTweenOut.stop());
 		preSelected && (preSelected.dissolving = true,preSelected.camFocusMe().stop(), preSelected.resizingChain = true);
 		preSelected = Selected;
@@ -175,8 +160,6 @@ onMouseClick = (event) => {
 		Global.map((i,j)=>{i.to0.stop(),i.to1.start()});
 		CosmoDust.to0();
 
-		
-
 		Info.addClass('hidden');
 
 		pause.addClass('hidden');
@@ -188,7 +171,6 @@ onMouseClick = (event) => {
 		audio.stop();
 	}
 }
-
 //GLOBAL FUNCTIONS
 log = (s) => console.log(s);  
 
@@ -346,13 +328,7 @@ CosmoDust.to1 = () => {
 	CosmoDust.opacity1.map((i)=>i.start())
 }
 
-
-
-
 let Global = [Globus.children[0],Globus.children[1],pointsClouds];
-
-
-
 
 Global.map((i,j)=>{
   
@@ -377,7 +353,6 @@ render = (time) => {
 	
 	TWEEN.update();
 
-
 	if (!audio.canPlay){
 
 					// stroke.style.animation = "dash 1.8s linear infinite paused";
@@ -392,7 +367,6 @@ render = (time) => {
 	sectsWithPlanes = raycasterPlanes.intersectObjects(PLANE_GROUP.children,true);
 
 	sectsWithPlanes[0] ? document.body.style.cursor = "pointer" : document.body.style.cursor = "default";
-
 
 	if (focusPlaneName == -1){ //Home view
 	
@@ -426,8 +400,6 @@ render = (time) => {
 
 	};
 
-
-
 	PLANE_GROUP.children.map((i,j) => {
 		
 											i.run(ConvertToWorld(i.name)); //change Plane position
@@ -442,8 +414,6 @@ render = (time) => {
 
 pointsClouds.geometry.verticesNeedUpdate = true;
 pointsClouds.matrixAutoUpdate = true;
-
-
 
 class PlaneAvatar extends THREE.Mesh {
 
@@ -472,9 +442,7 @@ class PlaneAvatar extends THREE.Mesh {
 								}
 							});
 
-
 		this.camTweenFocusMe; //init variable
-
 
 		Group.add(this);
 
@@ -487,7 +455,6 @@ removeFromGroup = (Group) => {
 		Group.remove(this);
 }
 
-
 run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
 camFocusMe = (t) => this.camTweenFocusMe = new TWEEN.Tween(camera.position) 
@@ -495,7 +462,6 @@ camFocusMe = (t) => this.camTweenFocusMe = new TWEEN.Tween(camera.position)
 											.easing(TWEEN.Easing.Quadratic.InOut)
 
 updateSize = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
-
 
 }
 
