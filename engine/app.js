@@ -78,13 +78,13 @@ playIcon.click(()=>{
 		// pause.toggleClass('hidden');
 
 		if (stroke.style.webkitAnimationPlayState == "paused" || stroke.style.webkitAnimationPlayState == "") {
-			// pause.addClass('hidden');
-			// play.removeClass('hidden');
+			pause.removeClass('hidden');
+			play.addClass('hidden');
 			stroke.style.webkitAnimationPlayState = "running";
 			audio.play();
 		} else if (stroke.style.webkitAnimationPlayState == "running"){
-			// play.addClass('hidden');
-			// pause.removeClass('hidden');
+			play.removeClass('hidden');
+			pause.addClass('hidden');
 			stroke.style.webkitAnimationPlayState = "paused"; // Logging the animation-play-state to the console:
 			audio.stop();
 		}
@@ -182,6 +182,7 @@ onMouseClick = (event) => {
 		pause.addClass('hidden');
 		play.removeClass('hidden');
 
+		stroke.style.webkitAnimationPlayState = "paused"
 
 		camTweenOut && (camTweenOut.stop());
 		preSelected && (preSelected.dissolving = true,preSelected.camFocusMe().stop(), preSelected.resizingChain = true);
@@ -211,6 +212,8 @@ onMouseClick = (event) => {
 		pause.addClass('hidden');
 		play.removeClass('hidden');
 		
+		stroke.style.webkitAnimationPlayState = "paused"
+
 		audio.stop();
 	}
 }
