@@ -11,26 +11,27 @@
 				opacity: 0.8;
 				display: block;
 				left:62%;
-				bottom: 50%;
-				min-height: 1em;
+				bottom: 52%;
+				/* min-height: 1em; */
 			    transform: translate(-38%, 50%) 
 			}
 			.descripto {
 				display: inline-block;
 				position: relative;
 				color: #fff;
-				font-family: "Fira Mono", Monaco, "Andale Mono", "Lucida Console", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
-		
+				font-family: "Fira Mono", Monaco, "Andale Mono", "Lucida Console", 
+				"Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
+	
 			  }
 			  #name {
 				position: relative;
-				font-size: 4vh;
+				font-size: 2vh;
 			  } 
 			  #location {
 				position: relative;
 				display: inline-block;
 
-				font-size: 3vh;
+				font-size: 1.5vh;
 				margin-top: 3px;
 			  }  
 				audio{
@@ -38,70 +39,70 @@
 			  }
 
 
-					.playicon {
-					position: relative;
-					display: inline-block;
+				.playicon {
+				position: relative;
+				display: inline-block;
 
-					min-width: 10vh;
-					min-height: 10vh;
-					
-					margin-left: 29px;
-					/* margin-left: 2vh; */
+				min-width: 7vh;
+				min-height: 7vh;
+				
+				margin-left: 0px;
+				/* margin-left: 2vh; */
 
-					top: 6.3vh;
-					opacity: .7;
-					
-					transform: translateY(-50%) translateX(-50%);
-					transition: all .25s cubic-bezier(.59, -0.26, .33, 1.42);
-					}
+				top: 2vh;
+				opacity: .7;
+				
+				transform: translateY(0%) translateX(50%);
+				transition: all .25s cubic-bezier(.59, -0.26, .33, 1.42);
+				}
 
-					.playicon:hover {
-					opacity: 1;
-					}
+				.playicon:hover {
+				opacity: 1;
+				}
 
-					.play {
-					opacity: 1;
-					}
+				.play {
+				opacity: 1;
+				}
 
-					.pause {
-					opacity: 1;
-					}
+				.pause {
+				opacity: 1;
+				}
 
 
-					.stroke-bg {
-					stroke: #4c4c4c;
-					}
+				.stroke-bg {
+				stroke: #4c4c4c;
+				}
 
-					.stroke {
-					stroke-dasharray: 145;
+				.stroke {
+				stroke-dasharray: 145;
+				stroke-dashoffset: 0;
+				/* stroke.style.animation = "dash 1.8s linear infinite paused"; */
+				}
+
+					@keyframes dash {
+				from {
 					stroke-dashoffset: 0;
-					/* stroke.style.animation = "dash 1.8s linear infinite paused"; */
-					}
+				}
+				to {
+					stroke-dashoffset: 145;
+				}
+				} 
+				
 
-					  @keyframes dash {
-					from {
-						stroke-dashoffset: 0;
-					}
-					to {
-						stroke-dashoffset: 145;
-					}
-					} 
-					
+				.appear {
+				opacity: 1;
+				/* transform: scale(1); */
+				transition: transform 0.66s ease-out, opacity 0.75s ease-in-out;
+				/* filter: blur(5px); */
 
-					.appear {
-					opacity: 1;
-					/* transform: scale(1); */
-					transition: transform 0.66s ease-out, opacity 0.75s ease-in-out;
-					/* filter: blur(5px); */
-
-					}
-					
-					.hidden {
-					opacity: 0;
-					transition: all 0.66s ease-out;
-					/* transform: scale(0.001); */
-					/* filter: blur(5px); */
-					}
+				}
+				
+				.hidden {
+				opacity: 0;
+				transition: all 0.66s ease-out;
+				/* transform: scale(0.001); */
+				/* filter: blur(5px); */
+				}
 
 
 		</style>
@@ -109,7 +110,7 @@
 	</head>
 	<body>
 
-		<audio controls crossorigin="anonymous" id="audio" src="/userdata/audio/0.mp3"></audio>
+		<audio controls crossorigin="anonymous" id="audio" src="https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559"></audio>
 		
 		<div class="info hidden">
 			

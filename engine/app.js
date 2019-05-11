@@ -1,9 +1,8 @@
+const buildMsg = 'heroku mp3 load sample test + build log'
+console.log('%c BUILD %c'+buildMsg, 'background: gold; color: darkgreen','background: green; color: white');
+
+
 let USERS;
-
-
-// $.getJSON("users.json", function(json) {
-//     console.log(json); // this will show the info it in firebug console
-// });
 
 let xmlhttp = new XMLHttpRequest();
 
@@ -17,24 +16,15 @@ if (this.readyState == 4 && this.status == 200) {
 xmlhttp.open("GET", '/userdata/users.json', true);
 xmlhttp.send();
 
-
-
 //Audio
 
-var ctx = new AudioContext();
-var audio = $("#audio")[0];
-var audioSrc = ctx.createMediaElementSource(audio);
-audioSrc.connect(ctx.destination);
-var analyser = ctx.createAnalyser();
+//Init ctx
+let initialResume = false;
+let ctx;
+let audioSrc;
+let analyser;
 
-audioSrc.connect(analyser);
-
-
-
-
-
-
-
+let audio = $("#audio")[0];
 
 // This gets the exact lenght of the stroke (.stroke) around the play icon
 let stroke = $(".stroke")[0];
@@ -42,15 +32,10 @@ let strokeLength = stroke.getTotalLength();
 
 console.log(strokeLength);
 
-// This sets the strokes dasharray and offset to be exactly the length of the stroke
-// stroke.style.strokeDasharray = strokeLength;
-// stroke.style.strokeDashoffset = strokeLength;
-
 // Toggle the animation-play-state of the ".stroke" on clicking the ".playicon" -container
 let playIcon = $('.playicon');
 let play = $('.play');
 let pause = $('.pause');
-
 
 audio.stop = () => {audio.pause(); audio.currentTime = 0};
 
@@ -60,10 +45,6 @@ audio.playState = "paused";
 $('audio').on('canplaythrough',()=> audio.canPlay = true)
 
 playIcon.click(()=>{
-
-
-
-
 
 		if (audio.playState == "paused" || audio.playState == "") {
 			pause.removeClass('hidden');
@@ -80,12 +61,7 @@ playIcon.click(()=>{
 		log(audio.playState);
 })
 
-
-
-
-
 //
-
 let RUNNING_INDEXES = [];
 
 let scene = new THREE.Scene();
@@ -131,17 +107,32 @@ onMouseMove = (event) => {
 	MOUSE.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	MOUSE.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 	raycaster.setFromCamera( MOUSE, camera );
+
+
 }
 
 let Selected,preSelected;
 let focusPlaneName = -1; // Home view by default, no Plane clicked
 
+onMouseClick = (event) => { 
 
+if (!initialResume) {
+		
+		initialResume = true;
+		ctx = new AudioContext();
+		audioSrc = ctx.createMediaElementSource(audio);
+		audioSrc.connect(ctx.destination);
+		analyser = ctx.createAnalyser();
+		audioSrc.connect(analyser);
+	
+		ctx.resume().then(() => {
+			log('Context resumed successfully');
+		});
 
+}
 
 onMouseClick = (event) => { 
 
-	
 	if ( sectsWithPlanes[0] ) { //Home && Plane ||
 		
 		Selected = sectsWithPlanes[0].object;
@@ -151,7 +142,7 @@ onMouseClick = (event) => {
 			DescriptLocation.innerHTML = Selected.info.location; 
 		} else {
 			DescriptName.innerHTML = "id"+Selected.name;
-			DescriptLocation.innerHTML = "Neverland";
+			DescriptLocation.innerHTML = "London";
 		}
 		
 		audio.canPlay = false;
@@ -173,7 +164,6 @@ onMouseClick = (event) => {
 		audio.playState =  "paused";
 
 		// audio.playState = "paused"
-
 		camTweenOut && (camTweenOut.stop());
 		preSelected && (preSelected.dissolving = true,preSelected.camFocusMe().stop(), preSelected.resizingChain = true);
 		preSelected = Selected;
@@ -195,20 +185,16 @@ onMouseClick = (event) => {
 		Global.map((i,j)=>{i.to0.stop(),i.to1.start()});
 		CosmoDust.to0();
 
-		
-
 		Info.addClass('hidden');
 
 		pause.addClass('hidden');
 		play.removeClass('hidden');
 		
 		audio.playState =  "paused";
-		// audio.playState = "paused"
 
 		audio.stop();
 	}
 }
-
 //GLOBAL FUNCTIONS
 log = (s) => console.log(s);  
 
@@ -366,13 +352,7 @@ CosmoDust.to1 = () => {
 	CosmoDust.opacity1.map((i)=>i.start())
 }
 
-
-
-
 let Global = [Globus.children[0],Globus.children[1],pointsClouds];
-
-
-
 
 Global.map((i,j)=>{
   
@@ -397,7 +377,6 @@ render = (time) => {
 	
 	TWEEN.update();
 
-
 	if (!audio.canPlay){
 
 					// stroke.style.animation = "dash 1.8s linear infinite paused";
@@ -412,7 +391,6 @@ render = (time) => {
 	sectsWithPlanes = raycasterPlanes.intersectObjects(PLANE_GROUP.children,true);
 
 	sectsWithPlanes[0] ? document.body.style.cursor = "pointer" : document.body.style.cursor = "default";
-
 
 	if (focusPlaneName == -1){ //Home view
 	
@@ -446,8 +424,6 @@ render = (time) => {
 
 	};
 
-
-
 	PLANE_GROUP.children.map((i,j) => {
 		
 											i.run(ConvertToWorld(i.name)); //change Plane position
@@ -462,8 +438,6 @@ render = (time) => {
 
 pointsClouds.geometry.verticesNeedUpdate = true;
 pointsClouds.matrixAutoUpdate = true;
-
-
 
 class PlaneAvatar extends THREE.Mesh {
 
@@ -492,9 +466,7 @@ class PlaneAvatar extends THREE.Mesh {
 								}
 							});
 
-
 		this.camTweenFocusMe; //init variable
-
 
 		Group.add(this);
 
@@ -507,7 +479,6 @@ removeFromGroup = (Group) => {
 		Group.remove(this);
 }
 
-
 run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
 camFocusMe = (t) => this.camTweenFocusMe = new TWEEN.Tween(camera.position) 
@@ -515,7 +486,6 @@ camFocusMe = (t) => this.camTweenFocusMe = new TWEEN.Tween(camera.position)
 											.easing(TWEEN.Easing.Quadratic.InOut)
 
 updateSize = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
-
 
 }
 
