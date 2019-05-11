@@ -98,6 +98,11 @@ function onWindowResize(){
 
 onMouseMove = (event) => {
 	event.preventDefault();
+
+	ctx.resume().then(() => {
+    log('Playback resumed successfully');
+  });
+
 	MOUSE.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	MOUSE.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 	raycaster.setFromCamera( MOUSE, camera );
