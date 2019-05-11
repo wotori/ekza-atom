@@ -1,4 +1,4 @@
-console.log('%c BUILD = audio ctx policy fix ', 'background: #222; color: #bada55');
+console.log('%c BUILD = Real ctx resumed successfully ', 'background: #222; color: #bada55');
 
 
 let USERS;
@@ -107,7 +107,15 @@ onMouseMove = (event) => {
 	MOUSE.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 	raycaster.setFromCamera( MOUSE, camera );
 
-	if (!initialResume) {
+
+}
+
+let Selected,preSelected;
+let focusPlaneName = -1; // Home view by default, no Plane clicked
+
+onMouseClick = (event) => { 
+
+if (!initialResume) {
 		
 		initialResume = true;
 		ctx = new AudioContext();
@@ -120,17 +128,7 @@ onMouseMove = (event) => {
 			log('Context resumed successfully');
 		});
 
-	}
-
-
-
 }
-
-let Selected,preSelected;
-let focusPlaneName = -1; // Home view by default, no Plane clicked
-
-onMouseClick = (event) => { 
-
 
 
 	if ( sectsWithPlanes[0] ) { //Home && Plane ||
