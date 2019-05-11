@@ -1,23 +1,70 @@
 let USERS;
 
-
-// $.getJSON("users.json", function(json) {
-//     console.log(json); // this will show the info it in firebug console
-// });
-
 let xmlhttp = new XMLHttpRequest();
 
 xmlhttp.onreadystatechange = function() {
 if (this.readyState == 4 && this.status == 200) {
 	USERS = JSON.parse(this.responseText);
-	console.log(USERS)
+	// console.log(USERS)
     }
 };
 
-xmlhttp.open("GET", 'users.json', true);
+xmlhttp.open("GET", '/userdata/users.json', true);
 xmlhttp.send();
 
+//Audio
+var ctx = new AudioContext();
+var audio = $("#audio")[0];
+var audioSrc = ctx.createMediaElementSource(audio);
+audioSrc.connect(ctx.destination);
+var analyser = ctx.createAnalyser();
+audioSrc.connect(analyser);
 
+// This gets the exact lenght of the stroke (.stroke) around the play icon
+let stroke = $(".stroke")[0];
+let strokeLength = stroke.getTotalLength();
+
+console.log(strokeLength);
+
+// Toggle the animation-play-state of the ".stroke" on clicking the ".playicon" -container
+let playIcon = $('.playicon');
+let play = $('.play');
+let pause = $('.pause');
+
+
+audio.stop = () => {audio.pause(); audio.currentTime = 0};
+
+audio.canPlay = false;
+audio.playState = "paused";
+
+$('audio').on('canplaythrough',()=> audio.canPlay = true)
+
+playIcon.click(()=>{
+
+
+
+
+
+		if (audio.playState == "paused" || audio.playState == "") {
+			pause.removeClass('hidden');
+			play.addClass('hidden');
+			audio.playState = "running";
+			audio.play();
+		} else if (audio.playState == "running"){
+			play.removeClass('hidden');
+			pause.addClass('hidden');
+			audio.playState = "paused"; // Logging the animation-play-state to the console:
+			audio.stop();
+		}
+
+		log(audio.playState);
+})
+
+
+
+
+
+//
 
 let RUNNING_INDEXES = [];
 
@@ -27,15 +74,16 @@ let camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeig
 let raycaster = new THREE.Raycaster();
 raycaster.params.Points.threshold = 0.07;
 
-let raycasterClick = new THREE.Raycaster();
-raycasterClick.params.Points.threshold = 0.0001;
+let raycasterPlanes = new THREE.Raycaster();
+raycasterPlanes.params.Points.threshold = 0.0001;
+let sectsWithPlanes;
 
+Info = $(".info");
 
-Descript = document.getElementById('info')
-DescriptName = document.getElementById('name');
-DescriptLocation = document.getElementById('location');
+Descript = $(".descripto");
+DescriptName = $("#name")[0];
+DescriptLocation = $("#location")[0];
 
-Descript.style.opacity = 1;
 
 let MOUSE = new THREE.Vector2();
 
@@ -66,58 +114,78 @@ onMouseMove = (event) => {
 }
 
 let Selected,preSelected;
-let objToTrackName = -1;
-let flagToMove = true;
-
-onMouseClick = (event) => {
+let focusPlaneName = -1; // Home view by default, no Plane clicked
 
 
 
 
+onMouseClick = (event) => { 
 
-	raycasterClick.setFromCamera( MOUSE, camera );
-	let intersectsClick = raycasterClick.intersectObjects(PLANE_GROUP.children,true);
-	if (objToTrackName == -1 && intersectsClick[0] ) { //click on avatar move In
+	
+	if ( sectsWithPlanes[0] ) { //Home && Plane ||
 		
-		Selected = intersectsClick[0].object;
+		Selected = sectsWithPlanes[0].object;
 
 		if (Selected.info) {
 			DescriptName.innerHTML = Selected.info.name;
 			DescriptLocation.innerHTML = Selected.info.location; 
 		} else {
 			DescriptName.innerHTML = "id"+Selected.name;
-			DescriptLocation.innerHTML = "London";
+			DescriptLocation.innerHTML = "Neverland";
+		}
+		
+		audio.canPlay = false;
+
+		if (Selected.info != undefined && 'audio' in Selected.info && Selected.info.audio != '') {
+			audio.src = Selected.info.audio
+		} else {
+			audio.src = 'https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559'
 		}
 
-		Descript.style.opacity = 1;
+		audio.load();
 
+		Info.removeClass('hidden');
+		Info.addClass('appear');
 
-		camTweenOut && camTweenOut.stop();
-		preSelected && (preSelected.dissolving = true);
+		pause.addClass('hidden');
+		play.removeClass('hidden');
+
+		audio.playState =  "paused";
+
+		// audio.playState = "paused"
+
+		camTweenOut && (camTweenOut.stop());
+		preSelected && (preSelected.dissolving = true,preSelected.camFocusMe().stop(), preSelected.resizingChain = true);
 		preSelected = Selected;
-		Selected.dissolving = false
-		objToTrackName  = Selected.name; //camFocusme
+		Selected.dissolving = false;
+		focusPlaneName  = Selected.name; //camFocusme
+
+		Selected.camFocusMe().start() //focus
+		Selected.resizingChain = false;
 
 		Global.map((i,j)=>{i.to1.stop(),i.to0.start()});
 		CosmoDust.to1();
-		flagToMove = false;
-		intersectsClick = null;
-
-	} else {  // Move out
-
-
-		flagToMove = true;
-		Selected && (Selected.dissolving = true);
-		objToTrackName = -1;
-
+		
+	} else if (event.target.tagName == "CANVAS"){  // Move out
+		focusPlaneName = -1;
+		Selected && (Selected.dissolving = true, Selected.resizingChain = true);
 	 
 		//Tweens activate
 		camTweenOut.start();
 		Global.map((i,j)=>{i.to0.stop(),i.to1.start()});
 		CosmoDust.to0();
 
-		Descript.style.opacity = 0;
+		
 
+		Info.addClass('hidden');
+
+		pause.addClass('hidden');
+		play.removeClass('hidden');
+		
+		audio.playState =  "paused";
+		// audio.playState = "paused"
+
+		audio.stop();
 	}
 }
 
@@ -306,31 +374,65 @@ getUserDescript =(index)=> USERS.find((e)=> e.pic == index);
 
 //RENDER
 render = (time) => {
+	
 	TWEEN.update();
-	if (objToTrackName == -1){ //FIND intersection with pC
-		let intersects = raycaster.intersectObjects( [pointsClouds] );
 
-		intersects.length > 0
-		?
-			(log(intersects[0].index),
-			RUNNING_INDEXES.indexOf(intersects[0].index) == -1
-					? (		
-							picindex < 61 ? picindex++ : picindex = 0, 
-							log(RUNNING_INDEXES),
-							RUNNING_INDEXES.push(intersects[0].index),
-							PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex, getUserDescript(picindex))
-							)
-						)
-					: void null )
-		: void null; 
+
+	if (!audio.canPlay){
+
+					// stroke.style.animation = "dash 1.8s linear infinite paused";
+					log('loading')
+
+	} else {
+		// stroke.style.animation = "";
+	
+	}
+	
+	raycasterPlanes.setFromCamera( MOUSE, camera );
+	sectsWithPlanes = raycasterPlanes.intersectObjects(PLANE_GROUP.children,true);
+
+	sectsWithPlanes[0] ? document.body.style.cursor = "pointer" : document.body.style.cursor = "default";
+
+
+	if (focusPlaneName == -1){ //Home view
+	
+		let sectsWithPoints = raycaster.intersectObjects( [pointsClouds] );
+
+		if (sectsWithPoints[0]){ //cursor on a point
+
+			
+			 if (RUNNING_INDEXES.indexOf(sectsWithPoints[0].index) == -1){ //Check point for existence
+						
+								picindex < 61 ? picindex++ : picindex = 0; 
+								RUNNING_INDEXES.push(sectsWithPoints[0].index);
+								// log(RUNNING_INDEXES);
+								let newPlane = new PlaneAvatar(PLANE_GROUP,sectsWithPoints[0].index,picindex, getUserDescript(picindex));
+								newPlane.scale.set(0.001,0.001,0.001);
+								newPlane.enlargeTween.start();
+								PLANE_GROUP.add(newPlane);
+			 } else {
+
+								let planeToEnlarge = PLANE_GROUP.children.find((e)=>e.name == sectsWithPoints[0].index);
+								planeToEnlarge != undefined ? planeToEnlarge.dissolving = false : void null;
+
+			 }
+						
+		};
+		
+		if (sectsWithPlanes[0]){//Enlarge existing one not dissolved Plane
+				let planeToEnlarge = sectsWithPlanes[0].object;
+				planeToEnlarge.dissolving = false; //flag to enlarge
+		};
+
 	};
 
-	PLANE_GROUP.children.map((i,j) =>
+
+
+	PLANE_GROUP.children.map((i,j) => {
 		
-											{i.run(ConvertToWorld(i.name)); //runing by the point
-											 objToTrackName == i.name ? (i.camFocusMe().start(),objToTrackName=-1):void null; //focus
-											 i.dissolve()} //dissolve handler
-	)
+											i.run(ConvertToWorld(i.name)); //change Plane position
+											i.updateSize() //every Plane size update
+	})
 
 	//FIND INTERSECTION
 	camera.updateMatrixWorld();
@@ -347,27 +449,35 @@ class PlaneAvatar extends THREE.Mesh {
 
 	constructor( Group, AnchorPointIndex, picindex , descript) {
 
-		const texture = new THREE.TextureLoader().load( "userpics/Frame-"+picindex+".png" );
+		const texture = new THREE.TextureLoader().load( "/userdata/pic/Frame-"+picindex+".png" );
 		super(new THREE.CircleGeometry( 0.35, 64 ,64 ), new THREE.MeshBasicMaterial({ map: texture }));
+		
 		
 		this.name = AnchorPointIndex; 
 		this.info = descript;
 		this.dissolving = true; //Dissolving by default
-		// this.position.set( camera.position ); // set initial position
+		this.resizingChain = true;
 
 		this.dissolveTween = new TWEEN.Tween( this.scale ) 
-							.to({ x:0.0001, y:0.0001, z:0.0001 }, 7000) 
+							.to({ x:0.001, y:0.001, z:0.001 }, 8000) 
 							.easing( TWEEN.Easing.Quadratic.Out )
-							.onComplete(()=>this.removeFromGroup(PLANE_GROUP))
-
+							
 		this.enlargeTween = new TWEEN.Tween( this.scale ) 
-							.to({ x:1.5, y:1.5, z:1.5 }, 650) 
+							.to({ x:1, y:1, z:1 }, 650) 
 							.easing( TWEEN.Easing.Quadratic.Out )
-							.onComplete(()=>log(this.scale))
+							.onStart(()=> this.material.opacity =1)
+							.onUpdate(()=> {
+								if (this.scale.z > 0.999 && this.resizingChain) { //About to complete
+									this.dissolving = true; //Now shall dissolve again by default
+								}
+							});
 
-		this.camTweenFocusMe;
+
+		this.camTweenFocusMe; //init variable
+
 
 		Group.add(this);
+
 };
 
 removeFromGroup = (Group) => {
@@ -381,10 +491,11 @@ removeFromGroup = (Group) => {
 run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
 camFocusMe = (t) => this.camTweenFocusMe = new TWEEN.Tween(camera.position) 
-											.to({ x:this.position.x, y:this.position.y, z:this.position.z+5 }, 1000) 
+											.to({ x:this.position.x+0.4, y:this.position.y, z:this.position.z+3 }, 1000) 
 											.easing(TWEEN.Easing.Quadratic.InOut)
 
-dissolve = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
+updateSize = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
+
 
 }
 
@@ -444,7 +555,7 @@ animate = () => {
 	let time = clock.getElapsedTime();
 	render(time);
 
-	if (!Selected || flagToMove) {
+	if (!Selected || focusPlaneName == -1) {
 		Globus.rotation.x -= 0.0003;
 		Globus.rotation.y -= 0.0003;
 
