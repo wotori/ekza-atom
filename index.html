@@ -66,7 +66,7 @@
 					.pause {
 					opacity: 1;
 					}
-/* 
+
 
 					.stroke-bg {
 					stroke: #4c4c4c;
@@ -74,24 +74,24 @@
 
 					.stroke {
 					stroke-dasharray: 145;
-					stroke-dashoffset: 145;
-					animation: dash 15s linear infinite paused;
+					stroke-dashoffset: 0;
+					/* stroke.style.animation = "dash 1.8s linear infinite paused"; */
 					}
 
-					@keyframes dash {
+					  @keyframes dash {
 					from {
 						stroke-dashoffset: 0;
 					}
 					to {
 						stroke-dashoffset: 145;
 					}
-					} */
+					} 
 					
 
 					.appear {
 					opacity: 1;
 					/* transform: scale(1); */
-					transition: transform 0.66s ease-out, opacity 1.75s ease-in-out;
+					transition: transform 0.66s ease-out, opacity 0.75s ease-in-out;
 					/* filter: blur(5px); */
 
 					}

@@ -40,12 +40,11 @@ audioSrc.connect(analyser);
 let stroke = $(".stroke")[0];
 let strokeLength = stroke.getTotalLength();
 
-// This logs the stroke lenght to the (devtools) console when run
 console.log(strokeLength);
 
 // This sets the strokes dasharray and offset to be exactly the length of the stroke
-stroke.style.strokeDasharray = strokeLength;
-stroke.style.strokeDashoffset = strokeLength;
+// stroke.style.strokeDasharray = strokeLength;
+// stroke.style.strokeDashoffset = strokeLength;
 
 // Toggle the animation-play-state of the ".stroke" on clicking the ".playicon" -container
 let playIcon = $('.playicon');
@@ -56,40 +55,29 @@ let pause = $('.pause');
 audio.stop = () => {audio.pause(); audio.currentTime = 0};
 
 audio.canPlay = false;
+audio.playState = "paused";
 
 $('audio').on('canplaythrough',()=> audio.canPlay = true)
 
 playIcon.click(()=>{
 
 
-	if (audio.canPlay){
 
 
 
-	} else {
-
-
-
-
-	}
-
-
-		// play.toggleClass('hidden');
-		// pause.toggleClass('hidden');
-
-		if (stroke.style.webkitAnimationPlayState == "paused" || stroke.style.webkitAnimationPlayState == "") {
+		if (audio.playState == "paused" || audio.playState == "") {
 			pause.removeClass('hidden');
 			play.addClass('hidden');
-			stroke.style.webkitAnimationPlayState = "running";
+			audio.playState = "running";
 			audio.play();
-		} else if (stroke.style.webkitAnimationPlayState == "running"){
+		} else if (audio.playState == "running"){
 			play.removeClass('hidden');
 			pause.addClass('hidden');
-			stroke.style.webkitAnimationPlayState = "paused"; // Logging the animation-play-state to the console:
+			audio.playState = "paused"; // Logging the animation-play-state to the console:
 			audio.stop();
 		}
 
-		log(stroke.style.webkitAnimationPlayState);
+		log(audio.playState);
 })
 
 
@@ -182,7 +170,9 @@ onMouseClick = (event) => {
 		pause.addClass('hidden');
 		play.removeClass('hidden');
 
-		stroke.style.webkitAnimationPlayState = "paused"
+		audio.playState =  "paused";
+
+		// audio.playState = "paused"
 
 		camTweenOut && (camTweenOut.stop());
 		preSelected && (preSelected.dissolving = true,preSelected.camFocusMe().stop(), preSelected.resizingChain = true);
@@ -212,7 +202,8 @@ onMouseClick = (event) => {
 		pause.addClass('hidden');
 		play.removeClass('hidden');
 		
-		stroke.style.webkitAnimationPlayState = "paused"
+		audio.playState =  "paused";
+		// audio.playState = "paused"
 
 		audio.stop();
 	}
@@ -405,6 +396,17 @@ getUserDescript =(index)=> USERS.find((e)=> e.pic == index);
 render = (time) => {
 	
 	TWEEN.update();
+
+
+	if (!audio.canPlay){
+
+					// stroke.style.animation = "dash 1.8s linear infinite paused";
+					log('loading')
+
+	} else {
+		// stroke.style.animation = "";
+	
+	}
 	
 	raycasterPlanes.setFromCamera( MOUSE, camera );
 	sectsWithPlanes = raycasterPlanes.intersectObjects(PLANE_GROUP.children,true);

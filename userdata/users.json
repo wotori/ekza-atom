@@ -1,6 +1,6 @@
  [
     { "name": "Greg Brockman", "location": "Chichester","pic":11,  "audio": "/userdata/audio/1.mp3" },
-    { "name": "Courtney Dauwalter", "location": "Bradford", "pic":1, "audio": "/userdata/audio/2.mp3" },
+    { "name": "Courtney Dauwalter", "location": "Bradford", "pic":1, "audio": "/userdata/audio/courtney_long.mp3" },
     { "name": "Rafael Atempa", "location": "Bristol", "pic":0 },
     { "name": "Raulando Aguiar", "location": "Yorkshire","pic":12 },
     { "name": "Arthem Goudzo","location": "Hoxton & Shoreditch","pic": 3 },
