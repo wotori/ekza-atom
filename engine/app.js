@@ -131,7 +131,7 @@ onMouseClick = (event) => {
 			DescriptLocation.innerHTML = Selected.info.location; 
 		} else {
 			DescriptName.innerHTML = "id"+Selected.name;
-			DescriptLocation.innerHTML = "Neverland";
+			DescriptLocation.innerHTML = "London";
 		}
 		
 		audio.canPlay = false;
