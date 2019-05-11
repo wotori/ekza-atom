@@ -13,12 +13,14 @@ xmlhttp.open("GET", '/userdata/users.json', true);
 xmlhttp.send();
 
 //Audio
-var ctx = new AudioContext();
-var audio = $("#audio")[0];
-var audioSrc = ctx.createMediaElementSource(audio);
-audioSrc.connect(ctx.destination);
-var analyser = ctx.createAnalyser();
-audioSrc.connect(analyser);
+
+//Init ctx
+let initialResume = false;
+let ctx;
+let audioSrc;
+let analyser;
+
+let audio = $("#audio")[0];
 
 // This gets the exact lenght of the stroke (.stroke) around the play icon
 let stroke = $(".stroke")[0];
@@ -98,20 +100,35 @@ function onWindowResize(){
 
 onMouseMove = (event) => {
 	event.preventDefault();
-
-	ctx.resume().then(() => {
-    log('Playback resumed successfully');
-  });
-
 	MOUSE.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	MOUSE.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 	raycaster.setFromCamera( MOUSE, camera );
+
+	if (!initialResume) {
+		
+		initialResume = true;
+		ctx = new AudioContext();
+		audioSrc = ctx.createMediaElementSource(audio);
+		audioSrc.connect(ctx.destination);
+		analyser = ctx.createAnalyser();
+		audioSrc.connect(analyser);
+	
+		ctx.resume().then(() => {
+			log('Context resumed successfully');
+		});
+
+	}
+
+
+
 }
 
 let Selected,preSelected;
 let focusPlaneName = -1; // Home view by default, no Plane clicked
 
 onMouseClick = (event) => { 
+
+
 
 	if ( sectsWithPlanes[0] ) { //Home && Plane ||
 		
