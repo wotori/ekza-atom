@@ -131,7 +131,6 @@ if (!initialResume) {
 
 }
 
-onMouseClick = (event) => { 
 
 	if ( sectsWithPlanes[0] ) { //Home && Plane ||
 		
@@ -537,6 +536,7 @@ function groupRotation(){
 		pointsClouds.rotation.x += deltaY / 100;
 	} 
 }
+
 groupRotation()
 
 animate = () => {
