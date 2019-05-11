@@ -406,12 +406,15 @@ render = (time) => {
 	raycasterPlanes.setFromCamera( MOUSE, camera );
 	sectsWithPlanes = raycasterPlanes.intersectObjects(PLANE_GROUP.children,true);
 
+	sectsWithPlanes[0] ? document.body.style.cursor = "pointer" : document.body.style.cursor = "default";
 
-	if (focusPlaneName == -1){ //is Home view?
+
+	if (focusPlaneName == -1){ //Home view
 	
 		let sectsWithPoints = raycaster.intersectObjects( [pointsClouds] );
 
 		if (sectsWithPoints[0]){ //cursor on a point
+
 			
 			 if (RUNNING_INDEXES.indexOf(sectsWithPoints[0].index) == -1){ //Check point for existence
 						
@@ -432,8 +435,8 @@ render = (time) => {
 		};
 		
 		if (sectsWithPlanes[0]){//Enlarge existing one not dissolved Plane
-			let planeToEnlarge = sectsWithPlanes[0].object;
-			planeToEnlarge.dissolving = false; //flag to enlarge
+				let planeToEnlarge = sectsWithPlanes[0].object;
+				planeToEnlarge.dissolving = false; //flag to enlarge
 		};
 
 	};
