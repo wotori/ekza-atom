@@ -1,6 +1,6 @@
 [
-    { "name": "Oleg Savchuk","location": "London","pic": 3, "audio": "/userdata/audio/0.mp3" },
-    { "name": "Luiza Matyba", "location": "Bradford", "pic":1, "audio": "https://archive.org/download/20060408-jscott-wikipedia/20060408-jscott-wikipedia_64kb.mp3" },
+    { "name": "Oleg Savchuk","location": "London","pic": 3 },
+    { "name": "Courtney Dauwalter", "location": "Bradford", "pic":1, "audio": "/userdata/audio/courtney.mp3" },
     { "name": "Rafael Atempa", "location": "Bristol", "pic":0, "audio": "https://archive.org/download/OTRR_Box_13_Singles/Box_13_49-05-22__40__Death_Is_No_Joke.mp3" },
     { "name": "Bruno Rezende", "location": "Chichester","pic":11, "audio": "https://archive.org/download/art_of_war_librivox/art_of_war_01-02_sun_tzu.mp3" },
     { "name": "Raulando Aguiar", "location": "Yorkshire","pic":12, "audio": "https://archive.org/download/OTRR_Box_13_Singles/Box_13_49-08-07__51__The_Clay_Pigeon.mp3" },

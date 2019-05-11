@@ -1,4 +1,5 @@
-console.log('%c BUILD = Real ctx resumed successfully ', 'background: #222; color: #bada55');
+const buildMsg = 'heroku mp3 load sample test + build log'
+console.log('%c BUILD %c'+buildMsg, 'background: gold; color: darkgreen','background: green; color: white');
 
 
 let USERS;
