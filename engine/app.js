@@ -30,7 +30,6 @@ var analyser = ctx.createAnalyser();
 audioSrc.connect(analyser);
 
 
-let playButton; let playClick=false;
 
 
 
@@ -107,8 +106,9 @@ let camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeig
 let raycaster = new THREE.Raycaster();
 raycaster.params.Points.threshold = 0.07;
 
-let raycasterClick = new THREE.Raycaster();
-raycasterClick.params.Points.threshold = 0.0001;
+let raycasterPlanes = new THREE.Raycaster();
+raycasterPlanes.params.Points.threshold = 0.0001;
+let sectsWithPlanes;
 
 Info = $(".info");
 
@@ -146,22 +146,17 @@ onMouseMove = (event) => {
 }
 
 let Selected,preSelected;
-let objToTrackName = -1;
-let flagToMove = true;
+let focusPlaneName = -1; // Home view by default, no Plane clicked
 
 
 
 
 onMouseClick = (event) => { 
 
-	// log($(event.target)[0]);
-	// log(event.target.classList);
-
-	raycasterClick.setFromCamera( MOUSE, camera );
-	let intersectsClick = raycasterClick.intersectObjects(PLANE_GROUP.children,true);
-	if (objToTrackName == -1 && intersectsClick[0] ) { //click on avatar move In
+	
+	if ( sectsWithPlanes[0] ) { //Home && Plane ||
 		
-		Selected = intersectsClick[0].object;
+		Selected = sectsWithPlanes[0].object;
 
 		if (Selected.info) {
 			DescriptName.innerHTML = Selected.info.name;
@@ -173,7 +168,7 @@ onMouseClick = (event) => {
 		
 		audio.canPlay = false;
 
-		if (Selected.info.audio) {
+		if (Selected.info != undefined && 'audio' in Selected.info && Selected.info.audio != '') {
 			audio.src = Selected.info.audio
 		} else {
 			audio.src = 'https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559'
@@ -188,21 +183,21 @@ onMouseClick = (event) => {
 		play.removeClass('hidden');
 
 
-		camTweenOut && camTweenOut.stop();
-		preSelected && (preSelected.dissolving = true);
+		camTweenOut && (camTweenOut.stop());
+		preSelected && (preSelected.dissolving = true,preSelected.camFocusMe().stop(), preSelected.resizingChain = true);
 		preSelected = Selected;
-		Selected.dissolving = false
-		objToTrackName  = Selected.name; //camFocusme
+		Selected.dissolving = false;
+		focusPlaneName  = Selected.name; //camFocusme
+
+		Selected.camFocusMe().start() //focus
+		Selected.resizingChain = false;
 
 		Global.map((i,j)=>{i.to1.stop(),i.to0.start()});
 		CosmoDust.to1();
-		flagToMove = false;
-		intersectsClick = null;
-
+		
 	} else if (event.target.tagName == "CANVAS"){  // Move out
-		flagToMove = true;
-		Selected && (Selected.dissolving = true);
-		objToTrackName = -1;
+		focusPlaneName = -1;
+		Selected && (Selected.dissolving = true, Selected.resizingChain = true);
 	 
 		//Tweens activate
 		camTweenOut.start();
@@ -408,37 +403,48 @@ render = (time) => {
 	
 	TWEEN.update();
 	
-	if (objToTrackName == -1){ //FIND intersection with pC
+	raycasterPlanes.setFromCamera( MOUSE, camera );
+	sectsWithPlanes = raycasterPlanes.intersectObjects(PLANE_GROUP.children,true);
+
+
+	if (focusPlaneName == -1){ //is Home view?
 	
-		let intersects = raycaster.intersectObjects( [pointsClouds] );
+		let sectsWithPoints = raycaster.intersectObjects( [pointsClouds] );
 
-		if (intersects.length > 0){
+		if (sectsWithPoints[0]){ //cursor on a point
 			
-			 if (RUNNING_INDEXES.indexOf(intersects[0].index) == -1){ //New point
+			 if (RUNNING_INDEXES.indexOf(sectsWithPoints[0].index) == -1){ //Check point for existence
 						
-								picindex < 61 ? picindex++ : picindex = 0;
-								RUNNING_INDEXES.push(intersects[0].index);
+								picindex < 61 ? picindex++ : picindex = 0; 
+								RUNNING_INDEXES.push(sectsWithPoints[0].index);
 								// log(RUNNING_INDEXES);
-								PLANE_GROUP.add(new PlaneAvatar(PLANE_GROUP,intersects[0].index,picindex, getUserDescript(picindex)));
+								let newPlane = new PlaneAvatar(PLANE_GROUP,sectsWithPoints[0].index,picindex, getUserDescript(picindex));
+								newPlane.scale.set(0.001,0.001,0.001);
+								newPlane.enlargeTween.start();
+								PLANE_GROUP.add(newPlane);
+			 } else {
 
-			 } else { //Existing one
+								let planeToEnlarge = PLANE_GROUP.children.find((e)=>e.name == sectsWithPoints[0].index);
+								planeToEnlarge != undefined ? planeToEnlarge.dissolving = false : void null;
 
-								let toEnlargePlane = PLANE_GROUP.children.find((i)=> i.name == intersects[0].index);
-								toEnlargePlane.dissolving = false;
-								toEnlargePlane.dissolve();
-			 }		
+			 }
 						
-		}	
+		};
+		
+		if (sectsWithPlanes[0]){//Enlarge existing one not dissolved Plane
+			let planeToEnlarge = sectsWithPlanes[0].object;
+			planeToEnlarge.dissolving = false; //flag to enlarge
+		};
 
 	};
 
-	PLANE_GROUP.children.map((i,j) =>
+
+
+	PLANE_GROUP.children.map((i,j) => {
 		
-											{i.run(ConvertToWorld(i.name)); //runing by the point
-											 objToTrackName == i.name ? (i.stopDissolvingChain=true, i.camFocusMe().start(),objToTrackName=-1):void null; //focus
-											//  i.dissolving = true;
-											 i.dissolve()} //dissolve handler
-	)
+											i.run(ConvertToWorld(i.name)); //change Plane position
+											i.updateSize() //every Plane size update
+	})
 
 	//FIND INTERSECTION
 	camera.updateMatrixWorld();
@@ -458,36 +464,32 @@ class PlaneAvatar extends THREE.Mesh {
 		const texture = new THREE.TextureLoader().load( "/userdata/pic/Frame-"+picindex+".png" );
 		super(new THREE.CircleGeometry( 0.35, 64 ,64 ), new THREE.MeshBasicMaterial({ map: texture }));
 		
+		
 		this.name = AnchorPointIndex; 
 		this.info = descript;
 		this.dissolving = true; //Dissolving by default
-		this.stopDissolvingChain = false;
+		this.resizingChain = true;
 
 		this.dissolveTween = new TWEEN.Tween( this.scale ) 
-							.to({ x:0.0001, y:0.0001, z:0.0001 }, 8000) 
+							.to({ x:0.001, y:0.001, z:0.001 }, 8000) 
 							.easing( TWEEN.Easing.Quadratic.Out )
-							.onComplete(()=>{
-								this.material.opacity = 0;
-						
-								// this.removeFromGroup(PLANE_GROUP))
-							});
-
+							
 		this.enlargeTween = new TWEEN.Tween( this.scale ) 
 							.to({ x:1, y:1, z:1 }, 650) 
 							.easing( TWEEN.Easing.Quadratic.Out )
 							.onStart(()=> this.material.opacity =1)
 							.onUpdate(()=> {
-								if (this.scale.z > 0.999 && !this.stopDissolvingChain) {
-									this.dissolving = true;
-									this.dissolve();
-									this.stopDissolvingChain = false;
+								if (this.scale.z > 0.999 && this.resizingChain) { //About to complete
+									this.dissolving = true; //Now shall dissolve again by default
 								}
 							});
 
 
-		this.camTweenFocusMe;
+		this.camTweenFocusMe; //init variable
+
 
 		Group.add(this);
+
 };
 
 removeFromGroup = (Group) => {
@@ -504,7 +506,7 @@ camFocusMe = (t) => this.camTweenFocusMe = new TWEEN.Tween(camera.position)
 											.to({ x:this.position.x+0.8, y:this.position.y, z:this.position.z+3 }, 1000) 
 											.easing(TWEEN.Easing.Quadratic.InOut)
 
-dissolve = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
+updateSize = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
 
 
 }
@@ -565,7 +567,7 @@ animate = () => {
 	let time = clock.getElapsedTime();
 	render(time);
 
-	if (!Selected || flagToMove) {
+	if (!Selected || focusPlaneName == -1) {
 		Globus.rotation.x -= 0.0003;
 		Globus.rotation.y -= 0.0003;
 
