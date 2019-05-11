@@ -509,7 +509,7 @@ removeFromGroup = (Group) => {
 run = (vector) => this.position.set(vector.x,vector.y,vector.z);
 
 camFocusMe = (t) => this.camTweenFocusMe = new TWEEN.Tween(camera.position) 
-											.to({ x:this.position.x+0.8, y:this.position.y, z:this.position.z+3 }, 1000) 
+											.to({ x:this.position.x+0.4, y:this.position.y, z:this.position.z+3 }, 1000) 
 											.easing(TWEEN.Easing.Quadratic.InOut)
 
 updateSize = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
