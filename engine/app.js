@@ -1,20 +1,51 @@
-const buildMsg = 'heroku mp3 load sample test + build log'
+const buildMsg = 'caching textures + refact'
 console.log('%c BUILD %c'+buildMsg, 'background: gold; color: darkgreen','background: green; color: white');
 
 
-let USERS;
+//Fetch USERS and cache their pics 
 
-let xmlhttp = new XMLHttpRequest();
+let USERS; //init Users
 
-xmlhttp.onreadystatechange = function() {
-if (this.readyState == 4 && this.status == 200) {
-	USERS = JSON.parse(this.responseText);
-	// console.log(USERS)
-    }
-};
+newFetchedPic = (index) =>new THREE.TextureLoader().load( "/userdata/pic/Frame-"+index+".png" );
 
-xmlhttp.open("GET", '/userdata/users.json', true);
-xmlhttp.send();
+let getUsers = new XMLHttpRequest();
+
+getUsers.onreadystatechange = function () {
+
+	if (this.readyState == 4 && this.status == 200) {
+		
+		USERS = JSON.parse(this.responseText);
+		
+		
+		//Cache pics for existing rows
+		USERS.map((i)=> +i.pic >= 0 ? i.fetchedPic = newFetchedPic(i.pic) : void null);
+		
+		//Cache for unexisting users
+		
+		const USERSexist  = USERS.map((i)=>i.pic);
+		
+		for (let picindex = 0; picindex <= 62; picindex++) 
+		
+		USERSexist.indexOf(picindex) == -1 ? USERS.push({ //Load all 62 textures
+			name : 'id'+picindex,
+			location : 'London',
+			pic : picindex,
+			fetchedPic: newFetchedPic(picindex),
+			audio: 'https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559'
+		}) : void null;
+		
+		USERS.sort((a,b)=>a.pic - b.pic);
+
+		// console.table(USERS);
+		
+	}
+}
+
+getUsers.open("GET", '/userdata/users.json', true);
+getUsers.send();
+
+
+
 
 //Audio
 
@@ -85,7 +116,7 @@ let MOUSE = new THREE.Vector2();
 
 let clock = new THREE.Clock();
 
-let picindex = 0;
+let picindex = 0, looped_picindex = false;
 
 let PLANE_GROUP = new THREE.Group();
 scene.add(PLANE_GROUP);
@@ -116,41 +147,32 @@ let focusPlaneName = -1; // Home view by default, no Plane clicked
 
 onMouseClick = (event) => { 
 
-if (!initialResume) {
+	if (!initialResume) { //Google audio policy
+			
+			initialResume = true;
+			ctx = new AudioContext();
+			audioSrc = ctx.createMediaElementSource(audio);
+			audioSrc.connect(ctx.destination);
+			analyser = ctx.createAnalyser();
+			audioSrc.connect(analyser);
 		
-		initialResume = true;
-		ctx = new AudioContext();
-		audioSrc = ctx.createMediaElementSource(audio);
-		audioSrc.connect(ctx.destination);
-		analyser = ctx.createAnalyser();
-		audioSrc.connect(analyser);
-	
-		ctx.resume().then(() => {
-			log('Context resumed successfully');
-		});
+			ctx.resume().then(() => {
+				log('Context resumed successfully');
+			});
 
-}
+	}
 
 
-	if ( sectsWithPlanes[0] ) { //Home && Plane ||
+	if ( sectsWithPlanes[0] ) { //Home && Plane 
 		
 		Selected = sectsWithPlanes[0].object;
 
-		if (Selected.info) {
-			DescriptName.innerHTML = Selected.info.name;
-			DescriptLocation.innerHTML = Selected.info.location; 
-		} else {
-			DescriptName.innerHTML = "id"+Selected.name;
-			DescriptLocation.innerHTML = "London";
-		}
+		DescriptName.innerHTML = Selected.info.name;
+		DescriptLocation.innerHTML = Selected.info.location; 
+
+		audio.src = Selected.info.audio;
 		
 		audio.canPlay = false;
-
-		if (Selected.info != undefined && 'audio' in Selected.info && Selected.info.audio != '') {
-			audio.src = Selected.info.audio
-		} else {
-			audio.src = 'https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559'
-		}
 
 		audio.load();
 
@@ -369,7 +391,7 @@ Global.map((i,j)=>{
 window.addEventListener ( 'resize', onWindowResize, false )
 
 
-getUserDescript =(index)=> USERS.find((e)=> e.pic == index);
+// getUserDescript =(index)=> USERS.find((e)=> e.pic == index);
 
 //RENDER
 render = (time) => {
@@ -400,10 +422,25 @@ render = (time) => {
 			
 			 if (RUNNING_INDEXES.indexOf(sectsWithPoints[0].index) == -1){ //Check point for existence
 						
-								picindex < 61 ? picindex++ : picindex = 0; 
-								RUNNING_INDEXES.push(sectsWithPoints[0].index);
+								picindex < 61 ? picindex++ : (picindex = 0, looped_picindex = true)
+								
+					
 								// log(RUNNING_INDEXES);
-								let newPlane = new PlaneAvatar(PLANE_GROUP,sectsWithPoints[0].index,picindex, getUserDescript(picindex));
+								RUNNING_INDEXES.push(sectsWithPoints[0].index);
+								
+
+								let newPlane = new PlaneAvatar(PLANE_GROUP,sectsWithPoints[0].index, 
+									!looped_picindex ? 
+														USERS[picindex]
+													 :	Object.assign(
+																	   USERS[picindex],
+																	   {
+																			name : 'id'+sectsWithPoints[0].index,
+																			location : 'London',
+																			audio: 'https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559'
+																	   })
+								);
+
 								newPlane.scale.set(0.001,0.001,0.001);
 								newPlane.enlargeTween.start();
 								PLANE_GROUP.add(newPlane);
@@ -440,14 +477,22 @@ pointsClouds.matrixAutoUpdate = true;
 
 class PlaneAvatar extends THREE.Mesh {
 
-	constructor( Group, AnchorPointIndex, picindex , descript) {
+	constructor( Group, AnchorPointIndex, oINFO) {
 
-		const texture = new THREE.TextureLoader().load( "/userdata/pic/Frame-"+picindex+".png" );
-		super(new THREE.CircleGeometry( 0.35, 64 ,64 ), new THREE.MeshBasicMaterial({ map: texture }));
+		super(new THREE.CircleGeometry( 0.35, 64 ,64 ), new THREE.MeshBasicMaterial({ 
+			map: oINFO.fetchedPic
+		}));
 		
 		
 		this.name = AnchorPointIndex; 
-		this.info = descript;
+		this.info = {
+			name : oINFO.name,
+			location : oINFO.location,
+			audio : oINFO.audio ? oINFO.audio : 'https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559'
+		};
+
+		console.table(this.info)
+
 		this.dissolving = true; //Dissolving by default
 		this.resizingChain = true;
 
