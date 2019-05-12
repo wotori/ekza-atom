@@ -24,6 +24,8 @@ getUsers.onreadystatechange = function () {
 		
 		const USERSexist  = USERS.map((i)=>i.pic);
 		
+		console.time();
+
 		for (let picindex = 0; picindex <= 62; picindex++) 
 		
 		USERSexist.indexOf(picindex) == -1 ? USERS.push({ //Load all 62 textures
@@ -33,6 +35,8 @@ getUsers.onreadystatechange = function () {
 			fetchedPic: newFetchedPic(picindex),
 			audio: 'https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559'
 		}) : void null;
+
+		console.timeEnd()
 		
 		USERS.sort((a,b)=>a.pic - b.pic);
 
@@ -491,7 +495,7 @@ class PlaneAvatar extends THREE.Mesh {
 			audio : oINFO.audio ? oINFO.audio : 'https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559'
 		};
 
-		console.table(this.info)
+		// console.table(this.info)
 
 		this.dissolving = true; //Dissolving by default
 		this.resizingChain = true;
@@ -518,7 +522,7 @@ class PlaneAvatar extends THREE.Mesh {
 
 removeFromGroup = (Group) => {
 		log('REMOVE <E');
-		const index = RUNNING_INDEXES.indexOf(this.name)
+		const index = RUNNING_INDEXES.iпшеndexOf(this.name)
 		RUNNING_INDEXES.splice(index);
 		Group.remove(this);
 }
