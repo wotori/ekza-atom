@@ -38,6 +38,7 @@ getUsers.onreadystatechange = function () {
 
 		console.timeEnd()
 		
+		
 		USERS.sort((a,b)=>a.pic - b.pic);
 
 		// console.table(USERS);
