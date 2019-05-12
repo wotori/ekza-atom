@@ -37,7 +37,7 @@ getUsers.onreadystatechange = function () {
 		}) : void null;
 
 		console.timeEnd()
-		
+
 		
 		USERS.sort((a,b)=>a.pic - b.pic);
 
@@ -523,7 +523,7 @@ class PlaneAvatar extends THREE.Mesh {
 
 removeFromGroup = (Group) => {
 		log('REMOVE <E');
-		const index = RUNNING_INDEXES.iпшеndexOf(this.name)
+		const index = RUNNING_INDEXES.indexOf(this.name)
 		RUNNING_INDEXES.splice(index);
 		Group.remove(this);
 }
