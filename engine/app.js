@@ -1,4 +1,4 @@
-const buildMsg = 'annoying dots'
+const buildMsg = 'draggo'
 console.log('%c BUILD %c'+buildMsg, 'background: gold; color: darkgreen','background: green; color: white');
 
 
@@ -224,10 +224,9 @@ onMouseClick = (event) => {
 //GLOBAL FUNCTIONS
 log = (s) => console.log(s);  
 
-ConvertToWorld = (index) => {
-	
-	return pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld)
-}
+ConvertToWorld = (index) => pointsClouds.geometry.vertices[index].clone().applyMatrix4(pointsClouds.matrixWorld)
+
+mod = (a,b) => a>=b ? 0.01 : -0.01;
 
 createCanvasMaterial = (color, size) => {
 	var matCanvas = document.createElement('canvas');
@@ -546,19 +545,16 @@ removeFromGroup = (Group) => {
 		Group.remove(this);
 }
 
+
+
 run = (vector) => {
 
-	// log(camera.position.x - vector.x)
-	// log(camera.position.y - vector.y)
-	// log(camera.position.z - vector.z)
-
-	let mod = (a,b) => a>=b ? 0.1 : -0.1;
-
 	this.position.set(mod(camera.position.x,vector.x)+vector.x,mod(camera.position.y,vector.y)+vector.y,mod(camera.position.z,vector.z)+vector.z);
+
 }
 
 camFocusMe = (t) => this.camTweenFocusMe = new TWEEN.Tween(camera.position) 
-											.to({ x:this.position.x+0.4, y:this.position.y, z:this.position.z+3 }, 1000) 
+											.to({ x:this.position.x+0.4, y:this.position.y, z:this.position.z+3 }, 1300) 
 											.easing(TWEEN.Easing.Quadratic.InOut)
 
 updateSize = () => this.dissolving ? (this.enlargeTween.stop(),this.dissolveTween.start()) : (this.dissolveTween.stop(),this.enlargeTween.start());
@@ -636,3 +632,5 @@ animate = () => {
 }
 
 window.requestAnimationFrame(animate);
+
+
