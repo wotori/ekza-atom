@@ -1,4 +1,4 @@
-const buildMsg = 'caching textures + refact'
+const buildMsg = 'annoying dots'
 console.log('%c BUILD %c'+buildMsg, 'background: gold; color: darkgreen','background: green; color: white');
 
 
