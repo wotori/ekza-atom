@@ -314,6 +314,9 @@ let SphereGeometry = new THREE.IcosahedronGeometry( 1.97, 3 );
 let SphereMaterial = new THREE.MeshBasicMaterial( { color: 0x13131B,transparent: true } );
 let SphereMesh = new THREE.Mesh( SphereGeometry, SphereMaterial );
 
+// console.warn('mesh')
+// console.log(SphereMesh)
+
 //wireFrame
 let lineMat = new THREE.LineBasicMaterial({ color: 0x3C4051 })
 let geometryWire = new THREE.IcosahedronBufferGeometry( 2, 2 );
@@ -321,6 +324,9 @@ let wireframe = new THREE.WireframeGeometry( geometryWire );
 let line = new THREE.LineSegments( wireframe, lineMat );
 line.material.opacity = 1;
 line.material.transparent = true;
+
+
+
 
 //pointClouds
 let pointGeo = new THREE.SphereGeometry( 3.5, 17, 17 )
@@ -338,16 +344,25 @@ pointGeo.vertices.forEach(function(vertex) {
 	vertex.z += (Math.random() - 0.5);
 })
 
+console.log(pointMat)
+
 let pointsClouds = new THREE.Points( pointGeo, pointMat );
 
 let Globus = new THREE.Group()
-Globus.add (line,SphereMesh)
+Globus.add (line,SphereMesh);
+
 
 let GlobusAndPoints = new THREE.Group();
 GlobusAndPoints.add(Globus,pointsClouds)
 
 // scene.add(Globus);
 scene.add(GlobusAndPoints);
+
+
+
+
+
+
 
 document.addEventListener('mousemove', onMouseMove, false );
 document.addEventListener('mouseup', onMouseClick, false);
@@ -406,7 +421,7 @@ render = (time) => {
 	if (!audio.canPlay){
 
 					// stroke.style.animation = "dash 1.8s linear infinite paused";
-					log('loading')
+					// log('loading')
 
 	} else {
 		// stroke.style.animation = "";
@@ -433,6 +448,7 @@ render = (time) => {
 								// log(RUNNING_INDEXES);
 								RUNNING_INDEXES.push(sectsWithPoints[0].index);
 								
+							
 
 								let newPlane = new PlaneAvatar(PLANE_GROUP,sectsWithPoints[0].index, 
 									!looped_picindex ? 
@@ -449,6 +465,7 @@ render = (time) => {
 								newPlane.scale.set(0.001,0.001,0.001);
 								newPlane.enlargeTween.start();
 								PLANE_GROUP.add(newPlane);
+
 			 } else {
 
 								let planeToEnlarge = PLANE_GROUP.children.find((e)=>e.name == sectsWithPoints[0].index);
@@ -510,6 +527,7 @@ class PlaneAvatar extends THREE.Mesh {
 							.easing( TWEEN.Easing.Quadratic.Out )
 							.onStart(()=> this.material.opacity =1)
 							.onUpdate(()=> {
+						
 								if (this.scale.z > 0.999 && this.resizingChain) { //About to complete
 									this.dissolving = true; //Now shall dissolve again by default
 								}
@@ -528,7 +546,7 @@ removeFromGroup = (Group) => {
 		Group.remove(this);
 }
 
-run = (vector) => this.position.set(vector.x,vector.y,vector.z);
+run = (vector) => this.position.set(vector.x,vector.y,vector.z+0.01);
 
 camFocusMe = (t) => this.camTweenFocusMe = new TWEEN.Tween(camera.position) 
 											.to({ x:this.position.x+0.4, y:this.position.y, z:this.position.z+3 }, 1000) 
