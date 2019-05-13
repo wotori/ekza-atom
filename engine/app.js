@@ -331,7 +331,7 @@ line.material.transparent = true;
 //pointClouds
 let pointGeo = new THREE.SphereGeometry( 3.5, 17, 17 )
 let pointMat =  new THREE.PointsMaterial({
-	size: 0.04,
+	size: 0.4,
 	map: createCanvasMaterial('white', 256),
 	transparent: true,
 	depthWrite: false
@@ -546,7 +546,16 @@ removeFromGroup = (Group) => {
 		Group.remove(this);
 }
 
-run = (vector) => this.position.set(vector.x,vector.y,vector.z+0.01);
+run = (vector) => {
+
+	// log(camera.position.x - vector.x)
+	// log(camera.position.y - vector.y)
+	// log(camera.position.z - vector.z)
+
+	let mod = (a,b) => a>=b ? 0.1 : -0.1;
+
+	this.position.set(mod(camera.position.x,vector.x)+vector.x,mod(camera.position.y,vector.y)+vector.y,mod(camera.position.z,vector.z)+vector.z);
+}
 
 camFocusMe = (t) => this.camTweenFocusMe = new TWEEN.Tween(camera.position) 
 											.to({ x:this.position.x+0.4, y:this.position.y, z:this.position.z+3 }, 1000) 
