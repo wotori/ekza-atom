@@ -331,7 +331,7 @@ line.material.transparent = true;
 //pointClouds
 let pointGeo = new THREE.SphereGeometry( 3.5, 17, 17 )
 let pointMat =  new THREE.PointsMaterial({
-	size: 0.4,
+	size: 0.04,
 	map: createCanvasMaterial('white', 256),
 	transparent: true,
 	depthWrite: false
