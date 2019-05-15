@@ -1,4 +1,4 @@
-const buildMsg = 'draggo'
+const buildMsg = 'cascade style sheets #a4da8620'
 console.log('%c BUILD %c'+buildMsg, 'background: gold; color: darkgreen','background: green; color: white');
 
 
@@ -182,7 +182,7 @@ onMouseClick = (event) => {
 		audio.load();
 
 		Info.removeClass('hidden');
-		Info.addClass('appear');
+		// Info.addClass('appear');
 
 		pause.addClass('hidden');
 		play.removeClass('hidden');
@@ -343,8 +343,6 @@ pointGeo.vertices.forEach(function(vertex) {
 	vertex.z += (Math.random() - 0.5);
 })
 
-console.log(pointMat)
-
 let pointsClouds = new THREE.Points( pointGeo, pointMat );
 
 let Globus = new THREE.Group()
@@ -451,7 +449,7 @@ render = (time) => {
 
 								let newPlane = new PlaneAvatar(PLANE_GROUP,sectsWithPoints[0].index, 
 									!looped_picindex ? 
-														USERS[picindex]
+													    USERS[picindex]
 													 :	Object.assign(
 																	   USERS[picindex],
 																	   {
