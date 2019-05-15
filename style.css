@@ -6,8 +6,8 @@
 
 			.info {
 				position: absolute;
-				left:57%;
-				bottom: 45.5%;
+				left:52%;
+				bottom: 46.2%;
 			}
 
 						.descripto {
@@ -18,12 +18,12 @@
 							}
 
 							#name {
-							font-size: 3.5vh;
+							font-size: 3.1vh;
 							} 
 
 							#location {
 							position: relative;
-							font-size: 2.5vh;
+							font-size: 2.1vh;
 							top: 3px;
 							}  
 
@@ -36,11 +36,11 @@
 							opacity: .9;
 							position: inherit;
 
-							width: 15vh;
-							height: 9vh;
+							width: 13vh;
+							height: 8vh;
 
-							top: 0.1vh;
-							left: 112%;
+							top: 0;
+							left: 119%;
 							}
 
 							.playicon:hover {

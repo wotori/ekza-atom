@@ -147,6 +147,8 @@ onMouseMove = (event) => {
 
 }
 
+let frequencyData; let ContextResumed = false;
+
 let Selected,preSelected;
 let focusPlaneName = -1; // Home view by default, no Plane clicked
 
@@ -160,9 +162,13 @@ onMouseClick = (event) => {
 			audioSrc.connect(ctx.destination);
 			analyser = ctx.createAnalyser();
 			audioSrc.connect(analyser);
+
+	 		frequencyData = new Uint8Array(analyser.frequencyBinCount);
+
 		
 			ctx.resume().then(() => {
 				log('Context resumed successfully');
+				ContextResumed = true;
 			});
 
 	}
@@ -310,7 +316,7 @@ scene.add(CosmoDust);
 
 //globus
 let SphereGeometry = new THREE.IcosahedronGeometry( 1.97, 3 );
-let SphereMaterial = new THREE.MeshBasicMaterial( { color: 0x13131B,transparent: true } );
+let SphereMaterial = new THREE.MeshNormalMaterial( { color: 0x13131B,transparent: true } );
 let SphereMesh = new THREE.Mesh( SphereGeometry, SphereMaterial );
 
 // console.warn('mesh')
@@ -346,7 +352,9 @@ pointGeo.vertices.forEach(function(vertex) {
 let pointsClouds = new THREE.Points( pointGeo, pointMat );
 
 let Globus = new THREE.Group()
-Globus.add (line,SphereMesh);
+// Globus.add (line,SphereMesh);
+Globus.add (SphereMesh);
+
 
 
 let GlobusAndPoints = new THREE.Group();
@@ -390,7 +398,9 @@ CosmoDust.to1 = () => {
 	CosmoDust.opacity1.map((i)=>i.start())
 }
 
-let Global = [Globus.children[0],Globus.children[1],pointsClouds];
+let Global = [Globus.children[0],pointsClouds];
+// let Global = [Globus.children[0],Globus.children[1],pointsClouds];
+
 
 Global.map((i,j)=>{
   
@@ -408,12 +418,130 @@ Global.map((i,j)=>{
 window.addEventListener ( 'resize', onWindowResize, false )
 
 
-// getUserDescript =(index)=> USERS.find((e)=> e.pic == index);
+
+function getColoredBufferLine(steps, phase, geometry) {
+
+	var vertices = geometry.vertices;
+	var segments = geometry.vertices.length;
+
+	// geometry
+	var geometry = new THREE.BufferGeometry();
+
+	// material
+	var lineMaterial = new THREE.LineBasicMaterial({
+		vertexColors: THREE.VertexColors
+	});
+
+	// attributes
+	var positions = new Float32Array(segments * 3); // 3 vertices per point
+	var colors = new Float32Array(segments * 3);
+
+	var frequency = 1 / (steps * segments);
+	var color = new THREE.Color();
+
+	var x, y, z;
+
+	for (var i = 0, l = segments; i < l; i++) {
+
+		x = vertices[i].x;
+		y = vertices[i].y;
+		z = vertices[i].z;
+
+		positions[i * 3] = x;
+		positions[i * 3 + 1] = y;
+		positions[i * 3 + 2] = z;
+
+		color.set(makeColorGradient(i, frequency, phase));
+
+		colors[i * 3] = color.r;
+		colors[i * 3 + 1] = color.g;
+		colors[i * 3 + 2] = color.b;
+
+	}
+
+	geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
+	geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+	// line
+	var line = new THREE.Line(geometry, lineMaterial);
+
+	return line;
+
+}
+
+// threejs color gradient line helper
+function makeColorGradient(i, frequency, phase) {
+
+	var center = 128;
+	var width = 127;
+
+	var redFrequency, grnFrequency, bluFrequency;
+	grnFrequency = bluFrequency = redFrequency = frequency;
+
+	var phase2 = phase + 2;
+	var phase3 = phase + 4;
+
+	var red = Math.sin(redFrequency * i + phase) * width + center;
+	var green = Math.sin(grnFrequency * i + phase2) * width + center;
+	var blue = Math.sin(bluFrequency * i + phase3) * width + center;
+
+	return parseInt('0x' + _byte2Hex(red) + _byte2Hex(green) + _byte2Hex(blue));
+}
+
+function _byte2Hex(n) {
+	var nybHexString = "0123456789ABCDEF";
+	return String(nybHexString.substr((n >> 4) & 0x0F, 1)) + nybHexString.substr(n & 0x0F, 1);
+}
+
+
+    // create geometry and add to scene
+geo = (arr) => {
+
+        var geometry = new THREE.Geometry();
+
+        for (var i = 0; i < arr.length; i++) {
+            var r = arr[i] + 10;
+            var theta = (2 * Math.PI / 1024) * i * 11;
+
+            geometry.vertices.push(
+                new THREE.Vector3(r * Math.cos(theta), r * Math.sin(theta), 4)
+            );
+
+        }
+
+        // parameters for gradient
+        var steps = 0.09;
+        var phase = 1.7;
+        var coloredLine = getColoredBufferLine(steps, phase, geometry);
+        coloredLine.position.set(0, -20, 0);
+        scene.add(coloredLine);
+
+
+}
+
+
+
+
+
+
+
+
+
 
 //RENDER
 render = (time) => {
 	
 	TWEEN.update();
+
+
+	if (ContextResumed) {
+		
+		analyser.getByteFrequencyData(frequencyData);
+		geo(frequencyData);
+	
+	}
+
+
 
 	if (!audio.canPlay){
 
