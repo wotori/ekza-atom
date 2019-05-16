@@ -1,0 +1,90 @@
+
+		
+		body { margin: 0; }
+
+			canvas { width: 100%; height: 100% }
+
+			.info {
+				position: absolute;
+				left:52%;
+				bottom: 46.2%;
+			}
+
+						.descripto {
+							position: relative;
+							color: #fff;
+							font-family: "Fira Mono", Monaco, "Andale Mono", "Lucida Console", 
+							"Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
+							}
+
+							#name {
+							font-size: 3.1vh;
+							} 
+
+							#location {
+							position: relative;
+							font-size: 2.1vh;
+							top: 3px;
+							}  
+
+							audio{
+							display: none;
+							}
+
+
+							.playicon {
+							opacity: .9;
+							position: inherit;
+
+							width: 13vh;
+							height: 8vh;
+
+							top: 0;
+							left: 119%;
+							}
+
+							.playicon:hover {
+							opacity: 1;
+							cursor: pointer;
+							}
+
+							.play {
+							opacity: .9;
+							}
+
+
+							.pause {
+							opacity: .9;
+							}
+
+							.stroke-bg {
+							stroke: #4c4c4c;
+							}
+
+							.stroke {
+							stroke-dasharray: 145;
+							stroke-dashoffset: 0;
+							/* stroke.style.animation = "dash 1.8s linear infinite paused"; */
+							}
+
+
+								@keyframes dash {
+							from {
+								stroke-dashoffset: 0;
+							}
+							to {
+								stroke-dashoffset: 145;
+							}
+							} 
+
+
+							.hidden {
+							opacity: 0;
+							transition: all 0.4s ease-out;
+							visibility: hidden;
+							/* filter: blur(5px); */
+							}
+
+
+
+		 
