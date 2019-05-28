@@ -187,7 +187,7 @@ var onMouseClick = function onMouseClick(event) {
   } else if (event.target.tagName == "CANVAS") {
     // Move out
     focusPlaneName = -1;
-    Selected && (Selected.dissolving = true, Selected.resizingChain = true); //Tweens activate
+    // Selected && (Selected.dissolving = true, Selected.resizingChain = true); //Tweens activate
 
     camTweenOut.start();
     Global.map(function (i, j) {
