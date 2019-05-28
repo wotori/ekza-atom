@@ -18,7 +18,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var buildMsg = 'brave new babel';
+var buildMsg = 'brave new babel + antispasm';
 console.log('%c BUILD %c' + buildMsg, 'background: gold; color: darkgreen', 'background: green; color: white'); //Fetch USERS and cache their pics 
 
 var USERS; //init Users
@@ -179,7 +179,7 @@ var onMouseClick = function onMouseClick(event) {
     audio.playState = "paused"; // audio.playState = "paused"
 
     camTweenOut && camTweenOut.stop();
-    preSelected && (preSelected.dissolving = true, preSelected.camFocusMe().stop(), preSelected.resizingChain = true);
+    preSelected && (preSelected.dissolving = true, preSelected.camTweenFocusMe.stop(), preSelected.resizingChain = true);
     preSelected = Selected;
     Selected.dissolving = false;
     focusPlaneName = Selected.name; //camFocusme
@@ -194,7 +194,7 @@ var onMouseClick = function onMouseClick(event) {
   } else if (event.target.tagName == "CANVAS") {
     // Move out
     focusPlaneName = -1;
-    Selected && (Selected.dissolving = true, Selected.resizingChain = true); //Tweens activate
+    Selected && (Selected.camTweenFocusMe.stop(), Selected.dissolving = true, Selected.resizingChain = true); //Tweens activate
 
     camTweenOut.start();
     Global.map(function (i, j) {
@@ -242,7 +242,6 @@ var camTweenOut = new TWEEN.Tween(camera.position).to({
   y: 0,
   z: 9
 }, 1600).easing(TWEEN.Easing.Quadratic.InOut);
-var camTweenFocusMe;
 var renderer = new THREE.WebGLRenderer({
   antialias: true
 });
