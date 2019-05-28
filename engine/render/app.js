@@ -37,9 +37,16 @@ getUsers.onreadystatechange = function () {
       return +i.pic >= 0 ? i.fetchedPic = newFetchedPic(i.pic) : void null;
     }); //Cache for unexisting users
 
-    var USERSexist = USERS.map(function (i) {
+    var _defined = function _defined(i) {
       return i.pic;
-    });
+    };
+
+    var USERSexist = new Array(USERS.length);
+
+    for (var _i2 = 0; _i2 <= USERS.length - 1; _i2++) {
+      USERSexist[_i2] = _defined(USERS[_i2], _i2, USERS);
+    }
+
     console.time();
 
     for (var _picindex = 0; _picindex <= 62; _picindex++) {
@@ -187,7 +194,7 @@ var onMouseClick = function onMouseClick(event) {
   } else if (event.target.tagName == "CANVAS") {
     // Move out
     focusPlaneName = -1;
-    // Selected && (Selected.dissolving = true, Selected.resizingChain = true); //Tweens activate
+    Selected && (Selected.dissolving = true, Selected.resizingChain = true); //Tweens activate
 
     camTweenOut.start();
     Global.map(function (i, j) {
@@ -263,17 +270,17 @@ for (var i = 0; i < bg_particles_count; i++) {
 var CosmoDust = new THREE.Group();
 var DustMaterials = [];
 
-for (var _i = 0; _i < parameterCount; _i++) {
-  var color = parameters[_i][0];
-  var size = parameters[_i][1];
-  DustMaterials[_i] = new THREE.PointsMaterial({
+for (var _i3 = 0; _i3 < parameterCount; _i3++) {
+  var color = parameters[_i3][0];
+  var size = parameters[_i3][1];
+  DustMaterials[_i3] = new THREE.PointsMaterial({
     size: size,
     map: createCanvasMaterial('white', 256),
     transparent: true,
     depthWrite: true,
     opacity: 0
   });
-  var particles = new THREE.Points(DustGeometry, DustMaterials[_i]);
+  var particles = new THREE.Points(DustGeometry, DustMaterials[_i3]);
   particles.rotation.x = Math.random() * 6;
   particles.rotation.y = Math.random() * 6;
   particles.rotation.z = Math.random() * 6;
@@ -307,11 +314,19 @@ var pointMat = new THREE.PointsMaterial({
   transparent: true,
   depthWrite: false
 });
-pointGeo.vertices.forEach(function (vertex) {
+
+var _defined2 = function _defined2(vertex) {
   vertex.color = vertex.x += Math.random() - 0.5;
   vertex.y += Math.random() - 0.5;
   vertex.z += Math.random() - 0.5;
-});
+};
+
+var _defined3 = pointGeo.vertices;
+
+for (var _i5 = 0; _i5 <= _defined3.length - 1; _i5++) {
+  _defined2(_defined3[_i5], _i5, _defined3);
+}
+
 console.log(pointMat);
 var pointsClouds = new THREE.Points(pointGeo, pointMat);
 var Globus = new THREE.Group();
