@@ -1,5 +1,123 @@
-"use strict";
+// modules are defined as an array
+// [ module function, map of requires ]
+//
+// map of requires is short require name -> numeric require
+//
+// anything defined in a previous bundle is accessed via the
+// orig method which is the require for previous bundles
+parcelRequire = (function (modules, cache, entry, globalName) {
+  // Save the require from previous bundle to this closure if any
+  var previousRequire = typeof parcelRequire === 'function' && parcelRequire;
+  var nodeRequire = typeof require === 'function' && require;
 
+  function newRequire(name, jumped) {
+    if (!cache[name]) {
+      if (!modules[name]) {
+        // if we cannot find the module within our internal map or
+        // cache jump to the current global require ie. the last bundle
+        // that was added to the page.
+        var currentRequire = typeof parcelRequire === 'function' && parcelRequire;
+        if (!jumped && currentRequire) {
+          return currentRequire(name, true);
+        }
+
+        // If there are other bundles on this page the require from the
+        // previous one is saved to 'previousRequire'. Repeat this as
+        // many times as there are bundles until the module is found or
+        // we exhaust the require chain.
+        if (previousRequire) {
+          return previousRequire(name, true);
+        }
+
+        // Try the node require function if it exists.
+        if (nodeRequire && typeof name === 'string') {
+          return nodeRequire(name);
+        }
+
+        var err = new Error('Cannot find module \'' + name + '\'');
+        err.code = 'MODULE_NOT_FOUND';
+        throw err;
+      }
+
+      localRequire.resolve = resolve;
+      localRequire.cache = {};
+
+      var module = cache[name] = new newRequire.Module(name);
+
+      modules[name][0].call(module.exports, localRequire, module, module.exports, this);
+    }
+
+    return cache[name].exports;
+
+    function localRequire(x){
+      return newRequire(localRequire.resolve(x));
+    }
+
+    function resolve(x){
+      return modules[name][1][x] || x;
+    }
+  }
+
+  function Module(moduleName) {
+    this.id = moduleName;
+    this.bundle = newRequire;
+    this.exports = {};
+  }
+
+  newRequire.isParcelRequire = true;
+  newRequire.Module = Module;
+  newRequire.modules = modules;
+  newRequire.cache = cache;
+  newRequire.parent = previousRequire;
+  newRequire.register = function (id, exports) {
+    modules[id] = [function (require, module) {
+      module.exports = exports;
+    }, {}];
+  };
+
+  var error;
+  for (var i = 0; i < entry.length; i++) {
+    try {
+      newRequire(entry[i]);
+    } catch (e) {
+      // Save first error but execute all entries
+      if (!error) {
+        error = e;
+      }
+    }
+  }
+
+  if (entry.length) {
+    // Expose entry point to Node, AMD or browser globals
+    // Based on https://github.com/ForbesLindesay/umd/blob/master/template.js
+    var mainExports = newRequire(entry[entry.length - 1]);
+
+    // CommonJS
+    if (typeof exports === "object" && typeof module !== "undefined") {
+      module.exports = mainExports;
+
+    // RequireJS
+    } else if (typeof define === "function" && define.amd) {
+     define(function () {
+       return mainExports;
+     });
+
+    // <script>
+    } else if (globalName) {
+      this[globalName] = mainExports;
+    }
+  }
+
+  // Override the current require with this new one
+  parcelRequire = newRequire;
+
+  if (error) {
+    // throw error from earlier, _after updating parcelRequire_
+    throw error;
+  }
+
+  return newRequire;
+})({"app.js":[function(require,module,exports) {
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -37,16 +155,9 @@ getUsers.onreadystatechange = function () {
       return +i.pic >= 0 ? i.fetchedPic = newFetchedPic(i.pic) : void null;
     }); //Cache for unexisting users
 
-    var _defined = function _defined(i) {
+    var USERSexist = USERS.map(function (i) {
       return i.pic;
-    };
-
-    var USERSexist = new Array(USERS.length);
-
-    for (var _i2 = 0; _i2 <= USERS.length - 1; _i2++) {
-      USERSexist[_i2] = _defined(USERS[_i2], _i2, USERS);
-    }
-
+    });
     console.time();
 
     for (var _picindex = 0; _picindex <= 62; _picindex++) {
@@ -269,17 +380,17 @@ for (var i = 0; i < bg_particles_count; i++) {
 var CosmoDust = new THREE.Group();
 var DustMaterials = [];
 
-for (var _i3 = 0; _i3 < parameterCount; _i3++) {
-  var color = parameters[_i3][0];
-  var size = parameters[_i3][1];
-  DustMaterials[_i3] = new THREE.PointsMaterial({
+for (var _i = 0; _i < parameterCount; _i++) {
+  var color = parameters[_i][0];
+  var size = parameters[_i][1];
+  DustMaterials[_i] = new THREE.PointsMaterial({
     size: size,
     map: createCanvasMaterial('white', 256),
     transparent: true,
     depthWrite: true,
     opacity: 0
   });
-  var particles = new THREE.Points(DustGeometry, DustMaterials[_i3]);
+  var particles = new THREE.Points(DustGeometry, DustMaterials[_i]);
   particles.rotation.x = Math.random() * 6;
   particles.rotation.y = Math.random() * 6;
   particles.rotation.z = Math.random() * 6;
@@ -313,19 +424,11 @@ var pointMat = new THREE.PointsMaterial({
   transparent: true,
   depthWrite: false
 });
-
-var _defined2 = function _defined2(vertex) {
+pointGeo.vertices.forEach(function (vertex) {
   vertex.color = vertex.x += Math.random() - 0.5;
   vertex.y += Math.random() - 0.5;
   vertex.z += Math.random() - 0.5;
-};
-
-var _defined3 = pointGeo.vertices;
-
-for (var _i5 = 0; _i5 <= _defined3.length - 1; _i5++) {
-  _defined2(_defined3[_i5], _i5, _defined3);
-}
-
+});
 console.log(pointMat);
 var pointsClouds = new THREE.Points(pointGeo, pointMat);
 var Globus = new THREE.Group();
@@ -594,3 +697,5 @@ var animate = function animate() {
 };
 
 window.requestAnimationFrame(animate);
+},{}]},{},["app.js"], null)
+//# sourceMappingURL=/polyapp.js.map
