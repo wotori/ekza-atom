@@ -1,4 +1,3 @@
-
 const buildMsg = 'brave new babel + antispasm';
 console.log('%c BUILD %c' + buildMsg, 'background: gold; color: darkgreen', 'background: green; color: white'); //Fetch USERS and cache their pics 
 
@@ -202,10 +201,13 @@ let camTweenOut = new TWEEN.Tween(camera.position).to({
   x: 0,
   y: 0,
   z: 9
-}, 1600).easing(TWEEN.Easing.Quadratic.InOut);
+}, 1000).easing(TWEEN.Easing.Quadratic.InOut);
+
 let renderer = new THREE.WebGLRenderer({
-  antialias: true
-});
+  antialias: true,
+  alpha: true,
+ });
+
 renderer.setClearColor(0x13131B, 1);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement); //Dust
@@ -249,24 +251,21 @@ for (let i = 0; i < parameterCount; i++) {
 
 scene.add(CosmoDust); //globus
 
-let SphereGeometry = new THREE.IcosahedronGeometry(1.97, 3);
-let SphereMaterial = new THREE.MeshBasicMaterial({
-  color: 0x13131B,
-  transparent: true
-});
-let SphereMesh = new THREE.Mesh(SphereGeometry, SphereMaterial); // console.warn('mesh')
-// console.log(SphereMesh)
-//wireFrame
+//Create SoulSphere
+let SphereGeometry = new THREE.IcosahedronGeometry(1.97, 2);
+let SphereMaterial = new THREE.MeshPhongMaterial( { color: 'orange', transparent: true } );
+let SphereMesh = new THREE.Mesh(SphereGeometry, SphereMaterial);
+SphereMaterial.flatShading = true;
 
-let lineMat = new THREE.LineBasicMaterial({
-  color: 0x3C4051
-});
-let geometryWire = new THREE.IcosahedronBufferGeometry(2, 2);
+//wireFrame
+let lineMat = new THREE.LineBasicMaterial({color: "yellow"});
+let geometryWire = new THREE.IcosahedronBufferGeometry(2, 3);
 let wireframe = new THREE.WireframeGeometry(geometryWire);
 let line = new THREE.LineSegments(wireframe, lineMat);
 line.material.opacity = 1;
 line.material.transparent = true; //pointClouds
 
+//Create Points
 let pointGeo = new THREE.SphereGeometry(3.5, 17, 17);
 let pointMat = new THREE.PointsMaterial({
   size: 0.04,
@@ -280,13 +279,19 @@ pointGeo.vertices.forEach(function (vertex) {
   vertex.z += Math.random() - 0.5;
 });
 console.log(pointMat);
+
 let pointsClouds = new THREE.Points(pointGeo, pointMat);
 let Globus = new THREE.Group();
 Globus.add(line, SphereMesh);
 let GlobusAndPoints = new THREE.Group();
 GlobusAndPoints.add(Globus, pointsClouds); // scene.add(Globus);
-
 scene.add(GlobusAndPoints);
+
+//createLight
+let light = new THREE.PointLight('white', 7, 15);
+scene.add(light)
+light.position.set(0, 0, 11)
+
 document.addEventListener('mousemove', onMouseMove, false);
 document.addEventListener('mouseup', onMouseClick, false); //OPACITY TWEENS
 
@@ -409,7 +414,7 @@ class PlaneAvatar extends THREE.Mesh {
       x: 1,
       y: 1,
       z: 1
-    }, 650).easing(TWEEN.Easing.Quadratic.Out).onStart(() => this.material.opacity = 1).onUpdate(() => {
+    }, 325).easing(TWEEN.Easing.Quadratic.Out).onStart(() => this.material.opacity = 1).onUpdate(() => {
       if (this.scale.z > 0.999 && this.resizingChain) {
         //About to complete
         this.dissolving = true; //Now shall dissolve again by default
@@ -435,8 +440,8 @@ class PlaneAvatar extends THREE.Mesh {
     return this.camTweenFocusMe = new TWEEN.Tween(camera.position).to({
       x: this.position.x + 0.4,
       y: this.position.y,
-      z: this.position.z + 3
-    }, 1000).easing(TWEEN.Easing.Quadratic.InOut);
+      z: this.position.z + 6
+    }, 850).easing(TWEEN.Easing.Quadratic.InOut);
   }
 
   updateSize() {

@@ -7,7 +7,7 @@
 			.info {
 				position: absolute;
 				left:52%;
-				bottom: 46.2%;
+				bottom: 47.7%;
 			}
 
 						.descripto {
@@ -18,13 +18,14 @@
 							}
 
 							#name {
-							font-size: 3.1vh;
+							font-size: 2vh;
 							} 
 
 							#location {
 							position: relative;
-							font-size: 2.1vh;
+							font-size: 1.6vh;
 							top: 3px;
+							opacity: 0.5;
 							}  
 
 							audio{
@@ -39,7 +40,7 @@
 							width: 13vh;
 							height: 8vh;
 
-							top: 0;
+							top: -7;
 							left: 119%;
 							}
 

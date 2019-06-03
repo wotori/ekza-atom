@@ -6,3 +6,6 @@ wotori
 gudzo
 node-modules
 *.map
+
+/live-server
+babel.config.js
