@@ -253,7 +253,7 @@ for (let i = 0; i < parameterCount; i++) {
 scene.add(CosmoDust); //globus
 
 //SoulSphere
-let SphereGeometry = new THREE.IcosahedronGeometry(1.75, 2);
+let SphereGeometry = new THREE.IcosahedronGeometry(1.75, 1);
 let SphereMaterial = new THREE.MeshPhongMaterial( { color: 'white', transparent: true } );
 let SphereMesh = new THREE.Mesh(SphereGeometry, SphereMaterial);
 SphereMaterial.flatShading = true;
@@ -263,7 +263,7 @@ let lineMat = new THREE.LineBasicMaterial({color: "#fffc81"});
 let geometryWire = new THREE.IcosahedronBufferGeometry(2.2, 1);
 let wireframe = new THREE.WireframeGeometry(geometryWire);
 let line = new THREE.LineSegments(wireframe, lineMat);
-line.material.opacity = 0.05;
+line.material.opacity = 0.08;
 line.material.transparent = true; //pointClouds
 
 //Create Points
