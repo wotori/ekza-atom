@@ -354,10 +354,11 @@ var camTweenOut = new TWEEN.Tween(camera.position).to({
   z: 9
 }, 1000).easing(TWEEN.Easing.Quadratic.InOut);
 var renderer = new THREE.WebGLRenderer({
-  antialias: true,
-  alpha: true
-});
-renderer.setClearColor(0x13131B, 1);
+  antialias: true // alpha: true,
+
+}); //Background Color
+
+renderer.setClearColor('#13131b', 1);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement); //Dust
 
@@ -399,23 +400,23 @@ for (var _i = 0; _i < parameterCount; _i++) {
 }
 
 scene.add(CosmoDust); //globus
-//Create SoulSphere
+//SoulSphere
 
-var SphereGeometry = new THREE.IcosahedronGeometry(1.97, 2);
+var SphereGeometry = new THREE.IcosahedronGeometry(1.75, 2);
 var SphereMaterial = new THREE.MeshPhongMaterial({
-  color: 'orange',
+  color: 'white',
   transparent: true
 });
 var SphereMesh = new THREE.Mesh(SphereGeometry, SphereMaterial);
-SphereMaterial.flatShading = true; //wireFrame
+SphereMaterial.flatShading = true; //SoulSphere wireFrame
 
 var lineMat = new THREE.LineBasicMaterial({
-  color: "yellow"
+  color: "#fffc81"
 });
-var geometryWire = new THREE.IcosahedronBufferGeometry(2, 3);
+var geometryWire = new THREE.IcosahedronBufferGeometry(2.2, 1);
 var wireframe = new THREE.WireframeGeometry(geometryWire);
 var line = new THREE.LineSegments(wireframe, lineMat);
-line.material.opacity = 1;
+line.material.opacity = 0.05;
 line.material.transparent = true; //pointClouds
 //Create Points
 
@@ -438,11 +439,15 @@ Globus.add(line, SphereMesh);
 var GlobusAndPoints = new THREE.Group();
 GlobusAndPoints.add(Globus, pointsClouds); // scene.add(Globus);
 
-scene.add(GlobusAndPoints); //createLight
+scene.add(GlobusAndPoints);
+var lightColor = '#e58237'; //createLight
 
-var light = new THREE.PointLight('white', 7, 15);
+var light = new THREE.PointLight(lightColor, 3, 15);
 scene.add(light);
-light.position.set(0, 0, 11);
+light.position.set(0, 0, 12); //ambient light
+
+var envLight = new THREE.AmbientLight(lightColor, 0.88);
+scene.add(envLight);
 document.addEventListener('mousemove', onMouseMove, false);
 document.addEventListener('mouseup', onMouseClick, false); //OPACITY TWEENS
 

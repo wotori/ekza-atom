@@ -205,10 +205,11 @@ let camTweenOut = new TWEEN.Tween(camera.position).to({
 
 let renderer = new THREE.WebGLRenderer({
   antialias: true,
-  alpha: true,
+  // alpha: true,
  });
 
-renderer.setClearColor(0x13131B, 1);
+//Background Color
+renderer.setClearColor('#13131b', 1);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement); //Dust
 
@@ -251,18 +252,18 @@ for (let i = 0; i < parameterCount; i++) {
 
 scene.add(CosmoDust); //globus
 
-//Create SoulSphere
-let SphereGeometry = new THREE.IcosahedronGeometry(1.97, 2);
-let SphereMaterial = new THREE.MeshPhongMaterial( { color: 'orange', transparent: true } );
+//SoulSphere
+let SphereGeometry = new THREE.IcosahedronGeometry(1.75, 2);
+let SphereMaterial = new THREE.MeshPhongMaterial( { color: 'white', transparent: true } );
 let SphereMesh = new THREE.Mesh(SphereGeometry, SphereMaterial);
 SphereMaterial.flatShading = true;
 
-//wireFrame
-let lineMat = new THREE.LineBasicMaterial({color: "yellow"});
-let geometryWire = new THREE.IcosahedronBufferGeometry(2, 3);
+//SoulSphere wireFrame
+let lineMat = new THREE.LineBasicMaterial({color: "#fffc81"});
+let geometryWire = new THREE.IcosahedronBufferGeometry(2.2, 1);
 let wireframe = new THREE.WireframeGeometry(geometryWire);
 let line = new THREE.LineSegments(wireframe, lineMat);
-line.material.opacity = 1;
+line.material.opacity = 0.05;
 line.material.transparent = true; //pointClouds
 
 //Create Points
@@ -287,10 +288,15 @@ let GlobusAndPoints = new THREE.Group();
 GlobusAndPoints.add(Globus, pointsClouds); // scene.add(Globus);
 scene.add(GlobusAndPoints);
 
+var lightColor = '#e58237'
 //createLight
-let light = new THREE.PointLight('white', 7, 15);
+let light = new THREE.PointLight(lightColor, 3, 15);
 scene.add(light)
-light.position.set(0, 0, 11)
+light.position.set(0, 0, 12)
+
+//ambient light
+var envLight = new THREE.AmbientLight(lightColor, 0.88 )
+scene.add ( envLight )
 
 document.addEventListener('mousemove', onMouseMove, false);
 document.addEventListener('mouseup', onMouseClick, false); //OPACITY TWEENS
