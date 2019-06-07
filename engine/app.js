@@ -299,14 +299,16 @@ let GlobusAndPoints = new THREE.Group();
 GlobusAndPoints.add(Globus, pointsClouds); // scene.add(Globus);
 scene.add(GlobusAndPoints);
 
-var lightColor = 'white'
+// var lightColor = 'white'
+var lightColor = '#e58237'
+
 //createLight
 let light = new THREE.PointLight(lightColor, 1, 15);
 scene.add(light)
 light.position.set(0, 0, 12)
 
 //ambient light
-var envLight = new THREE.AmbientLight(lightColor, 0.7 )
+var envLight = new THREE.AmbientLight(lightColor, 1 )
 scene.add ( envLight )
 
 document.addEventListener('mousemove', onMouseMove, false);
