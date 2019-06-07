@@ -7,6 +7,9 @@ let newFetchedPic = index => new THREE.TextureLoader().load("/userdata/pic/Frame
 
 let getUsers = new XMLHttpRequest();
 
+var timeNow = new Date()
+console.log(timeNow)
+
 getUsers.onreadystatechange = function () {
   if (this.readyState == 4 && this.status == 200) {
     USERS = JSON.parse(this.responseText); //Cache pics for existing rows
@@ -150,6 +153,7 @@ const onMouseClick = event => {
     Selected.resizingChain = false;
     Global.map((i, j) => {
       i.to1.stop(), i.to0.start();
+      line_to1.stop(), line_to0.start();
     });
     CosmoDust.to1();
   } else if (event.target.tagName == "CANVAS") {
@@ -161,6 +165,7 @@ const onMouseClick = event => {
     camTweenOut.start();
     Global.map((i, j) => {
       i.to0.stop(), i.to1.start();
+      line_to0.stop(), line_to1.start();
     });
     CosmoDust.to0();
     Info.addClass('hidden');
@@ -206,12 +211,17 @@ let camTweenOut = new TWEEN.Tween(camera.position).to({
 let renderer = new THREE.WebGLRenderer({
   antialias: true,
   // alpha: true,
+  canvas: canvasSphere,
  });
+
+renderer.domElement.id = 'canvasSphere';
+container = document.getElementById( 'canvasSphere' );
+document.body.appendChild( container );
 
 //Background Color
 renderer.setClearColor('#13131b', 1);
 renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement); //Dust
+document.body.appendChild(renderer.domElement);
 
 const parameters = [[[1, 1, 1], 0.9], [[0.95, 1, 0.5], 1], [[0.90, 1, 0.5], 1.4], [[0.85, 1, 0.5], 1.1], [[1, 1, 1], 0.8]];
 const parameterCount = parameters.length;
@@ -265,6 +275,7 @@ let wireframe = new THREE.WireframeGeometry(geometryWire);
 let line = new THREE.LineSegments(wireframe, lineMat);
 line.material.opacity = 0.08;
 line.material.transparent = true; //pointClouds
+scene.add( line )
 
 //Create Points
 let pointGeo = new THREE.SphereGeometry(3.5, 17, 17);
@@ -283,19 +294,19 @@ console.log(pointMat);
 
 let pointsClouds = new THREE.Points(pointGeo, pointMat);
 let Globus = new THREE.Group();
-Globus.add(line, SphereMesh);
+Globus.add( SphereMesh );
 let GlobusAndPoints = new THREE.Group();
 GlobusAndPoints.add(Globus, pointsClouds); // scene.add(Globus);
 scene.add(GlobusAndPoints);
 
-var lightColor = '#e58237'
+var lightColor = 'white'
 //createLight
-let light = new THREE.PointLight(lightColor, 3, 15);
+let light = new THREE.PointLight(lightColor, 1, 15);
 scene.add(light)
 light.position.set(0, 0, 12)
 
 //ambient light
-var envLight = new THREE.AmbientLight(lightColor, 0.88 )
+var envLight = new THREE.AmbientLight(lightColor, 0.7 )
 scene.add ( envLight )
 
 document.addEventListener('mousemove', onMouseMove, false);
@@ -322,7 +333,7 @@ CosmoDust.to1 = () => {
   CosmoDust.opacity1.map(i => i.start());
 };
 
-let Global = [Globus.children[0], Globus.children[1], pointsClouds];
+let Global = [Globus.children[0], pointsClouds];
 Global.map((i, j) => {
   i.to0 = new TWEEN.Tween(i.material).to({
     opacity: 0
@@ -330,7 +341,14 @@ Global.map((i, j) => {
   i.to1 = new TWEEN.Tween(i.material).to({
     opacity: 1
   }, 2000).easing(TWEEN.Easing.Quadratic.InOut).onStart(() => i.visible = true);
+  Globus.children[0]
 });
+
+line_to0 = new TWEEN.Tween(line.material).to({ opacity: 0 }, 1500).easing(TWEEN.Easing.Exponential.Out).onComplete(() => line.visible = false);
+line_to1 = new TWEEN.Tween(line.material).to({ opacity: 0.08 }, 2000).easing(TWEEN.Easing.Quadratic.InOut).onStart(() => line.visible = true);
+
+
+
 window.addEventListener('resize', onWindowResize, false); // getUserDescript =(index)=> USERS.find((e)=> e.pic == index);
 //RENDER
 
@@ -420,7 +438,7 @@ class PlaneAvatar extends THREE.Mesh {
       x: 1,
       y: 1,
       z: 1
-    }, 325).easing(TWEEN.Easing.Quadratic.Out).onStart(() => this.material.opacity = 1).onUpdate(() => {
+    }, 325).easing(TWEEN.Easing.Quadratic.Out).onStart(() => this.material.opacity = 0.08).onUpdate(() => {
       if (this.scale.z > 0.999 && this.resizingChain) {
         //About to complete
         this.dissolving = true; //Now shall dissolve again by default
@@ -456,7 +474,7 @@ class PlaneAvatar extends THREE.Mesh {
 
 } //rotation on mouse click and drag
 
-
+//Rotation Function
 function groupRotation() {
   var mouseDown = false,
       mouseX = 0,
@@ -487,7 +505,7 @@ function groupRotation() {
     mouseDown = false;
   }
 
-  var ee = document.body.appendChild(renderer.domElement);
+  var ee = document.body.appendChild( container );
   ee.addEventListener('mousemove', function (e) {
     onMouseMove(e);
   }, false);
@@ -501,6 +519,8 @@ function groupRotation() {
   function rotateScene(deltaX, deltaY) {
     Globus.rotation.y += deltaX / 100;
     Globus.rotation.x += deltaY / 100;
+    line.rotation.y += deltaX / 100;
+    line.rotation.x += deltaY / 100;
     pointsClouds.rotation.y += deltaX / 100;
     pointsClouds.rotation.x += deltaY / 100;
   }
@@ -523,4 +543,4 @@ const animate = () => {
   CosmoDust.children.map((i, j) => i.rotation.y = Date.now() * 0.0004);
 };
 
-window.requestAnimationFrame(animate);
+window.requestAnimationFrame( animate );

@@ -146,6 +146,8 @@ var newFetchedPic = function newFetchedPic(index) {
 };
 
 var getUsers = new XMLHttpRequest();
+var timeNow = new Date();
+console.log(timeNow);
 
 getUsers.onreadystatechange = function () {
   if (this.readyState == 4 && this.status == 200) {
@@ -300,6 +302,7 @@ var onMouseClick = function onMouseClick(event) {
     Selected.resizingChain = false;
     Global.map(function (i, j) {
       i.to1.stop(), i.to0.start();
+      line_to1.stop(), line_to0.start();
     });
     CosmoDust.to1();
   } else if (event.target.tagName == "CANVAS") {
@@ -310,6 +313,7 @@ var onMouseClick = function onMouseClick(event) {
     camTweenOut.start();
     Global.map(function (i, j) {
       i.to0.stop(), i.to1.start();
+      line_to0.stop(), line_to1.start();
     });
     CosmoDust.to0();
     Info.addClass('hidden');
@@ -354,14 +358,17 @@ var camTweenOut = new TWEEN.Tween(camera.position).to({
   z: 9
 }, 1000).easing(TWEEN.Easing.Quadratic.InOut);
 var renderer = new THREE.WebGLRenderer({
-  antialias: true // alpha: true,
-
-}); //Background Color
+  antialias: true,
+  // alpha: true,
+  canvas: canvasSphere
+});
+renderer.domElement.id = 'canvasSphere';
+container = document.getElementById('canvasSphere');
+document.body.appendChild(container); //Background Color
 
 renderer.setClearColor('#13131b', 1);
 renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement); //Dust
-
+document.body.appendChild(renderer.domElement);
 var parameters = [[[1, 1, 1], 0.9], [[0.95, 1, 0.5], 1], [[0.90, 1, 0.5], 1.4], [[0.85, 1, 0.5], 1.1], [[1, 1, 1], 0.8]];
 var parameterCount = parameters.length;
 var DustGeometry = new THREE.Geometry();
@@ -418,7 +425,8 @@ var wireframe = new THREE.WireframeGeometry(geometryWire);
 var line = new THREE.LineSegments(wireframe, lineMat);
 line.material.opacity = 0.08;
 line.material.transparent = true; //pointClouds
-//Create Points
+
+scene.add(line); //Create Points
 
 var pointGeo = new THREE.SphereGeometry(3.5, 17, 17);
 var pointMat = new THREE.PointsMaterial({
@@ -435,18 +443,18 @@ pointGeo.vertices.forEach(function (vertex) {
 console.log(pointMat);
 var pointsClouds = new THREE.Points(pointGeo, pointMat);
 var Globus = new THREE.Group();
-Globus.add(line, SphereMesh);
+Globus.add(SphereMesh);
 var GlobusAndPoints = new THREE.Group();
 GlobusAndPoints.add(Globus, pointsClouds); // scene.add(Globus);
 
 scene.add(GlobusAndPoints);
-var lightColor = '#e58237'; //createLight
+var lightColor = 'white'; //createLight
 
-var light = new THREE.PointLight(lightColor, 3, 15);
+var light = new THREE.PointLight(lightColor, 1, 15);
 scene.add(light);
 light.position.set(0, 0, 12); //ambient light
 
-var envLight = new THREE.AmbientLight(lightColor, 0.88);
+var envLight = new THREE.AmbientLight(lightColor, 0.7);
 scene.add(envLight);
 document.addEventListener('mousemove', onMouseMove, false);
 document.addEventListener('mouseup', onMouseClick, false); //OPACITY TWEENS
@@ -480,7 +488,7 @@ CosmoDust.to1 = function () {
   });
 };
 
-var Global = [Globus.children[0], Globus.children[1], pointsClouds];
+var Global = [Globus.children[0], pointsClouds];
 Global.map(function (i, j) {
   i.to0 = new TWEEN.Tween(i.material).to({
     opacity: 0
@@ -492,6 +500,17 @@ Global.map(function (i, j) {
   }, 2000).easing(TWEEN.Easing.Quadratic.InOut).onStart(function () {
     return i.visible = true;
   });
+  Globus.children[0];
+});
+line_to0 = new TWEEN.Tween(line.material).to({
+  opacity: 0
+}, 1500).easing(TWEEN.Easing.Exponential.Out).onComplete(function () {
+  return line.visible = false;
+});
+line_to1 = new TWEEN.Tween(line.material).to({
+  opacity: 0.08
+}, 2000).easing(TWEEN.Easing.Quadratic.InOut).onStart(function () {
+  return line.visible = true;
 });
 window.addEventListener('resize', onWindowResize, false); // getUserDescript =(index)=> USERS.find((e)=> e.pic == index);
 //RENDER
@@ -593,7 +612,7 @@ function (_THREE$Mesh) {
       y: 1,
       z: 1
     }, 325).easing(TWEEN.Easing.Quadratic.Out).onStart(function () {
-      return _this.material.opacity = 1;
+      return _this.material.opacity = 0.08;
     }).onUpdate(function () {
       if (_this.scale.z > 0.999 && _this.resizingChain) {
         //About to complete
@@ -637,6 +656,7 @@ function (_THREE$Mesh) {
 
   return PlaneAvatar;
 }(THREE.Mesh); //rotation on mouse click and drag
+//Rotation Function
 
 
 function groupRotation() {
@@ -669,7 +689,7 @@ function groupRotation() {
     mouseDown = false;
   }
 
-  var ee = document.body.appendChild(renderer.domElement);
+  var ee = document.body.appendChild(container);
   ee.addEventListener('mousemove', function (e) {
     onMouseMove(e);
   }, false);
@@ -683,6 +703,8 @@ function groupRotation() {
   function rotateScene(deltaX, deltaY) {
     Globus.rotation.y += deltaX / 100;
     Globus.rotation.x += deltaY / 100;
+    line.rotation.y += deltaX / 100;
+    line.rotation.x += deltaY / 100;
     pointsClouds.rotation.y += deltaX / 100;
     pointsClouds.rotation.x += deltaY / 100;
   }
