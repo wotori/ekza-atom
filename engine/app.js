@@ -303,12 +303,12 @@ scene.add(GlobusAndPoints);
 var lightColor = '#e58237'
 
 //createLight
-let light = new THREE.PointLight(lightColor, 1, 15);
+let light = new THREE.PointLight(lightColor, 1.85, 15);
 scene.add(light)
 light.position.set(0, 0, 12)
 
 //ambient light
-var envLight = new THREE.AmbientLight(lightColor, 1 )
+var envLight = new THREE.AmbientLight(lightColor, 1.2 )
 scene.add ( envLight )
 
 document.addEventListener('mousemove', onMouseMove, false);
