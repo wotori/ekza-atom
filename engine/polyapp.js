@@ -359,14 +359,14 @@ var camTweenOut = new TWEEN.Tween(camera.position).to({
 }, 1000).easing(TWEEN.Easing.Quadratic.InOut);
 var renderer = new THREE.WebGLRenderer({
   antialias: true,
-  // alpha: true,
+  alpha: true,
   canvas: canvasSphere
 });
 renderer.domElement.id = 'canvasSphere';
 container = document.getElementById('canvasSphere');
 document.body.appendChild(container); //Background Color
+// renderer.setClearColor('#13131b', 1);
 
-renderer.setClearColor('#13131b', 1);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 var parameters = [[[1, 1, 1], 0.9], [[0.95, 1, 0.5], 1], [[0.90, 1, 0.5], 1.4], [[0.85, 1, 0.5], 1.1], [[1, 1, 1], 0.8]];

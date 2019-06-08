@@ -210,7 +210,7 @@ let camTweenOut = new TWEEN.Tween(camera.position).to({
 
 let renderer = new THREE.WebGLRenderer({
   antialias: true,
-  // alpha: true,
+  alpha: true,
   canvas: canvasSphere,
  });
 
@@ -219,7 +219,7 @@ container = document.getElementById( 'canvasSphere' );
 document.body.appendChild( container );
 
 //Background Color
-renderer.setClearColor('#13131b', 1);
+// renderer.setClearColor('#13131b', 1);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
