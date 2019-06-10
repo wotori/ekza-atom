@@ -214,6 +214,8 @@ let renderer = new THREE.WebGLRenderer({
   canvas: canvasSphere,
  });
 
+// renderer.setClearAlpha(1)
+
 renderer.domElement.id = 'canvasSphere';
 container = document.getElementById( 'canvasSphere' );
 document.body.appendChild( container );
@@ -299,16 +301,26 @@ let GlobusAndPoints = new THREE.Group();
 GlobusAndPoints.add(Globus, pointsClouds); // scene.add(Globus);
 scene.add(GlobusAndPoints);
 
-// var lightColor = 'white'
-var lightColor = '#e58237'
+//sphereEnvPresets
+lightPresets = {sun:['#e58237', 1.2, 1.85], moon:['white', 0.75, 0.5], whiteBack:[1, 2, 3]} //color, ambientLight, pointLight
+var dayTime = 'sun'
+var d = new Date()
+var curMin = d.getMinutes()
+if (curMin % 2 == 0) {
+  dayTime = 'sun'
+} else {
+  dayTime = 'moon'
+}
+console.log(dayTime, curMin)
+var lightColor = [lightPresets[dayTime][0], lightPresets[dayTime][1], lightPresets[dayTime][2]] //Yellow
 
 //createLight
-let light = new THREE.PointLight(lightColor, 1.85, 15);
+let light = new THREE.PointLight(lightColor[0], lightColor[2], 15);
 scene.add(light)
 light.position.set(0, 0, 12)
 
 //ambient light
-var envLight = new THREE.AmbientLight(lightColor, 1.2 )
+var envLight = new THREE.AmbientLight(lightColor[0], lightColor[1] )
 scene.add ( envLight )
 
 document.addEventListener('mousemove', onMouseMove, false);
