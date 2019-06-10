@@ -303,6 +303,7 @@ var onMouseClick = function onMouseClick(event) {
     Global.map(function (i, j) {
       i.to1.stop(), i.to0.start();
       line_to1.stop(), line_to0.start();
+      points_to1.stop(), points_to0.start();
     });
     CosmoDust.to1();
   } else if (event.target.tagName == "CANVAS") {
@@ -314,6 +315,7 @@ var onMouseClick = function onMouseClick(event) {
     Global.map(function (i, j) {
       i.to0.stop(), i.to1.start();
       line_to0.stop(), line_to1.start();
+      points_to0.stop(), points_to1.start();
     });
     CosmoDust.to0();
     Info.addClass('hidden');
@@ -432,6 +434,7 @@ scene.add(line); //Create Points
 var pointGeo = new THREE.SphereGeometry(3.5, 17, 17);
 var pointMat = new THREE.PointsMaterial({
   size: 0.04,
+  opacity: 0.33,
   map: createCanvasMaterial('white', 256),
   transparent: true,
   depthWrite: false
@@ -510,7 +513,7 @@ CosmoDust.to1 = function () {
   });
 };
 
-var Global = [Globus.children[0], pointsClouds];
+var Global = [Globus.children[0]];
 Global.map(function (i, j) {
   i.to0 = new TWEEN.Tween(i.material).to({
     opacity: 0
@@ -533,6 +536,16 @@ line_to1 = new TWEEN.Tween(line.material).to({
   opacity: 0.08
 }, 2000).easing(TWEEN.Easing.Quadratic.InOut).onStart(function () {
   return line.visible = true;
+});
+points_to0 = new TWEEN.Tween(pointsClouds.material).to({
+  opacity: 0
+}, 1500).easing(TWEEN.Easing.Exponential.Out).onComplete(function () {
+  return pointMat.visible = false;
+});
+points_to1 = new TWEEN.Tween(pointsClouds.material).to({
+  opacity: 0.33
+}, 2000).easing(TWEEN.Easing.Quadratic.InOut).onStart(function () {
+  return pointMat.visible = true;
 });
 window.addEventListener('resize', onWindowResize, false); // getUserDescript =(index)=> USERS.find((e)=> e.pic == index);
 //RENDER

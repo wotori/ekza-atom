@@ -154,6 +154,7 @@ const onMouseClick = event => {
     Global.map((i, j) => {
       i.to1.stop(), i.to0.start();
       line_to1.stop(), line_to0.start();
+      points_to1.stop(), points_to0.start();
     });
     CosmoDust.to1();
   } else if (event.target.tagName == "CANVAS") {
@@ -166,6 +167,7 @@ const onMouseClick = event => {
     Global.map((i, j) => {
       i.to0.stop(), i.to1.start();
       line_to0.stop(), line_to1.start();
+      points_to0.stop(), points_to1.start();
     });
     CosmoDust.to0();
     Info.addClass('hidden');
@@ -283,6 +285,7 @@ scene.add( line )
 let pointGeo = new THREE.SphereGeometry(3.5, 17, 17);
 let pointMat = new THREE.PointsMaterial({
   size: 0.04,
+  opacity: 0.33,
   map: createCanvasMaterial('white', 256),
   transparent: true,
   depthWrite: false
@@ -352,7 +355,7 @@ CosmoDust.to1 = () => {
   CosmoDust.opacity1.map(i => i.start());
 };
 
-let Global = [Globus.children[0], pointsClouds];
+let Global = [Globus.children[0]];
 Global.map((i, j) => {
   i.to0 = new TWEEN.Tween(i.material).to({
     opacity: 0
@@ -366,6 +369,8 @@ Global.map((i, j) => {
 line_to0 = new TWEEN.Tween(line.material).to({ opacity: 0 }, 1500).easing(TWEEN.Easing.Exponential.Out).onComplete(() => line.visible = false);
 line_to1 = new TWEEN.Tween(line.material).to({ opacity: 0.08 }, 2000).easing(TWEEN.Easing.Quadratic.InOut).onStart(() => line.visible = true);
 
+points_to0 = new TWEEN.Tween(pointsClouds.material).to({ opacity: 0 }, 1500).easing(TWEEN.Easing.Exponential.Out).onComplete(() => pointMat.visible = false);
+points_to1 = new TWEEN.Tween(pointsClouds.material).to({ opacity: 0.33 }, 2000).easing(TWEEN.Easing.Quadratic.InOut).onStart(() => pointMat.visible = true);
 
 
 window.addEventListener('resize', onWindowResize, false); // getUserDescript =(index)=> USERS.find((e)=> e.pic == index);
