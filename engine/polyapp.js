@@ -452,13 +452,13 @@ scene.add(GlobusAndPoints); //sphereEnvPresets
 
 lightPresets = {
   sun: ['#e58237', 1.2, 1.85],
-  moon: ['white', 0.75, 0.5],
+  moon: ['#E2E0F4', 0.85, 0.65],
   whiteBack: [1, 2, 3] //color, ambientLight, pointLight
 
 };
 var dayTime = 'sun';
 var d = new Date();
-var curMin = d.getMinutes();
+var curMin = d.getSeconds();
 
 if (curMin % 2 == 0) {
   dayTime = 'sun';

@@ -302,10 +302,10 @@ GlobusAndPoints.add(Globus, pointsClouds); // scene.add(Globus);
 scene.add(GlobusAndPoints);
 
 //sphereEnvPresets
-lightPresets = {sun:['#e58237', 1.2, 1.85], moon:['white', 0.75, 0.5], whiteBack:[1, 2, 3]} //color, ambientLight, pointLight
+lightPresets = {sun:['#e58237', 1.2, 1.85], moon:['#E2E0F4', 0.85, 0.65], whiteBack:[1, 2, 3]} //color, ambientLight, pointLight
 var dayTime = 'sun'
 var d = new Date()
-var curMin = d.getMinutes()
+var curMin = d.getSeconds()
 if (curMin % 2 == 0) {
   dayTime = 'sun'
   document.body.style.cssText = 'background: radial-gradient(circle, rgba(48,32,27,1) 0%, rgba(22,22,39,1) 100%);';
