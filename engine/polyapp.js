@@ -462,8 +462,10 @@ var curMin = d.getMinutes();
 
 if (curMin % 2 == 0) {
   dayTime = 'sun';
+  document.body.style.cssText = 'background: radial-gradient(circle, rgba(48,32,27,1) 0%, rgba(22,22,39,1) 100%);';
 } else {
   dayTime = 'moon';
+  document.body.style.cssText = 'background: radial-gradient(circle, rgb(39, 38, 52) 0%, rgba(22,22,39,1) 100%);';
 }
 
 console.log(dayTime, curMin);

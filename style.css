@@ -1,11 +1,13 @@
-body { margin: 0;
+/* body { margin: 0;
 	   background: rgb(48,32,27);
-	   background: radial-gradient(circle, rgba(48,32,27,1) 0%, rgba(22,22,39,1) 100%); }
+	   background: radial-gradient(circle, rgba(48,32,27,1) 0%, rgba(22,22,39,1) 100%); } */
+
+/* 2nd color rgb(39, 38, 52) */
 
 
-
-
-canvas { width: 100%; height: 100% }
+canvas { 
+	width: 100%; height: 100%;
+}
 
 .info {
 position: absolute;
