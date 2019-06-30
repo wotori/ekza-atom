@@ -136,8 +136,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var buildMsg = 'brave new babel + antispasm';
-console.log('%c BUILD %c' + buildMsg, 'background: gold; color: darkgreen', 'background: green; color: white'); //Fetch USERS and cache their pics 
+var buildMsg = "brave new babel + antispasm";
+console.log("%c BUILD %c" + buildMsg, "background: gold; color: darkgreen", "background: green; color: white"); //Fetch USERS and cache their pics
 
 var USERS; //init Users
 
@@ -165,11 +165,11 @@ getUsers.onreadystatechange = function () {
     for (var _picindex = 0; _picindex <= 62; _picindex++) {
       USERSexist.indexOf(_picindex) == -1 ? USERS.push({
         //Load all 62 textures
-        name: 'id' + _picindex,
-        location: 'London',
+        name: "id" + _picindex,
+        location: "London",
         pic: _picindex,
         fetchedPic: newFetchedPic(_picindex),
-        audio: 'https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559'
+        audio: "https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559"
       }) : void null;
     }
 
@@ -180,7 +180,7 @@ getUsers.onreadystatechange = function () {
   }
 };
 
-getUsers.open("GET", '/userdata/users.json', true);
+getUsers.open("GET", "/userdata/users.json", true);
 getUsers.send(); //Audio
 //Init ctx
 
@@ -194,9 +194,9 @@ var stroke = $(".stroke")[0];
 var strokeLength = stroke.getTotalLength();
 console.log(strokeLength); // Toggle the animation-play-state of the ".stroke" on clicking the ".playicon" -container
 
-var playIcon = $('.playicon');
-var play = $('.play');
-var pause = $('.pause');
+var playIcon = $(".playicon");
+var play = $(".play");
+var pause = $(".pause");
 
 audio.stop = function () {
   audio.pause();
@@ -205,18 +205,18 @@ audio.stop = function () {
 
 audio.canPlay = false;
 audio.playState = "paused";
-$('audio').on('canplaythrough', function () {
+$("audio").on("canplaythrough", function () {
   return audio.canPlay = true;
 });
 playIcon.click(function () {
   if (audio.playState == "paused" || audio.playState == "") {
-    pause.removeClass('hidden');
-    play.addClass('hidden');
+    pause.removeClass("hidden");
+    play.addClass("hidden");
     audio.playState = "running";
     audio.play();
   } else if (audio.playState == "running") {
-    play.removeClass('hidden');
-    pause.addClass('hidden');
+    play.removeClass("hidden");
+    pause.addClass("hidden");
     audio.playState = "paused"; // Logging the animation-play-state to the console:
 
     audio.stop();
@@ -273,22 +273,22 @@ var onMouseClick = function onMouseClick(event) {
     analyser = ctx.createAnalyser();
     audioSrc.connect(analyser);
     ctx.resume().then(function () {
-      log('Context resumed successfully');
+      log("Context resumed successfully");
     });
   }
 
   if (sectsWithPlanes[0]) {
-    //Home && Plane 
+    //Home && Plane
     Selected = sectsWithPlanes[0].object;
     DescriptName.innerHTML = Selected.info.name;
     DescriptLocation.innerHTML = Selected.info.location;
     audio.src = Selected.info.audio;
     audio.canPlay = false;
     audio.load();
-    Info.removeClass('hidden');
-    Info.addClass('appear');
-    pause.addClass('hidden');
-    play.removeClass('hidden');
+    Info.removeClass("hidden");
+    Info.addClass("appear");
+    pause.addClass("hidden");
+    play.removeClass("hidden");
     audio.playState = "paused"; // audio.playState = "paused"
 
     camTweenOut && camTweenOut.stop();
@@ -318,9 +318,9 @@ var onMouseClick = function onMouseClick(event) {
       points_to0.stop(), points_to1.start();
     });
     CosmoDust.to0();
-    Info.addClass('hidden');
-    pause.addClass('hidden');
-    play.removeClass('hidden');
+    Info.addClass("hidden");
+    pause.addClass("hidden");
+    play.removeClass("hidden");
     audio.playState = "paused";
     audio.stop();
   }
@@ -336,9 +336,9 @@ var ConvertToWorld = function ConvertToWorld(index) {
 };
 
 var createCanvasMaterial = function createCanvasMaterial(color, size) {
-  var matCanvas = document.createElement('canvas');
+  var matCanvas = document.createElement("canvas");
   matCanvas.width = matCanvas.height = size;
-  var matContext = matCanvas.getContext('2d'); // create exture object from canvas.
+  var matContext = matCanvas.getContext("2d"); // create exture object from canvas.
 
   var texture = new THREE.Texture(matCanvas); // Draw a circle
 
@@ -365,14 +365,14 @@ var renderer = new THREE.WebGLRenderer({
   canvas: canvasSphere
 }); // renderer.setClearAlpha(1)
 
-renderer.domElement.id = 'canvasSphere';
-container = document.getElementById('canvasSphere');
+renderer.domElement.id = "canvasSphere";
+container = document.getElementById("canvasSphere");
 document.body.appendChild(container); //Background Color
 // renderer.setClearColor('#13131b', 1);
 
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
-var parameters = [[[1, 1, 1], 0.9], [[0.95, 1, 0.5], 1], [[0.90, 1, 0.5], 1.4], [[0.85, 1, 0.5], 1.1], [[1, 1, 1], 0.8]];
+var parameters = [[[1, 1, 1], 0.9], [[0.95, 1, 0.5], 1], [[0.9, 1, 0.5], 1.4], [[0.85, 1, 0.5], 1.1], [[1, 1, 1], 0.8]];
 var parameterCount = parameters.length;
 var DustGeometry = new THREE.Geometry();
 /*	NO ONE SAID ANYTHING ABOUT MATH! UGH!	*/
@@ -397,7 +397,7 @@ for (var _i = 0; _i < parameterCount; _i++) {
   var size = parameters[_i][1];
   DustMaterials[_i] = new THREE.PointsMaterial({
     size: size,
-    map: createCanvasMaterial('white', 256),
+    map: createCanvasMaterial("white", 256),
     transparent: true,
     depthWrite: true,
     opacity: 0
@@ -414,7 +414,7 @@ scene.add(CosmoDust); //globus
 
 var SphereGeometry = new THREE.IcosahedronGeometry(1.75, 1);
 var SphereMaterial = new THREE.MeshPhongMaterial({
-  color: 'white',
+  color: "white",
   transparent: true
 });
 var SphereMesh = new THREE.Mesh(SphereGeometry, SphereMaterial);
@@ -435,7 +435,7 @@ var pointGeo = new THREE.SphereGeometry(3.5, 17, 17);
 var pointMat = new THREE.PointsMaterial({
   size: 0.04,
   opacity: 0.33,
-  map: createCanvasMaterial('white', 256),
+  map: createCanvasMaterial("white", 256),
   transparent: true,
   depthWrite: false
 });
@@ -454,21 +454,21 @@ GlobusAndPoints.add(Globus, pointsClouds); // scene.add(Globus);
 scene.add(GlobusAndPoints); //sphereEnvPresets
 
 lightPresets = {
-  sun: ['#e58237', 1.2, 1.85],
-  moon: ['#E2E0F4', 0.85, 0.65],
-  whiteBack: [1, 2, 3] //color, ambientLight, pointLight
+  sun: ["#e58237", 1.2, 1.85],
+  moon: ["#E2E0F4", 0.85, 0.65],
+  whiteBack: [1, 2, 3]
+}; //color, ambientLight, pointLight
 
-};
-var dayTime = 'sun';
+var dayTime = "sun";
 var d = new Date();
 var curMin = d.getSeconds();
 
 if (curMin % 2 == 0) {
-  dayTime = 'sun';
-  document.body.style.cssText = 'background: radial-gradient(circle, rgba(48,32,27,1) 0%, rgba(22,22,39,1) 100%);';
+  dayTime = "sun";
+  document.body.style.cssText = "background: radial-gradient(circle, rgba(249, 240, 226, 1) 0%, rgba(240, 240, 240,1) 100%);";
 } else {
-  dayTime = 'moon';
-  document.body.style.cssText = 'background: radial-gradient(circle, rgb(39, 38, 52) 0%, rgba(22,22,39,1) 100%);';
+  dayTime = "moon";
+  document.body.style.cssText = "background: radial-gradient(circle, rgb(39, 38, 52) 0%, rgba(22,22,39,1) 100%);";
 }
 
 console.log(dayTime, curMin);
@@ -481,8 +481,8 @@ light.position.set(0, 0, 12); //ambient light
 
 var envLight = new THREE.AmbientLight(lightColor[0], lightColor[1]);
 scene.add(envLight);
-document.addEventListener('mousemove', onMouseMove, false);
-document.addEventListener('mouseup', onMouseClick, false); //OPACITY TWEENS
+document.addEventListener("mousemove", onMouseMove, false);
+document.addEventListener("mouseup", onMouseClick, false); //OPACITY TWEENS
 
 CosmoDust.opacity1 = [];
 CosmoDust.opacity0 = [];
@@ -547,7 +547,7 @@ points_to1 = new TWEEN.Tween(pointsClouds.material).to({
 }, 2000).easing(TWEEN.Easing.Quadratic.InOut).onStart(function () {
   return pointMat.visible = true;
 });
-window.addEventListener('resize', onWindowResize, false); // getUserDescript =(index)=> USERS.find((e)=> e.pic == index);
+window.addEventListener("resize", onWindowResize, false); // getUserDescript =(index)=> USERS.find((e)=> e.pic == index);
 //RENDER
 
 var render = function render(time) {
@@ -574,9 +574,9 @@ var render = function render(time) {
 
         RUNNING_INDEXES.push(sectsWithPoints[0].index);
         var newPlane = new PlaneAvatar(PLANE_GROUP, sectsWithPoints[0].index, !looped_picindex ? USERS[picindex] : Object.assign(USERS[picindex], {
-          name: 'id' + sectsWithPoints[0].index,
-          location: 'London',
-          audio: 'https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559'
+          name: "id" + sectsWithPoints[0].index,
+          location: "London",
+          audio: "https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559"
         }));
         newPlane.scale.set(0.001, 0.001, 0.001);
         newPlane.enlargeTween.start();
@@ -589,18 +589,13 @@ var render = function render(time) {
       }
     }
 
-    ;
-
     if (sectsWithPlanes[0]) {
       //Enlarge existing one not dissolved Plane
       var _planeToEnlarge = sectsWithPlanes[0].object;
       _planeToEnlarge.dissolving = false; //flag to enlarge
     }
-
-    ;
   }
 
-  ;
   PLANE_GROUP.children.map(function (i, j) {
     i.run(ConvertToWorld(i.name)); //change Plane position
 
@@ -631,7 +626,7 @@ function (_THREE$Mesh) {
     _this.info = {
       name: oINFO.name,
       location: oINFO.location,
-      audio: oINFO.audio ? oINFO.audio : 'https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559'
+      audio: oINFO.audio ? oINFO.audio : "https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559"
     }; // console.table(this.info)
 
     _this.dissolving = true; //Dissolving by default
@@ -663,7 +658,7 @@ function (_THREE$Mesh) {
   _createClass(PlaneAvatar, [{
     key: "removeFromGroup",
     value: function removeFromGroup(Group) {
-      log('REMOVE <E');
+      log("REMOVE <E");
       var index = RUNNING_INDEXES.indexOf(this.name);
       RUNNING_INDEXES.splice(index);
       Group.remove(this);
@@ -725,13 +720,13 @@ function groupRotation() {
   }
 
   var ee = document.body.appendChild(container);
-  ee.addEventListener('mousemove', function (e) {
+  ee.addEventListener("mousemove", function (e) {
     onMouseMove(e);
   }, false);
-  ee.addEventListener('mousedown', function (e) {
+  ee.addEventListener("mousedown", function (e) {
     onMouseDown(e);
   }, false);
-  ee.addEventListener('mouseup', function (e) {
+  ee.addEventListener("mouseup", function (e) {
     onMouseUp(e);
   }, false);
 
