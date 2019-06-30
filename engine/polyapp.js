@@ -465,7 +465,7 @@ var curMin = d.getSeconds();
 
 if (curMin % 2 == 0) {
   dayTime = "sun";
-  document.body.style.cssText = "background: radial-gradient(circle, rgba(249, 240, 226, 1) 0%, rgba(240, 240, 240,1) 100%);";
+  document.body.style.cssText = "background: radial-gradient(circle, rgba(48,32,27,1) 0%, rgba(22,22,39,1) 100%);";
 } else {
   dayTime = "moon";
   document.body.style.cssText = "background: radial-gradient(circle, rgb(39, 38, 52) 0%, rgba(22,22,39,1) 100%);";
