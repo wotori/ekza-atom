@@ -189,26 +189,31 @@ function startSphere() {
   //DayNightMechanics
   var dayTime = "sun";
   var d = new Date();
-  var curMin = d.getSeconds();
+  var curMin = d.getSeconds(); // if (curMin % 2 == 0) {
+  //   dayTime = "sun";
+  //   var TorF = true;
+  //   var alphaTOF = false;
+  //   //set Backgound
+  //   var loader = new THREE.TextureLoader();
+  //   loader.load("https://i.ibb.co/60CGggV/sphereBG.jpg", function(texture) {
+  //     scene.background = texture;
+  //   });
+  // } else {
+  //   dayTime = "moon";
+  //   var alphaTOF = true;
+  //   var TorF = true;
+  //   $(".sphere-section").css({
+  //     background:
+  //       "radial-gradient(circle, rgb(39, 38, 52) 0%, rgba(22,22,39,1) 100%);"
+  //   });
+  // }
 
-  if (curMin % 2 == 0) {
-    dayTime = "sun";
-    var TorF = true;
-    var alphaTOF = false; //set Backgound
-
-    var loader = new THREE.TextureLoader();
-    loader.load("https://i.ibb.co/60CGggV/sphereBG.jpg", function (texture) {
-      scene.background = texture;
-    });
-  } else {
-    dayTime = "moon";
-    var alphaTOF = true;
-    var TorF = true;
-    $(".sphere-section").css({
-      background: "radial-gradient(circle, rgb(39, 38, 52) 0%, rgba(22,22,39,1) 100%);"
-    });
-  }
-
+  dayTime = "moon";
+  var alphaTOF = true;
+  var TorF = true;
+  $(".sphere-section").css({
+    background: "radial-gradient(circle, rgb(39, 38, 52) 0%, rgba(22,22,39,1) 100%);"
+  });
   console.log(dayTime, curMin);
   var initialResume = false;
   var ctx;

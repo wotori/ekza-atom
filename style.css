@@ -23,12 +23,12 @@ font-family: "Fira Mono", Monaco, "Andale Mono", "Lucida Console",
 }
 
 #name {
-font-size: 0vh;
+font-size: 2vh;
 } 
 
 #location {
 position: relative;
-font-size: 0vh;
+font-size: 1.6vh;
 top: 3px;
 opacity: 0.5;
 }  
@@ -42,8 +42,8 @@ display: none;
 opacity: .9;
 position: inherit;
 
-width: 0vh;
-height: 0vh;
+width: 13vh;
+height: 8vh;
 
 top: -7;
 left: 119%;
