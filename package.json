@@ -1,0 +1,23 @@
+{
+  "name": "soulsphere",
+  "version": "1.0.0",
+  "description": "user visualisation interface",
+  "main": "index.html",
+  "dependencies": {
+    "bower": "^1.8.8"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wotori/soulsphere.git"
+  },
+  "author": "Dmitry Sobolev (aka Wotory)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wotori/soulsphere/issues"
+  },
+  "homepage": "https://github.com/wotori/soulsphere#readme"
+}
