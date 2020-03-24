@@ -1,8 +1,13 @@
 # soulsphere
-visualisation interface for registered users 
+three.js user visualisation interface 
 
-# current version on heroku:
+## Parcel build 
+``
+parcel watch engine/app.js --out-file polyapp.js --out-dir engine --no-hmr
+``
+
+## current version on heroku:
 http://soulsphere.herokuapp.com/
 
-# Demonstration video:
+## Demonstration video:
 https://vimeo.com/383682865
