@@ -1,0 +1,17 @@
+{
+  "name": "soulsphere",
+  "description": "user visualisation interface",
+  "main": "index.html",
+  "authors": [
+    "Dmitry Sobolev"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/wotori/soulsphere",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
