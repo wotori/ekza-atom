@@ -3,7 +3,7 @@
     "name": "Dmitry Sobolev",
     "location": "Moscow",
     "pic": 3,
-    "audio": "/userdata/audio/0.mp3"
+    "audio": "static/userdata/audio/0.mp3"
   },
   {
     "name": "Artem Gudz",

@@ -146,7 +146,7 @@ console.log("%c BUILD %c" + buildMsg, "background: gold; color: darkgreen", "bac
 var USERS; //init Users
 
 var newFetchedPic = function newFetchedPic(index) {
-  return new THREE.TextureLoader().load("/userdata/pic/Frame-" + index + ".png");
+  return new THREE.TextureLoader().load("static/userdata/pic/Frame-" + index + ".png");
 };
 
 var getUsers = new XMLHttpRequest();
@@ -184,7 +184,7 @@ getUsers.onreadystatechange = function () {
   }
 };
 
-getUsers.open("GET", "/userdata/users.json", true);
+getUsers.open("GET", "static/userdata/users.json", true);
 getUsers.send(); //Audio
 //Init ctx
 

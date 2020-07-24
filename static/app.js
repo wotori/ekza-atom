@@ -12,7 +12,7 @@ let pause = $(".pause");
 
 //Fetch USERS and cache their pics
 let USERS; //init Users
-let newFetchedPic = index => new THREE.TextureLoader().load("/userdata/pic/Frame-" + index + ".png");
+let newFetchedPic = index => new THREE.TextureLoader().load("static/userdata/pic/Frame-" + index + ".png");
 let getUsers = new XMLHttpRequest();
 
 var timeNow = new Date();
@@ -44,7 +44,7 @@ getUsers.onreadystatechange = function () {
   }
 };
 
-getUsers.open("GET", "/userdata/users.json", true);
+getUsers.open("GET", "static/userdata/users.json", true);
 getUsers.send(); //Audio
 
 //SET DAY TIME
