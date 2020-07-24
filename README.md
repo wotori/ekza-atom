@@ -1,13 +1,21 @@
 # soulsphere
-three.js user visualisation interface 
+[WebGL](https://en.wikipedia.org/wiki/WebGL) user visualisation interface based on [three.js](https://github.com/mrdoob/three.js/) library
 
-## Parcel build 
+### Run SoulSphere App
+- install js libraries <br>
+``% yarn install``
+
+- create virtual environment and activate it <br>
+``% virtualenv venv && source venv/bin/activate``
+
+- install python dependencies <br>
+``% pip install -r requirements.txt``
+
+- create a parcel build if you want better multiple browser support [optional] <br>
 ``
-parcel watch engine/app.js --out-file polyapp.js --out-dir engine --no-hmr
+% parcel watch static/app.js --out-file polyapp.js --out-dir static --no-hmr
 ``
 
-## current version on heroku:
-http://soulsphere.herokuapp.com/
-
-## Demonstration video:
-https://vimeo.com/383682865
+### Preview the SoulSphere
+- current version at [heroku](http://soulsphere.herokuapp.com/)
+- video demonstration at [vimeo](https://vimeo.com/383682865)
