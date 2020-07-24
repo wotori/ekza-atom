@@ -4,6 +4,38 @@ console.log(
   "background: gold; color: darkgreen",
   "background: green; color: white"
 );
+
+// interface features init
+let playIcon = $(".playicon");
+let play = $(".play");
+let pause = $(".pause");
+
+audio.stop = () => {
+  audio.pause();
+  audio.currentTime = 0;
+};
+
+audio.canPlay = false;
+audio.playState = "paused";
+$("audio").on("canplaythrough", () => (audio.canPlay = true));
+
+playIcon.click(() => {
+  if (audio.playState == "paused" || audio.playState == "") {
+    pause.removeClass("hidden");
+    play.addClass("hidden");
+    audio.playState = "running";
+    audio.play();
+  } else if (audio.playState == "running") {
+    play.removeClass("hidden");
+    pause.addClass("hidden");
+    audio.playState = "paused"; // Logging the animation-play-state to the console:
+
+    audio.stop();
+  }
+
+  log(audio.playState);
+});
+
 //Fetch USERS and cache their pics
 let USERS; //init Users
 let newFetchedPic = index => new THREE.TextureLoader().load("/userdata/pic/Frame-" + index + ".png");
@@ -222,14 +254,11 @@ let renderer = new THREE.WebGLRenderer({
   canvas: canvasSphere
 });
 
-// renderer.setClearAlpha(1)
-
 renderer.domElement.id = "canvasSphere";
 container = document.getElementById("canvasSphere");
 document.body.appendChild(container);
 
 //Background Color
-// renderer.setClearColor('#13131b', 1);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -280,9 +309,9 @@ for (let i = 0; i < parameterCount; i++) {
     opacity: 0
   });
   let particles = new THREE.Points(DustGeometry, DustMaterials[i]);
-  particles.rotation.x = Math.random() * 6;
-  particles.rotation.y = Math.random() * 6;
-  particles.rotation.z = Math.random() * 6;
+  particles.rotation.x = Math.random() * 3;
+  particles.rotation.y = Math.random() * 3;
+  particles.rotation.z = Math.random() * 3;
   CosmoDust.add(particles);
 }
 
@@ -297,7 +326,7 @@ let SphereMaterial = new THREE.MeshPhongMaterial({
 let SphereMesh = new THREE.Mesh(SphereGeometry, SphereMaterial);
 SphereMaterial.flatShading = true;
 
-//SoulSphere wireFrame // colors: ['white' & #E7CEA9] [0.04, 100]
+//SoulSphere wireFrame
 let wireOp;
 let wirePresets = [0.04, 0.3, "white", "#E7CEA9"];
 let lineMat = new THREE.LineBasicMaterial({
@@ -319,7 +348,7 @@ if (dayTime == "sun") {
 }
 scene.add(line);
 
-//Create Points for AvatarCircles START //opacity:0.33 & 0.8
+//Create Points for AvatarCircles START
 let pointGeo = new THREE.SphereGeometry(3.5, 17, 17);
 let pointMat = new THREE.PointsMaterial({
   size: 0.04,
