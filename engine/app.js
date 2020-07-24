@@ -1,20 +1,15 @@
-const buildMsg = "brave new babel + antispasm";
+const buildMsg = "Nihao from SoulSphere";
 console.log(
   "%c BUILD %c" + buildMsg,
   "background: gold; color: darkgreen",
   "background: green; color: white"
-); //Fetch USERS and cache their pics
-
+);
+//Fetch USERS and cache their pics
 let USERS; //init Users
-
-let newFetchedPic = index =>
-  new THREE.TextureLoader().load("/userdata/pic/Frame-" + index + ".png");
-
+let newFetchedPic = index => new THREE.TextureLoader().load("/userdata/pic/Frame-" + index + ".png");
 let getUsers = new XMLHttpRequest();
 
 var timeNow = new Date();
-console.log(timeNow);
-
 getUsers.onreadystatechange = function () {
   if (this.readyState == 4 && this.status == 200) {
     USERS = JSON.parse(this.responseText); //Cache pics for existing rows
@@ -45,7 +40,6 @@ getUsers.onreadystatechange = function () {
 
 getUsers.open("GET", "/userdata/users.json", true);
 getUsers.send(); //Audio
-//Init ctx
 
 //SET DAY TIME
 //DayNightMechanics
@@ -58,7 +52,6 @@ var TorF = true;
 $(".sphere-section").css({
   background: "radial-gradient(circle, rgb(39, 38, 52) 0%, rgba(22,22,39,1) 100%);"
 });
-console.log(dayTime, curMin);
 
 let initialResume = false;
 let ctx;
@@ -175,13 +168,16 @@ const onMouseClick = event => {
       points_to0.stop(), points_to1.start();
     });
     CosmoDust.to0();
+
+    // html elements tricks
     Info.addClass("hidden");
     pause.addClass("hidden");
     play.removeClass("hidden");
     audio.playState = "paused";
     audio.stop();
+
   }
-}; //GLOBAL FUNCTIONS
+};
 
 const log = s => console.log(s);
 
@@ -475,8 +471,8 @@ points_to1 = new TWEEN.Tween(pointsClouds.material)
   .onStart(() => (pointMat.visible = true));
 
 window.addEventListener("resize", onWindowResize, false); // getUserDescript =(index)=> USERS.find((e)=> e.pic == index);
-//RENDER
 
+//RENDER
 const render = time => {
   TWEEN.update();
 

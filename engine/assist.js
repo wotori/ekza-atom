@@ -26,4 +26,4 @@ playIcon.click(() => {
     }
 
     log(audio.playState);
-}); //
+});
