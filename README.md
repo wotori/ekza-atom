@@ -18,10 +18,10 @@ PC - ``% virtualenv venv && venv\Scripts\activate``
 ``% pip install -r requirements.txt``
 
 ### testing environment with hot reloading <br>
-- install python live-server
+- install python live-server <br>
 ``% pip install live-server``
 
-- run server in root directory (default adress should be like http://127.0.0.1:8888/)
+- run server in root directory <br>
 ``% live-server``
 
 - create a parcel build if you want better multiple browser support [optional] <br>
