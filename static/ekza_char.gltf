@@ -1,0 +1,625 @@
+{
+    "asset": {
+        "generator": "FBX2glTF v0.9.7",
+        "version": "2.0"
+    },
+    "scene": 0,
+    "buffers": [
+        {
+            "byteLength": 138536,
+            "uri": "buffer.bin"
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteLength": 21360,
+            "byteOffset": 0,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteLength": 24876,
+            "byteOffset": 21360,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 24876,
+            "byteOffset": 46236,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 16584,
+            "byteOffset": 71112,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 16584,
+            "byteOffset": 87696,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 33168,
+            "byteOffset": 104280,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 1088,
+            "byteOffset": 137448
+        }
+    ],
+    "scenes": [
+        {
+            "name": "Root Scene",
+            "nodes": [
+                0
+            ]
+        }
+    ],
+    "accessors": [
+        {
+            "componentType": 5123,
+            "type": "SCALAR",
+            "count": 10680,
+            "bufferView": 0,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC3",
+            "count": 2073,
+            "bufferView": 1,
+            "byteOffset": 0,
+            "min": [
+                -0.00772373005747795,
+                -6.24120229986147e-06,
+                -0.0024277160409838
+            ],
+            "max": [
+                0.00772373005747795,
+                0.0200405716896057,
+                0.00242771510966122
+            ]
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC3",
+            "count": 2073,
+            "bufferView": 2,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC2",
+            "count": 2073,
+            "bufferView": 3,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5123,
+            "type": "VEC4",
+            "count": 2073,
+            "bufferView": 4,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC4",
+            "count": 2073,
+            "bufferView": 5,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5126,
+            "type": "MAT4",
+            "count": 17,
+            "bufferView": 6,
+            "byteOffset": 0
+        }
+    ],
+    "samplers": [
+        {}
+    ],
+    "materials": [
+        {
+            "name": "pasted__lambert2",
+            "alphaMode": "OPAQUE",
+            "extras": {
+                "fromFBX": {
+                    "shadingModel": "Phong",
+                    "isTruePBR": false
+                }
+            },
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.9,
+                    0.9,
+                    0.9,
+                    0.3
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.7
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "name": "anim_walkCycle_char_v1_5:logo_v1_3:LogoChar_pSphere6",
+            "primitives": [
+                {
+                    "material": 0,
+                    "mode": 4,
+                    "attributes": {
+                        "JOINTS_0": 4,
+                        "NORMAL": 2,
+                        "POSITION": 1,
+                        "TEXCOORD_0": 3,
+                        "WEIGHTS_0": 5
+                    },
+                    "indices": 0
+                }
+            ]
+        }
+    ],
+    "skins": [
+        {
+            "joints": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18
+            ],
+            "inverseBindMatrices": 6,
+            "skeleton": 2
+        }
+    ],
+    "nodes": [
+        {
+            "name": "RootNode",
+            "translation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "children": [
+                1,
+                19
+            ]
+        },
+        {
+            "name": "group",
+            "translation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "children": [
+                2
+            ]
+        },
+        {
+            "name": "anim_walkCycle_char_v1_5:logo_v1_3:joint_root",
+            "translation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "children": [
+                3
+            ]
+        },
+        {
+            "name": "anim_walkCycle_char_v1_5:logo_v1_3:joint1",
+            "translation": [
+                0.0,
+                0.00951188523322344,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "children": [
+                4,
+                7,
+                10
+            ]
+        },
+        {
+            "name": "anim_walkCycle_char_v1_5:logo_v1_3:joint3",
+            "translation": [
+                0.00215154001489282,
+                -0.00186910375487059,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "children": [
+                5
+            ]
+        },
+        {
+            "name": "anim_walkCycle_char_v1_5:logo_v1_3:joint4",
+            "translation": [
+                1.58064067363739e-05,
+                -0.00300685758702457,
+                0.000230968536925502
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "children": [
+                6
+            ]
+        },
+        {
+            "name": "anim_walkCycle_char_v1_5:logo_v1_3:joint5",
+            "translation": [
+                4.17232515204091e-09,
+                -0.00301999063231051,
+                -0.000230968536925502
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "anim_walkCycle_char_v1_5:logo_v1_3:joint6",
+            "translation": [
+                -0.00215154001489282,
+                -0.0018691053846851,
+                0.0
+            ],
+            "rotation": [
+                1.0,
+                0.0,
+                0.0,
+                -6.12323426292584e-17
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "children": [
+                8
+            ]
+        },
+        {
+            "name": "anim_walkCycle_char_v1_5:logo_v1_3:joint7",
+            "translation": [
+                -1.58099992404459e-05,
+                0.00300685991533101,
+                -0.000230969002586789
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "children": [
+                9
+            ]
+        },
+        {
+            "name": "anim_walkCycle_char_v1_5:logo_v1_3:joint8",
+            "translation": [
+                0.0,
+                0.00301998993381858,
+                0.000230969002586789
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "anim_walkCycle_char_v1_5:logo_v1_3:joint9",
+            "translation": [
+                2.47144089371432e-05,
+                0.00369503279216588,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                -0.0,
+                -0.130760744214058,
+                0.991413950920105
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "children": [
+                11,
+                14,
+                17
+            ]
+        },
+        {
+            "name": "anim_walkCycle_char_v1_5:logo_v1_3:joint10",
+            "translation": [
+                0.00300173088908195,
+                -4.44089199923895e-18,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                -0.0,
+                -0.247648626565933,
+                0.968849897384644
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "children": [
+                12
+            ]
+        },
+        {
+            "name": "anim_walkCycle_char_v1_5:logo_v1_3:joint11",
+            "translation": [
+                0.00304132327437401,
+                4.44089199923895e-18,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                -0.0,
+                -0.255720674991608,
+                0.966750741004944
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "children": [
+                13
+            ]
+        },
+        {
+            "name": "anim_walkCycle_char_v1_5:logo_v1_3:joint12",
+            "translation": [
+                0.00299112382344902,
+                1.86398392543197e-05,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.597180902957916,
+                0.802106559276581
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "anim_walkCycle_char_v1_5:logo_v1_3:joint13",
+            "translation": [
+                -0.00259814574383199,
+                -0.00150336546357721,
+                0.0
+            ],
+            "rotation": [
+                0.871509075164795,
+                0.490379422903061,
+                3.65361141341225e-09,
+                6.49324860546585e-09
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "children": [
+                15
+            ]
+        },
+        {
+            "name": "anim_walkCycle_char_v1_5:logo_v1_3:joint14",
+            "translation": [
+                -0.0030412885826081,
+                -3.28832499008058e-08,
+                -4.89998607349483e-16
+            ],
+            "rotation": [
+                1.31951405357711e-09,
+                4.98841590257371e-09,
+                -0.255720674991608,
+                0.966750741004944
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "children": [
+                16
+            ]
+        },
+        {
+            "name": "anim_walkCycle_char_v1_5:logo_v1_3:joint15",
+            "translation": [
+                -0.00299112522043288,
+                -1.86377019417705e-05,
+                2.17962349557954e-11
+            ],
+            "rotation": [
+                7.01316178795592e-25,
+                -5.09119389746515e-25,
+                0.597180902957916,
+                0.802106559276581
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "anim_walkCycle_char_v1_5:logo_v1_3:joint16",
+            "translation": [
+                -0.000536775158252567,
+                0.001904166652821,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.130760744214058,
+                0.991413950920105
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "children": [
+                18
+            ]
+        },
+        {
+            "name": "anim_walkCycle_char_v1_5:logo_v1_3:joint17",
+            "translation": [
+                0.0,
+                0.00485543021932244,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "anim_walkCycle_char_v1_5:logo_v1_3:LogoChar_pSphere6",
+            "translation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "mesh": 0,
+            "skin": 0
+        }
+    ]
+}

@@ -5,10 +5,47 @@ console.log(
   "background: green; color: white"
 );
 
-// interface features init
-let playIcon = $(".playicon");
-let play = $(".play");
-let pause = $(".pause");
+var loader = new THREE.GLTFLoader();
+
+function gltf_load(path, char_name, setup) {
+  loader.load(path, function (gltf) {
+    mesh = gltf.scene;
+    mesh.scale.set(setup.scale.x, setup.scale.y, setup.scale.x);
+    mesh.rotation.set(setup.rotation.x, setup.rotation.y, setup.rotation.z);
+    mesh.position.set(
+      setup.position.x,
+      setup.position.y,
+      setup.position.z)
+
+    let material = new THREE.MeshPhongMaterial({
+      color: "white",
+      transparent: true
+    });
+
+    scene.add(mesh);
+  });
+}
+
+setup = {
+  'scale': {
+    x: 150,
+    y: 150,
+    z: 150
+  },
+  'rotation': {
+    x: 0,
+    y: 0,
+    z: 0
+  },
+  'position': {
+    x: 0,
+    y: -1.5,
+    z: 0,
+  }
+
+}
+
+gltf_load('/static/ekza_char.gltf', "logo", setup)
 
 //Fetch USERS and cache their pics
 let USERS; //init Users
@@ -218,14 +255,13 @@ const parameters = [
     [1, 1, 1], 0.8
   ]
 ];
+
 const parameterCount = parameters.length;
 let DustGeometry = new THREE.Geometry();
-/*	NO ONE SAID ANYTHING ABOUT MATH! UGH!	*/
-
 const bg_particles_count = 1000;
 /* Leagues under the sea */
-//Particles
 
+//Particles
 for (let i = 0; i < bg_particles_count; i++) {
   var vertex = new THREE.Vector3();
   vertex.x = Math.random() * 2000 - 1000;
@@ -257,7 +293,7 @@ for (let i = 0; i < parameterCount; i++) {
 scene.add(CosmoDust); //globus
 
 //SoulSphere
-let SphereGeometry = new THREE.IcosahedronGeometry(1.75, 1);
+let SphereGeometry = new THREE.IcosahedronGeometry(1.75, 2);
 let SphereMaterial = new THREE.MeshPhongMaterial({
   color: "white",
   transparent: true
@@ -271,7 +307,7 @@ let wirePresets = [0.04, 0.3, "white", "#E7CEA9"];
 let lineMat = new THREE.LineBasicMaterial({
   color: wirePresets[3]
 });
-let geometryWire = new THREE.IcosahedronBufferGeometry(2.2, 1);
+let geometryWire = new THREE.IcosahedronBufferGeometry(2.2, 2);
 let wireframe = new THREE.WireframeGeometry(geometryWire);
 let line = new THREE.LineSegments(wireframe, lineMat);
 line.material.opacity = 0.3;
@@ -330,6 +366,7 @@ lightPresets = {
 var dayTime = "sun";
 var d = new Date();
 var curMin = d.getSeconds();
+var curMin = 3 // override to keep color scheme cold
 if (curMin % 2 == 0) {
   dayTime = "sun";
   document.body.style.cssText =
