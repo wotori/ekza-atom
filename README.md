@@ -1,7 +1,7 @@
 # soulsphere
 [WebGL](https://en.wikipedia.org/wiki/WebGL) user visualisation interface based on [three.js](https://github.com/mrdoob/three.js/) library
 
-![gif](https://i.ibb.co/RQFhKCJ/soulsphere-3.gif)
+![gif](https://s7.gifyu.com/images/2020-07-25-06-41-30.gif)
 
 ### Run SoulSphere App
 - install js libraries <br>
@@ -30,5 +30,4 @@ PC - ``% virtualenv venv && venv\Scripts\activate``
 ``
 
 ### Preview the SoulSphere
-- current version at [heroku](http://soulsphere.herokuapp.com/)
-- video demonstration at [vimeo](https://vimeo.com/383682865)
+- current version at [heroku](http://soulsphere.herokuapp.com/
