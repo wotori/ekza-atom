@@ -8,10 +8,21 @@
 ``% yarn install``
 
 - create virtual environment and activate it <br>
-``% virtualenv venv && source venv/bin/activate``
+Unix - ``% virtualenv venv && source venv/bin/activate``
+PC - ``% virtualenv venv && venv\Scripts\activate``
 
 - install python dependencies <br>
 ``% pip install -r requirements.txt``
+
+- run python flask server <br>
+``% pip install -r requirements.txt``
+
+### testing environment with hot reloading <br>
+- install python live-server
+``% pip install live-server``
+
+- run server in root directory (default adress should be like http://127.0.0.1:8888/)
+``% live-server``
 
 - create a parcel build if you want better multiple browser support [optional] <br>
 ``
