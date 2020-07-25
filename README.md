@@ -1,6 +1,8 @@
 # soulsphere
 [WebGL](https://en.wikipedia.org/wiki/WebGL) user visualisation interface based on [three.js](https://github.com/mrdoob/three.js/) library
 
+![gif](https://i.ibb.co/RQFhKCJ/soulsphere-3.gif)
+
 ### Run SoulSphere App
 - install js libraries <br>
 ``% yarn install``
