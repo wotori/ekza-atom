@@ -2,62 +2,61 @@
   {
     "name": "Dmitry Sobolev",
     "location": "Moscow",
-    "pic": 3,
-    "audio": "static/userdata/audio/0.mp3"
+    "pic": 3
   },
   {
     "name": "Artem Gudz",
     "location": "Moscow",
-    "pic": 4,
+    "pic": 9
   },
   {
     "name": "Rafael Atempa",
     "location": "Bristol",
-    "pic": 5,
+    "pic": 1
   },
   {
     "name": "Bruno Rezende",
     "location": "Chichester",
-    "pic": 6,
+    "pic": 2
   },
   {
     "name": "Raulando Aguiar",
     "location": "Yorkshire",
-    "pic": 7,
+    "pic": 4
   },
   {
     "name": "Taissia Soboleva",
     "location": "Beijing",
-    "pic": 8,
+    "pic": 1
   },
   {
     "name": "Gabriel M. Ramos",
     "location": "Gloucester",
-    "pic": 14,
+    "pic": 6
   },
   {
     "name": "Daniel Pecly",
     "location": "Hereford",
-    "pic": 22,
+    "pic": 7
   },
   {
     "name": "Asa Onze Studio",
     "location": "Leicester",
-    "pic": 6,
+    "pic": 8
   },
   {
     "name": "Isabela Nogueira",
     "location": "Southampton",
-    "pic": 8,
+    "pic": 9
   },
   {
     "name": "Marcelo Siqueira",
     "location": "Wakefield",
-    "pic": 29,
+    "pic": 2
   },
   {
     "name": "Guzz Soares",
     "location": "Kingston",
-    "pic": 47,
+    "pic": 4
   }
 ]

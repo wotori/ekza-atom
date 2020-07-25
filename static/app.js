@@ -24,19 +24,17 @@ getUsers.onreadystatechange = function () {
       +i.pic >= 0 ? (i.fetchedPic = newFetchedPic(i.pic)) : void null
     ); //Cache for unexisting users
 
-    const USERSexist = USERS.map(i => i.pic);
+    const UserPic = USERS.map(i => i.pic);
 
-    for (let picindex = 0; picindex <= 62; picindex++)
-      USERSexist.indexOf(picindex) == -1 ?
+    for (let picindex = 0; picindex <= 50; picindex++) {
+      rand_num = Math.floor(Math.random() * 8) + 1
       USERS.push({
-        //Load all 62 textures
-        name: "id" + picindex,
-        location: "London",
+        name: "user_name" + picindex,
+        location: "Mars",
         pic: picindex,
-        fetchedPic: newFetchedPic(picindex),
-      }) :
-      void null;
-    USERS.sort((a, b) => a.pic - b.pic);
+        fetchedPic: newFetchedPic(rand_num),
+      })
+    }
   }
 };
 
