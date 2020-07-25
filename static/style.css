@@ -31,32 +31,6 @@ audio {
 	display: none;
 }
 
-
-.playicon {
-	opacity: .9;
-	position: inherit;
-
-	width: 13vh;
-	height: 8vh;
-
-	top: -7;
-	left: 119%;
-}
-
-.playicon:hover {
-	opacity: 1;
-	cursor: pointer;
-}
-
-.play {
-	opacity: .9;
-}
-
-
-.pause {
-	opacity: .9;
-}
-
 .stroke-bg {
 	stroke: #4c4c4c;
 }
@@ -77,7 +51,6 @@ audio {
 		stroke-dashoffset: 145;
 	}
 }
-
 
 .hidden {
 	opacity: 0;

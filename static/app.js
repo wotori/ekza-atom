@@ -25,7 +25,6 @@ getUsers.onreadystatechange = function () {
     ); //Cache for unexisting users
 
     const USERSexist = USERS.map(i => i.pic);
-    console.time();
 
     for (let picindex = 0; picindex <= 62; picindex++)
       USERSexist.indexOf(picindex) == -1 ?
@@ -35,17 +34,14 @@ getUsers.onreadystatechange = function () {
         location: "London",
         pic: picindex,
         fetchedPic: newFetchedPic(picindex),
-        audio: "https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559"
       }) :
       void null;
-
-    console.timeEnd();
-    USERS.sort((a, b) => a.pic - b.pic); // console.table(USERS);
+    USERS.sort((a, b) => a.pic - b.pic);
   }
 };
 
 getUsers.open("GET", "static/userdata/users.json", true);
-getUsers.send(); //Audio
+getUsers.send();
 
 //SET DAY TIME
 //DayNightMechanics
@@ -61,13 +57,6 @@ $(".sphere-section").css({
 
 let initialResume = false;
 let ctx;
-let audioSrc;
-let analyser;
-let audio = $("#audio")[0]; // This gets the exact lenght of the stroke (.stroke) around the play icon
-
-let stroke = $(".stroke")[0];
-let strokeLength = stroke.getTotalLength();
-console.log(strokeLength); // Toggle the animation-play-state of the ".stroke" on clicking the ".playicon" -container
 
 let RUNNING_INDEXES = [];
 let scene = new THREE.Scene();
@@ -113,32 +102,14 @@ let Selected, preSelected;
 let focusPlaneName = -1; // Home view by default, no Plane clicked
 
 const onMouseClick = event => {
-  if (!initialResume) {
-    //Google audio policy
-    initialResume = true;
-    ctx = new AudioContext();
-    audioSrc = ctx.createMediaElementSource(audio);
-    audioSrc.connect(ctx.destination);
-    analyser = ctx.createAnalyser();
-    audioSrc.connect(analyser);
-    ctx.resume().then(() => {
-      log("Context resumed successfully");
-    });
-  }
 
   if (sectsWithPlanes[0]) {
     //Home && Plane
     Selected = sectsWithPlanes[0].object;
     DescriptName.innerHTML = Selected.info.name;
     DescriptLocation.innerHTML = Selected.info.location;
-    audio.src = Selected.info.audio;
-    audio.canPlay = false;
-    audio.load();
     Info.removeClass("hidden");
     Info.addClass("appear");
-    pause.addClass("hidden");
-    play.removeClass("hidden");
-    audio.playState = "paused"; // audio.playState = "paused"
 
     camTweenOut && camTweenOut.stop();
     preSelected &&
@@ -177,39 +148,9 @@ const onMouseClick = event => {
 
     // html elements tricks
     Info.addClass("hidden");
-    pause.addClass("hidden");
-    play.removeClass("hidden");
-    audio.playState = "paused";
-    audio.stop();
 
   }
 };
-
-audio.stop = () => {
-  audio.pause();
-  audio.currentTime = 0;
-};
-
-audio.canPlay = false;
-audio.playState = "paused";
-$("audio").on("canplaythrough", () => (audio.canPlay = true));
-
-playIcon.click(() => {
-  if (audio.playState == "paused" || audio.playState == "") {
-    pause.removeClass("hidden");
-    play.addClass("hidden");
-    audio.playState = "running";
-    audio.play();
-  } else if (audio.playState == "running") {
-    play.removeClass("hidden");
-    pause.addClass("hidden");
-    audio.playState = "paused"; // Logging the animation-play-state to the console:
-
-    audio.stop();
-  }
-
-  log(audio.playState);
-});
 
 const log = s => console.log(s);
 
@@ -400,7 +341,6 @@ if (curMin % 2 == 0) {
   document.body.style.cssText =
     "background: radial-gradient(circle, rgb(39, 38, 52) 0%, rgba(22,22,39,1) 100%);";
 }
-console.log(dayTime, curMin);
 var lightColor = [
   lightPresets[dayTime][0],
   lightPresets[dayTime][1],
@@ -505,13 +445,6 @@ window.addEventListener("resize", onWindowResize, false); // getUserDescript =(i
 const render = time => {
   TWEEN.update();
 
-  if (!audio.canPlay) {
-    // stroke.style.animation = "dash 1.8s linear infinite paused";
-    // log('loading')
-  } else {
-    // stroke.style.animation = "";
-  }
-
   raycasterPlanes.setFromCamera(MOUSE, camera);
   sectsWithPlanes = raycasterPlanes.intersectObjects(
     PLANE_GROUP.children,
@@ -543,7 +476,6 @@ const render = time => {
           Object.assign(USERS[picindex], {
             name: "id" + sectsWithPoints[0].index,
             location: "London",
-            audio: "https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559"
           })
         );
         newPlane.scale.set(0.001, 0.001, 0.001);
@@ -590,10 +522,8 @@ class PlaneAvatar extends THREE.Mesh {
     this.name = AnchorPointIndex;
     this.info = {
       name: oINFO.name,
-      location: oINFO.location,
-      audio: oINFO.audio ?
-        oINFO.audio : "https://cdn.glitch.com/ff820234-7fc5-4317-a00a-ad183b72978d%2Fmoonlight.mp3?1512000557559"
-    }; // console.table(this.info)
+      location: oINFO.location
+    };
 
     this.dissolving = true; //Dissolving by default
 
