@@ -235,8 +235,8 @@ container = document.getElementById("canvasSphere");
 document.body.appendChild(container);
 
 //Background Color
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+renderer.setSize(window.innerWidth * 0.98, window.innerHeight * 0.98);
+// renderer.setClearColor("blue", 1);
 
 const parameters = [
   [
