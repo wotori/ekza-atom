@@ -1,4 +1,4 @@
-# soulsphere
+# ekza-atom
 [WebGL](https://en.wikipedia.org/wiki/WebGL) user visualisation interface based on [three.js](https://github.com/mrdoob/three.js/) library
 
 ![gif](https://s7.gifyu.com/images/2020-07-25-06-41-30.gif)
@@ -29,5 +29,5 @@ PC - ``% virtualenv venv && venv\Scripts\activate``
 % parcel watch static/app.js --out-file polyapp.js --out-dir static --no-hmr
 ``
 
-### Preview the SoulSphere
+### Preview the ekza-atom here
 current version at [heroku](http://soulsphere.herokuapp.com/)
