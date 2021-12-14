@@ -28,6 +28,3 @@ PC - ``% virtualenv venv && venv\Scripts\activate``
 ``
 % parcel watch static/app.js --out-file polyapp.js --out-dir static --no-hmr
 ``
-
-### Preview the ekza-atom here
-current version at [heroku](http://soulsphere.herokuapp.com/)
